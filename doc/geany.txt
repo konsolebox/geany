@@ -2716,7 +2716,8 @@ Don't use run script
     like a Python console (e.g. ipython). Use this with care.
 
 Draw intense colors in bold fonts
-    Use bold fonts when printing characters that have the highlight attribute.
+    Use bold fonts when printing characters that have the high-intensity
+    attribute.
 
 
 Project management

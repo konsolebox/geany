@@ -6129,7 +6129,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Whether to use bold fonts when printing characters having highlight attributes</property>
+                                <property name="tooltip_text" translatable="yes">Whether to use bold fonts when printing characters having the high-intensity attribute</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
