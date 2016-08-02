@@ -174,13 +174,8 @@ static void init_pref_groups(void)
 		"radio_msgwin_vertical", GTK_ORIENTATION_VERTICAL,
 		"radio_msgwin_horizontal", GTK_ORIENTATION_HORIZONTAL,
 		NULL);
-	stash_group_add_radio_buttons(group, &interface_prefs.notebook_auto_sort_tabs,
-		"notebook_auto_sort_tabs", NOTEBOOK_TAB_SORT_NONE,
-		"radio_notebook_auto_sort_tabs_disabled", NOTEBOOK_TAB_SORT_NONE,
-		"radio_notebook_auto_sort_tabs_by_filename", NOTEBOOK_TAB_SORT_BY_FILENAME,
-		"radio_notebook_auto_sort_tabs_by_pathname", NOTEBOOK_TAB_SORT_BY_PATHNAME,
-		"radio_notebook_auto_sort_tabs_by_folder", NOTEBOOK_TAB_SORT_BY_FOLDER,
-		NULL);
+	stash_group_add_combo_box(group, &interface_prefs.notebook_auto_sort_tabs,
+		"notebook_auto_sort_tabs", NOTEBOOK_TAB_SORT_NONE, "combo_notebook_auto_sort_tabs");
 
 	/* editor display */
 	stash_group_add_toggle_button(group, &interface_prefs.highlighting_invert_all,
