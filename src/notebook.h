@@ -48,22 +48,13 @@ gboolean notebook_switch_in_progress(void);
 
 typedef enum NotebookTabSortMethod
 {
+	NOTEBOOK_TAB_SORT_NONE,
 	NOTEBOOK_TAB_SORT_BY_FILENAME,
-	NOTEBOOK_TAB_SORT_BY_PATHNAME
+	NOTEBOOK_TAB_SORT_BY_PATHNAME,
+	NOTEBOOK_TAB_SORT_BY_FOLDER
 } NotebookTabSortMethod;
 
 void notebook_sort_tabs(NotebookTabSortMethod method);
-
-void on_sort_tabs_by_filename_activate(GtkMenuItem *menuitem, gpointer user_data);
-
-void on_sort_tabs_by_pathname_activate(GtkMenuItem *menuitem, gpointer user_data);
-
-typedef enum NotebookTabAutoSortMode
-{
-	NOTEBOOK_TAB_AUTO_SORT_DISABLED,
-	NOTEBOOK_TAB_AUTO_SORT_BY_FILENAME,
-	NOTEBOOK_TAB_AUTO_SORT_BY_PATHNAME
-} NotebookTabAutoSortMode;
 
 G_END_DECLS
 
