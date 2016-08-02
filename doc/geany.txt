@@ -512,19 +512,15 @@ shortcuts including for Most-Recently-Used document switching.
 Sorting tabs
 ^^^^^^^^^^^^
 
-You can sort tabs based on the names of the opened files they represent,
-or based on the pathnames of those files.  This can be done by
+You can sort editor tabs based on the basic names of the opened files
+they represent (By filename), based on the complete path of those files
+(By pathname), or based on how they are sorted in the documents list in
+the sidebar when Show Paths is enabled (BY folder).  This can be done by
 activating the sort command item in the popup menu that's shown by
-right-clicking an editor tab.  You can also activate the commands by
-using shortcut keys.  See `Notebook tab keybindings`_ section.
+right-clicking an editor tab.
 
-Sorting by filename means sorting the tabs based on the alphabetical
-order of the basic names of the files, which excludes the directory
-parts.  For example: "name.ext".
-
-Sorting by pathname on the other hand includes the directory parts.
-This makes the resulting arrangement similar to the one in the documents
-list when Show Paths is enabled.
+You can also activate the commands by using shortcut keys.  See
+`Notebook tab keybindings`_ section.
 
 Sorting tabs automatically
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1998,9 +1994,9 @@ Automatically sort tabs
 
     Sorting by filename means sorting it based on the basic name of the
     file and it excludes the directory parts, while sorting by pathname
-    means sorting it based on the full path, in which the resulting
-    arrangement would be the same as the one in the documents list when
-    Show Paths is enabled.
+    means sorting it based on the complete path of the file.  Sorting
+    tabs by folder on the other hand makes the resulting arrangement the
+    same as the one in the documents list when Show Paths is enabled.
 
 Tab positions
 `````````````
@@ -3746,11 +3742,14 @@ Move document first                                       Moves the current docu
 
 Move document last                                        Moves the current document to the last position.
 
-Sort tabs by filename                                     Sorts tabs based on filenames or basenames.
+Sort tabs by filename                                     Sorts tabs based on the basic name of the file.
 
-Sort tabs by pathname                                     Sorts tabs based on full path names.  The tabs get
-                                                          sorted similar to how files are arranged in the
-                                                          documents list when Show Paths is enabled.
+Sort tabs by pathname                                     Sorts tabs based on the complete path of the file.
+
+Sort tabs by folder                                       Sorts tabs based on how they are arranged in the
+                                                          documents list in the sidebar when Show Paths is
+                                                          enabled.
+
 =============================== ========================= ==================================================
 
 

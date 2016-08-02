@@ -658,6 +658,8 @@ static void init_default_kb(void)
 		0, 0, "sort_tabs_by_filename", _("Sort tabs by filename"), NULL);
 	add_kb(group, GEANY_KEYS_NOTEBOOK_SORTTABSBYPATHNAME, cb_func_sort_tabs,
 		0, 0, "sort_tabs_by_filepath", _("Sort tabs by pathname"), NULL);
+	add_kb(group, GEANY_KEYS_NOTEBOOK_SORTTABSBYFOLDER, cb_func_sort_tabs,
+		0, 0, "sort_tabs_by_folder", _("Sort tabs by folder"), NULL);
 
 	group = keybindings_get_core_group(GEANY_KEY_GROUP_DOCUMENT);
 
@@ -1958,6 +1960,8 @@ static void cb_func_sort_tabs(guint key_id)
 		case GEANY_KEYS_NOTEBOOK_SORTTABSBYPATHNAME:
 			notebook_sort_tabs(NOTEBOOK_TAB_SORT_BY_PATHNAME);
 			break;
+		case GEANY_KEYS_NOTEBOOK_SORTTABSBYFOLDER:
+			notebook_sort_tabs(NOTEBOOK_TAB_SORT_BY_FOLDER);
 	}
 }
 
