@@ -316,6 +316,9 @@ void document_grab_focus(GeanyDocument *doc);
 
 GeanyDocument *document_clone(GeanyDocument *old_doc);
 
+void document_open_files_recursively(const GSList *filenames, gboolean readonly, GeanyFiletype *ft,
+		const gchar *forced_enc, GtkFileFilter *filter, GError **error);
+
 #endif /* GEANY_PRIVATE */
 
 G_END_DECLS
