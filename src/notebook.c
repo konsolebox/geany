@@ -86,9 +86,9 @@ static void setup_tab_dnd(void);
 void on_sort_tabs_by_filename_activate(GtkMenuItem *menuitem, gpointer user_data);
 void on_sort_tabs_by_pathname_activate(GtkMenuItem *menuitem, gpointer user_data);
 void on_sort_tabs_by_folder_activate(GtkMenuItem *menuitem, gpointer user_data);
-static void on_document_open(GObject *obj, const GeanyDocument *doc);
-static void on_document_before_save(GObject *obj, const GeanyDocument *doc);
-static void on_document_save(GObject *obj, const GeanyDocument *doc);
+static void on_document_open(GObject *obj, GeanyDocument *doc);
+static void on_document_before_save(GObject *obj, GeanyDocument *doc);
+static void on_document_save(GObject *obj, GeanyDocument *doc);
 
 
 static void update_mru_docs_head(GeanyDocument *doc)
@@ -884,7 +884,7 @@ static GCompareFunc get_compare_func(NotebookTabSortMethod method)
 }
 
 
-static void move_tab(const GeanyDocument *doc, gint pos)
+static void move_tab(GeanyDocument *doc, gint pos)
 {
 	GtkWidget *child = document_get_notebook_child(doc);
 	g_assert(child != NULL);
@@ -933,7 +933,7 @@ void on_sort_tabs_by_folder_activate(GtkMenuItem *menuitem, gpointer user_data)
 }
 
 
-static void gradually_sort_tab(const GeanyDocument *doc, NotebookTabSortMethod method)
+static void gradually_sort_tab(GeanyDocument *doc, NotebookTabSortMethod method)
 {
 	GCompareFunc func = get_compare_func(method);
 
@@ -960,19 +960,19 @@ static void gradually_sort_tab(const GeanyDocument *doc, NotebookTabSortMethod m
 }
 
 
-static void on_document_open(GObject *obj, const GeanyDocument *doc)
+static void on_document_open(GObject *obj, GeanyDocument *doc)
 {
 	gradually_sort_tab(doc, interface_prefs.notebook_auto_sort_tabs);
 }
 
 
-static void on_document_before_save(GObject *obj, const GeanyDocument *doc)
+static void on_document_before_save(GObject *obj, GeanyDocument *doc)
 {
 	doc_saves_to_new_file = doc->real_path == NULL;
 }
 
 
-static void on_document_save(GObject *obj, const GeanyDocument *doc)
+static void on_document_save(GObject *obj, GeanyDocument *doc)
 {
 	if (doc_saves_to_new_file)
 		gradually_sort_tab(doc, interface_prefs.notebook_auto_sort_tabs);
