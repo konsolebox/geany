@@ -86,6 +86,7 @@ static void setup_tab_dnd(void);
 void on_sort_tabs_by_filename_activate(GtkMenuItem *menuitem, gpointer user_data);
 void on_sort_tabs_by_pathname_activate(GtkMenuItem *menuitem, gpointer user_data);
 void on_sort_tabs_by_folder_activate(GtkMenuItem *menuitem, gpointer user_data);
+static void on_document_new(GObject *obj, GeanyDocument *doc);
 static void on_document_open(GObject *obj, GeanyDocument *doc);
 static void on_document_before_save(GObject *obj, GeanyDocument *doc);
 static void on_document_save(GObject *obj, GeanyDocument *doc);
@@ -566,6 +567,7 @@ void notebook_init(void)
 	/* in case the switch dialog misses an event while drawing the dialog */
 	g_signal_connect(main_widgets.window, "key-release-event", G_CALLBACK(on_key_release_event), NULL);
 
+	g_signal_connect(geany_object, "document-new", G_CALLBACK(on_document_new), NULL);
 	g_signal_connect(geany_object, "document-open", G_CALLBACK(on_document_open), NULL);
 	g_signal_connect(geany_object, "document-before-save", G_CALLBACK(on_document_before_save), NULL);
 	g_signal_connect(geany_object, "document-save", G_CALLBACK(on_document_save), NULL);
@@ -957,6 +959,13 @@ static void gradually_sort_tab(GeanyDocument *doc, NotebookTabSortMethod method)
 
 		move_tab(doc, pos);
 	}
+}
+
+
+static void on_document_new(GObject *obj, GeanyDocument *doc)
+{
+	if (doc->file_name)
+		gradually_sort_tab(doc, interface_prefs.notebook_auto_sort_tabs);
 }
 
 
