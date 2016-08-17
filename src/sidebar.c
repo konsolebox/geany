@@ -31,6 +31,7 @@
 
 #include "app.h"
 #include "callbacks.h" /* FIXME: for ignore_callback */
+#include "dialogs.h"
 #include "documentprivate.h"
 #include "filetypesprivate.h"
 #include "geanyobject.h"
@@ -74,7 +75,8 @@ enum
 {
 	OPENFILES_ACTION_REMOVE = 0,
 	OPENFILES_ACTION_SAVE,
-	OPENFILES_ACTION_RELOAD
+	OPENFILES_ACTION_RELOAD,
+	OPENFILES_ACTION_RELOAD_NO_PROMPT
 };
 
 /* documents tree model columns */
@@ -830,6 +832,28 @@ static void document_action(GeanyDocument *doc, gint action)
 			document_reload_prompt(doc, NULL);
 			break;
 		}
+		case OPENFILES_ACTION_RELOAD_NO_PROMPT:
+		{
+			if (doc->real_path)
+				document_reload_force(doc, NULL);
+
+			break;
+		}
+	}
+}
+
+
+static void document_action_recursive(GtkTreeModel *model, GtkTreeIter *parent, gint action)
+{
+	GtkTreeIter child;
+	gint i = gtk_tree_model_iter_n_children(model, parent) - 1;
+	GeanyDocument *doc;
+
+	while (i >= 0 && gtk_tree_model_iter_nth_child(model, &child, parent, i))
+	{
+		gtk_tree_model_get(model, &child, DOCUMENTS_DOCUMENT, &doc, -1);
+		document_action(doc, action);
+		--i;
 	}
 }
 
@@ -852,15 +876,30 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 		else
 		{
 			/* parent item selected */
-			GtkTreeIter child;
-			gint i = gtk_tree_model_iter_n_children(model, &iter) - 1;
 
-			while (i >= 0 && gtk_tree_model_iter_nth_child(model, &child, &iter, i))
+			switch (action)
 			{
-				gtk_tree_model_get(model, &child, DOCUMENTS_DOCUMENT, &doc, -1);
+				case OPENFILES_ACTION_RELOAD:
+				{
+					gchar *short_name;
+					gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name, -1);
 
-				document_action(doc, action);
-				i--;
+					if (short_name)
+					{
+						if (dialogs_show_question_full(NULL, _("_Reload"), GTK_STOCK_CANCEL,
+								_("Any unsaved changes and undo history will be lost."),
+								_("Reload all documents under '%s'?"), short_name))
+						{
+							document_action_recursive(model, &iter, OPENFILES_ACTION_RELOAD_NO_PROMPT);
+						}
+
+						g_free(short_name);
+					}
+
+					break;
+				}
+				default:
+					document_action_recursive(model, &iter, action);
 			}
 		}
 	}
@@ -1057,7 +1096,7 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	/* can close all, save all (except shortname), but only reload individually ATM */
 	gtk_widget_set_sensitive(doc_items.close, sel);
 	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
-	gtk_widget_set_sensitive(doc_items.reload, doc && doc->real_path);
+	gtk_widget_set_sensitive(doc_items.reload, sel && (!doc || doc->real_path));
 	gtk_widget_set_sensitive(doc_items.find_in_files, sel);
 	g_free(shortname);
 
