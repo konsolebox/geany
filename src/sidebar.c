@@ -31,6 +31,7 @@
 
 #include "app.h"
 #include "callbacks.h" /* FIXME: for ignore_callback */
+#include "dialogs.h"
 #include "documentprivate.h"
 #include "filetypesprivate.h"
 #include "geanyobject.h"
@@ -57,12 +58,13 @@ static struct
 	GtkWidget *close;
 	GtkWidget *save;
 	GtkWidget *reload;
+	GtkWidget *rename;
 	GtkWidget *show_paths;
 	GtkWidget *find_in_files;
 	GtkWidget *expand_all;
 	GtkWidget *collapse_all;
 }
-doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 enum
 {
@@ -74,7 +76,8 @@ enum
 {
 	OPENFILES_ACTION_REMOVE = 0,
 	OPENFILES_ACTION_SAVE,
-	OPENFILES_ACTION_RELOAD
+	OPENFILES_ACTION_RELOAD,
+	OPENFILES_ACTION_RENAME
 };
 
 /* documents tree model columns */
@@ -103,6 +106,8 @@ static void on_list_symbol_activate(GtkCheckMenuItem *item, gpointer user_data);
 static void documents_menu_update(GtkTreeSelection *selection);
 static void sidebar_tabs_show_hide(GtkNotebook *notebook, GtkWidget *child,
 								   guint page_num, gpointer data);
+static void on_openfiles_renamed(GtkCellRenderer *renderer, const gchar *path_string,
+		const gchar *name_new, gpointer user_data);
 
 
 /* the prepare_* functions are document-related, but I think they fit better here than in document.c */
@@ -306,6 +311,8 @@ static void prepare_openfiles(void)
 	gtk_tree_view_column_pack_start(column, text_renderer, TRUE);
 	gtk_tree_view_column_set_attributes(column, text_renderer, "text", DOCUMENTS_SHORTNAME,
 		"foreground-gdk", DOCUMENTS_COLOR, NULL);
+	g_signal_connect(G_OBJECT(text_renderer), "edited", G_CALLBACK(on_openfiles_renamed), GTK_TREE_VIEW(tv.tree_openfiles));
+
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv.tree_openfiles), column);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv.tree_openfiles), FALSE);
 
@@ -724,6 +731,15 @@ static void create_openfiles_popup_menu(void)
 			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_RELOAD));
 	doc_items.reload = item;
 
+	item = gtk_image_menu_item_new_with_mnemonic(_("R_ename"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
+			gtk_image_new_from_stock(GTK_STOCK_EDIT, GTK_ICON_SIZE_MENU));
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+	g_signal_connect(item, "activate",
+			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_RENAME));
+	doc_items.rename = item;
+
 	item = gtk_separator_menu_item_new();
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
@@ -806,6 +822,29 @@ void sidebar_select_openfiles_item(GeanyDocument *doc)
 }
 
 
+static void rename_file_inplace(GeanyDocument *doc)
+{
+	g_assert(DOC_VALID(doc) && doc->file_name);
+
+	GtkTreeIter *iter = &doc->priv->iter;
+
+	g_return_if_fail(gtk_tree_store_iter_is_valid(store_openfiles, iter));
+
+	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(store_openfiles), iter);
+	GtkTreeView *tree_view = GTK_TREE_VIEW(tv.tree_openfiles);
+	GtkTreeViewColumn *column = gtk_tree_view_get_column(tree_view, 0);
+	GList *renderers = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(column));
+	GtkCellRenderer *renderer = g_list_nth_data(renderers, 1);
+
+	g_object_set(G_OBJECT(renderer), "editable", TRUE, NULL);
+
+	gtk_tree_view_set_cursor_on_cell(tree_view, path, column, renderer, TRUE);
+
+	gtk_tree_path_free(path);
+	g_list_free(renderers);
+}
+
+
 /* callbacks */
 
 static void document_action(GeanyDocument *doc, gint action)
@@ -828,6 +867,11 @@ static void document_action(GeanyDocument *doc, gint action)
 		case OPENFILES_ACTION_RELOAD:
 		{
 			document_reload_prompt(doc, NULL);
+			break;
+		}
+		case OPENFILES_ACTION_RENAME:
+		{
+			rename_file_inplace(doc);
 			break;
 		}
 	}
@@ -1058,6 +1102,7 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gtk_widget_set_sensitive(doc_items.close, sel);
 	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
 	gtk_widget_set_sensitive(doc_items.reload, doc && doc->real_path);
+	gtk_widget_set_sensitive(doc_items.rename, doc && doc->file_name);
 	gtk_widget_set_sensitive(doc_items.find_in_files, sel);
 	g_free(shortname);
 
@@ -1175,4 +1220,38 @@ static void sidebar_tabs_show_hide(GtkNotebook *notebook, GtkWidget *child,
 		tabs--;
 
 	gtk_notebook_set_show_tabs(notebook, (tabs > 1));
+}
+
+
+static void on_openfiles_renamed(GtkCellRenderer *renderer, const gchar *path_string,
+		const gchar *new_basename, gpointer user_data)
+{
+	GeanyDocument *doc = NULL;
+	GtkTreeIter iter;
+
+	g_object_set(G_OBJECT(renderer), "editable", FALSE, NULL);
+
+	g_return_if_fail(new_basename != NULL);
+
+	if (*new_basename == '\0')
+		return;
+
+	if (gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(store_openfiles), &iter, path_string))
+	{
+		gtk_tree_model_get(GTK_TREE_MODEL(store_openfiles), &iter, DOCUMENTS_DOCUMENT, &doc, -1);
+
+		if (doc && doc->file_name)
+		{
+			g_return_if_fail(doc == document_get_current());
+
+			gchar *dirname = g_path_get_dirname(doc->file_name);
+			gchar *new_file_name = g_strconcat(dirname, G_DIR_SEPARATOR_S, new_basename, NULL);
+
+			if (strcmp(doc->file_name, new_file_name) != 0)
+				document_rename_and_save(doc, new_file_name, TRUE);
+
+			g_free(new_file_name);
+			g_free(dirname);
+		}
+	}
 }
