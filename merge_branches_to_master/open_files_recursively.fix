@@ -1,0 +1,36 @@
+diff --git a/src/document.h b/src/document.h
+index cb47808..8ca1068 100644
+--- a/src/document.h
++++ b/src/document.h
+@@ -316,12 +316,10 @@ void document_grab_focus(GeanyDocument *doc);
+ 
+ GeanyDocument *document_clone(GeanyDocument *old_doc);
+ 
+-<<<<<<< HEAD
+ GtkWidget *document_get_notebook_child(GeanyDocument *doc);
+-=======
++
+ void document_open_files_recursively(const GSList *filenames, gboolean readonly, GeanyFiletype *ft,
+ 		const gchar *forced_enc, GtkFileFilter *filter, GError **error);
+->>>>>>> refs/heads/open_files_recursively
+ 
+ #endif /* GEANY_PRIVATE */
+ 
+diff --git a/src/keybindings.h b/src/keybindings.h
+index 462c050..b7595e0 100644
+--- a/src/keybindings.h
++++ b/src/keybindings.h
+@@ -274,13 +274,10 @@ enum GeanyKeyBindingID
+ 	GEANY_KEYS_FORMAT_SENDTOCMD8,				/**< Keybinding. */
+ 	GEANY_KEYS_FORMAT_SENDTOCMD9,				/**< Keybinding. */
+ 	GEANY_KEYS_EDITOR_DELETELINETOBEGINNING,	/**< Keybinding. */
+-<<<<<<< HEAD
+ 	GEANY_KEYS_NOTEBOOK_SORTTABSBYFILENAME,		/**< Keybinding. */
+ 	GEANY_KEYS_NOTEBOOK_SORTTABSBYPATHNAME,		/**< Keybinding. */
+ 	GEANY_KEYS_NOTEBOOK_SORTTABSBYFOLDER,		/**< Keybinding. */
+-=======
+ 	GEANY_KEYS_FILE_OPENRECURSIVE,				/**< Keybinding. */
+->>>>>>> refs/heads/open_files_recursively
+ 	GEANY_KEYS_COUNT	/* must not be used by plugins */
+ };
+ 

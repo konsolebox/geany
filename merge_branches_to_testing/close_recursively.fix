@@ -1,0 +1,17 @@
+diff --git a/src/sidebar.c b/src/sidebar.c
+index 20cb419..8a82dff 100644
+--- a/src/sidebar.c
++++ b/src/sidebar.c
+@@ -67,11 +67,7 @@ static struct
+ 	GtkWidget *expand_all;
+ 	GtkWidget *collapse_all;
+ }
+-<<<<<<< HEAD
+-doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+-=======
+-doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+->>>>>>> refs/heads/close_recursively
++doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+ 
+ enum
+ {
