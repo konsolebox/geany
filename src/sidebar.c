@@ -1255,3 +1255,30 @@ static void on_openfiles_renamed(GtkCellRenderer *renderer, const gchar *path_st
 		}
 	}
 }
+
+
+void sidebar_rename_file_cb(G_GNUC_UNUSED guint key_id)
+{
+	GtkTreeSelection *selection;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	GeanyDocument *doc;
+
+	if (ui_prefs.sidebar_visible && interface_prefs.sidebar_openfiles_visible)
+	{
+		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
+
+		if (selection && gtk_tree_selection_get_selected(selection, &model, &iter))
+		{
+			gtk_tree_model_get(model, &iter, DOCUMENTS_DOCUMENT, &doc, -1);
+
+			if (DOC_VALID(doc) && doc->file_name)
+			{
+				gtk_notebook_set_current_page(GTK_NOTEBOOK(main_widgets.sidebar_notebook),
+						TREEVIEW_OPENFILES);
+
+				rename_file_inplace(doc);
+			}
+		}
+	}
+}

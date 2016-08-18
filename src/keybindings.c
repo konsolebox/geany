@@ -322,6 +322,7 @@ static void init_default_kb(void)
 	ADD_KB_GROUP(GEANY_KEY_GROUP_HELP, _("Help"), NULL);
 	ADD_KB_GROUP(GEANY_KEY_GROUP_FOCUS, _("Focus"), cb_func_switch_action);
 	ADD_KB_GROUP(GEANY_KEY_GROUP_NOTEBOOK, _("Notebook tab"), NULL);
+	ADD_KB_GROUP(GEANY_KEY_GROUP_SIDEBAR, _("Sidebar"), NULL);
 
 	/* Init all fields of keys with default values.
 	 * The menu_item field is always the main menu item, popup menu accelerators are
@@ -712,6 +713,11 @@ static void init_default_kb(void)
 
 	add_kb(group, GEANY_KEYS_HELP_HELP, cb_func_menu_help,
 		GDK_F1, 0, "menu_help", _("Help"), "help1");
+
+	group = keybindings_get_core_group(GEANY_KEY_GROUP_SIDEBAR);
+
+	add_kb(group, GEANY_KEYS_SIDEBAR_RENAME_FILE, sidebar_rename_file_cb,
+		0, 0, "sidebar_rename_file", _("Rename File"), NULL);
 }
 
 
