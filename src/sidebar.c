@@ -1272,7 +1272,10 @@ void sidebar_rename_file_cb(G_GNUC_UNUSED guint key_id)
 		{
 			gtk_tree_model_get(model, &iter, DOCUMENTS_DOCUMENT, &doc, -1);
 
-			if (DOC_VALID(doc) && doc->file_name)
+			if (!DOC_VALID(doc))
+				doc = document_get_current();
+
+			if (doc && doc->file_name)
 			{
 				gtk_notebook_set_current_page(GTK_NOTEBOOK(main_widgets.sidebar_notebook),
 						TREEVIEW_OPENFILES);
