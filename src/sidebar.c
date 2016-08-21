@@ -57,6 +57,7 @@ static struct
 	GtkWidget *close;
 	GtkWidget *save;
 	GtkWidget *reload;
+	GtkWidget *clone;
 	GtkWidget *show_paths;
 	GtkWidget *find_in_files;
 	GtkWidget *expand_all;
@@ -74,7 +75,8 @@ enum
 {
 	OPENFILES_ACTION_REMOVE = 0,
 	OPENFILES_ACTION_SAVE,
-	OPENFILES_ACTION_RELOAD
+	OPENFILES_ACTION_RELOAD,
+	OPENFILES_ACTION_CLONE
 };
 
 /* documents tree model columns */
@@ -724,6 +726,15 @@ static void create_openfiles_popup_menu(void)
 			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_RELOAD));
 	doc_items.reload = item;
 
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Clone"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
+			gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU));
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+	g_signal_connect(item, "activate",
+			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_CLONE));
+	doc_items.clone = item;
+
 	item = gtk_separator_menu_item_new();
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
@@ -828,6 +839,11 @@ static void document_action(GeanyDocument *doc, gint action)
 		case OPENFILES_ACTION_RELOAD:
 		{
 			document_reload_prompt(doc, NULL);
+			break;
+		}
+		case OPENFILES_ACTION_CLONE:
+		{
+			document_clone(doc);
 			break;
 		}
 	}
@@ -1058,6 +1074,7 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gtk_widget_set_sensitive(doc_items.close, sel);
 	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
 	gtk_widget_set_sensitive(doc_items.reload, doc && doc->real_path);
+	gtk_widget_set_sensitive(doc_items.clone, doc != NULL);
 	gtk_widget_set_sensitive(doc_items.find_in_files, sel);
 	g_free(shortname);
 
