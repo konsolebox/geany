@@ -314,6 +314,8 @@ void document_apply_indent_settings(GeanyDocument *doc);
 
 void document_grab_focus(GeanyDocument *doc);
 
+gboolean document_delete_prompt(GeanyDocument *doc);
+
 GeanyDocument *document_clone(GeanyDocument *old_doc);
 
 gpointer document_get_data(const GeanyDocument *doc, const gchar *key);
