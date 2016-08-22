@@ -208,8 +208,6 @@ gboolean document_save_file_as(GeanyDocument *doc, const gchar *utf8_fname);
 
 void document_rename_file(GeanyDocument *doc, const gchar *new_filename);
 
-gboolean document_rename_file_and_save(GeanyDocument *doc, const gchar *new_filename);
-
 const GdkColor *document_get_status_color(GeanyDocument *doc);
 
 gchar *document_get_basename_for_display(GeanyDocument *doc, gint length);
@@ -317,6 +315,8 @@ void document_apply_indent_settings(GeanyDocument *doc);
 void document_grab_focus(GeanyDocument *doc);
 
 GeanyDocument *document_clone(GeanyDocument *old_doc);
+
+gboolean document_rename_file_and_save(GeanyDocument *doc, const gchar *new_filename);
 
 #endif /* GEANY_PRIVATE */
 
