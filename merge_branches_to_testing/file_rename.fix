@@ -1,0 +1,20 @@
+diff --git a/src/keybindings.h b/src/keybindings.h
+index 1be638f..be46f63 100644
+--- a/src/keybindings.h
++++ b/src/keybindings.h
+@@ -275,15 +275,12 @@ enum GeanyKeyBindingID
+ 	GEANY_KEYS_FORMAT_SENDTOCMD8,				/**< Keybinding. */
+ 	GEANY_KEYS_FORMAT_SENDTOCMD9,				/**< Keybinding. */
+ 	GEANY_KEYS_EDITOR_DELETELINETOBEGINNING,	/**< Keybinding. */
+-<<<<<<< HEAD
+ 	GEANY_KEYS_NOTEBOOK_SORTTABSBYFILENAME,		/**< Keybinding. */
+ 	GEANY_KEYS_NOTEBOOK_SORTTABSBYPATHNAME,		/**< Keybinding. */
+ 	GEANY_KEYS_NOTEBOOK_SORTTABSBYFOLDER,		/**< Keybinding. */
+ 	GEANY_KEYS_FILE_OPENRECURSIVE,				/**< Keybinding. */
+ 	GEANY_KEYS_SIDEBAR_RENAME_FILE,				/**< Keybinding. */
+-=======
+ 	GEANY_KEYS_FILE_RENAME,						/**< Keybinding. */
+->>>>>>> refs/heads/file_rename
+ 	GEANY_KEYS_COUNT	/* must not be used by plugins */
+ };
+ 

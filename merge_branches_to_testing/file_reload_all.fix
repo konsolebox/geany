@@ -1,0 +1,197 @@
+diff --git a/data/geany.glade b/data/geany.glade
+index cb96df6..a705420 100644
+--- a/data/geany.glade
++++ b/data/geany.glade
+@@ -549,7 +549,12 @@
+     <property name="stock">gtk-revert-to-saved</property>
+     <property name="icon-size">1</property>
+   </object>
+-<<<<<<< HEAD
++  <object class="GtkImage" id="image_reload_all1">
++    <property name="visible">True</property>
++    <property name="can_focus">False</property>
++    <property name="stock">gtk-revert-to-saved</property>
++    <property name="icon-size">1</property>
++  </object>
+   <object class="GtkImage" id="image_rename1">
+     <property name="visible">True</property>
+     <property name="can_focus">False</property>
+@@ -560,12 +565,6 @@
+     <property name="visible">True</property>
+     <property name="can_focus">False</property>
+     <property name="stock">gtk-delete</property>
+-=======
+-  <object class="GtkImage" id="image_reload_all1">
+-    <property name="visible">True</property>
+-    <property name="can_focus">False</property>
+-    <property name="stock">gtk-revert-to-saved</property>
+->>>>>>> refs/heads/file_reload_all
+     <property name="icon-size">1</property>
+   </object>
+   <object class="GtkImage" id="image4060">
+@@ -6578,7 +6577,17 @@
+                           </object>
+                         </child>
+                         <child>
+-<<<<<<< HEAD
++                          <object class="GtkImageMenuItem" id="menu_reload_all1">
++                            <property name="label" translatable="yes">R_eload All</property>
++                            <property name="visible">True</property>
++                            <property name="can_focus">False</property>
++                            <property name="use_underline">True</property>
++                            <property name="image">image_reload_all1</property>
++                            <property name="use_stock">False</property>
++                            <signal name="activate" handler="on_reload_all1_activate" swapped="no"/>
++                          </object>
++                        </child>
++                        <child>
+                           <object class="GtkImageMenuItem" id="menu_rename1">
+                             <property name="label" translatable="yes">Rena_me</property>
+                             <property name="visible">True</property>
+@@ -6598,16 +6607,6 @@
+                             <property name="image">image_file_delete1</property>
+                             <property name="use_stock">False</property>
+                             <signal name="activate" handler="on_file_delete1_activate" swapped="no"/>
+-=======
+-                          <object class="GtkImageMenuItem" id="menu_reload_all1">
+-                            <property name="label" translatable="yes">R_eload All</property>
+-                            <property name="visible">True</property>
+-                            <property name="can_focus">False</property>
+-                            <property name="use_underline">True</property>
+-                            <property name="image">image_reload_all1</property>
+-                            <property name="use_stock">False</property>
+-                            <signal name="activate" handler="on_reload_all1_activate" swapped="no"/>
+->>>>>>> refs/heads/file_reload_all
+                           </object>
+                         </child>
+                         <child>
+diff --git a/src/callbacks.c b/src/callbacks.c
+index 195b8c0..160181d 100644
+--- a/src/callbacks.c
++++ b/src/callbacks.c
+@@ -339,23 +339,6 @@ void on_toolbutton_reload_clicked(GtkAction *action, gpointer user_data)
+ }
+ 
+ 
+-<<<<<<< HEAD
+-/* rename file */
+-void on_rename1_activate(GtkMenuItem *menuitem, gpointer user_data)
+-{
+-	GeanyDocument *doc = document_get_current();
+-
+-	g_return_if_fail(doc && doc->file_name);
+-
+-	document_rename_prompt(doc);
+-}
+-
+-
+-/* delete file and close document */
+-void on_file_delete1_activate(GtkAction *action, gpointer user_data)
+-{
+-	document_delete_prompt(document_get_current());
+-=======
+ /* reload all documents */
+ void on_reload_all1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+@@ -375,7 +358,24 @@ void on_reload_all1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 				document_reload_force(doc, NULL);
+ 		}
+ 	}
+->>>>>>> refs/heads/file_reload_all
++}
++
++
++/* rename file */
++void on_rename1_activate(GtkMenuItem *menuitem, gpointer user_data)
++{
++	GeanyDocument *doc = document_get_current();
++
++	g_return_if_fail(doc && doc->file_name);
++
++	document_rename_prompt(doc);
++}
++
++
++/* delete file and close document */
++void on_file_delete1_activate(GtkAction *action, gpointer user_data)
++{
++	document_delete_prompt(document_get_current());
+ }
+ 
+ 
+diff --git a/src/callbacks.h b/src/callbacks.h
+index 1c021e4..15f0b36 100644
+--- a/src/callbacks.h
++++ b/src/callbacks.h
+@@ -101,11 +101,9 @@ void on_find_in_files1_activate(GtkMenuItem *menuitem, gpointer user_data);
+ 
+ void on_toolbutton_reload_clicked(GtkAction *action, gpointer user_data);
+ 
+-<<<<<<< HEAD
+-void on_rename1_activate(GtkMenuItem *menuitem, gpointer user_data);
+-=======
+ void on_reload_all1_activate(GtkMenuItem *menuitem, gpointer user_data);
+->>>>>>> refs/heads/file_reload_all
++
++void on_rename1_activate(GtkMenuItem *menuitem, gpointer user_data);
+ 
+ void on_go_to_line_activate(GtkMenuItem *menuitem, gpointer user_data);
+ 
+diff --git a/src/keybindings.c b/src/keybindings.c
+index 3acfb34..f08accb 100644
+--- a/src/keybindings.c
++++ b/src/keybindings.c
+@@ -358,13 +358,10 @@ static void init_default_kb(void)
+ 		"menu_close_all1");
+ 	add_kb(group, GEANY_KEYS_FILE_RELOAD, NULL,
+ 		GDK_r, GEANY_PRIMARY_MOD_MASK, "menu_reloadfile", _("Reload file"), "menu_reload1");
+-<<<<<<< HEAD
+-	add_kb(group, GEANY_KEYS_FILE_RENAME, NULL,
+-		0, 0, "menu_renamefile", _("Rename file"), "menu_rename1");
+-=======
+ 	add_kb(group, GEANY_KEYS_FILE_RELOAD_ALL, NULL,
+ 		0, 0, "menu_reloadall", _("Reload all"), "menu_reload_all1");
+->>>>>>> refs/heads/file_reload_all
++	add_kb(group, GEANY_KEYS_FILE_RENAME, NULL,
++		0, 0, "menu_renamefile", _("Rename file"), "menu_rename1");
+ 	add_kb(group, GEANY_KEYS_FILE_OPENLASTTAB, NULL,
+ 		0, 0, "file_openlasttab", _("Re-open last closed tab"), NULL);
+ 	add_kb(group, GEANY_KEYS_FILE_QUIT, NULL,
+@@ -1483,13 +1480,11 @@ static gboolean cb_func_file_action(guint key_id)
+ 		case GEANY_KEYS_FILE_RELOAD:
+ 			on_toolbutton_reload_clicked(NULL, NULL);
+ 			break;
+-<<<<<<< HEAD
+-		case GEANY_KEYS_FILE_RENAME:
+-			on_rename1_activate(NULL, NULL);
+-=======
+ 		case GEANY_KEYS_FILE_RELOAD_ALL:
+ 			on_reload_all1_activate(NULL, NULL);
+->>>>>>> refs/heads/file_reload_all
++			break;
++		case GEANY_KEYS_FILE_RENAME:
++			on_rename1_activate(NULL, NULL);
+ 			break;
+ 		case GEANY_KEYS_FILE_PRINT:
+ 			on_print1_activate(NULL, NULL);
+diff --git a/src/keybindings.h b/src/keybindings.h
+index 20d8fd6..7723d10 100644
+--- a/src/keybindings.h
++++ b/src/keybindings.h
+@@ -275,16 +275,13 @@ enum GeanyKeyBindingID
+ 	GEANY_KEYS_FORMAT_SENDTOCMD8,				/**< Keybinding. */
+ 	GEANY_KEYS_FORMAT_SENDTOCMD9,				/**< Keybinding. */
+ 	GEANY_KEYS_EDITOR_DELETELINETOBEGINNING,	/**< Keybinding. */
+-<<<<<<< HEAD
+ 	GEANY_KEYS_NOTEBOOK_SORTTABSBYFILENAME,		/**< Keybinding. */
+ 	GEANY_KEYS_NOTEBOOK_SORTTABSBYPATHNAME,		/**< Keybinding. */
+ 	GEANY_KEYS_NOTEBOOK_SORTTABSBYFOLDER,		/**< Keybinding. */
+ 	GEANY_KEYS_FILE_OPENRECURSIVE,				/**< Keybinding. */
+ 	GEANY_KEYS_SIDEBAR_RENAME_FILE,				/**< Keybinding. */
+ 	GEANY_KEYS_FILE_RENAME,						/**< Keybinding. */
+-=======
+ 	GEANY_KEYS_FILE_RELOAD_ALL,					/**< Keybinding. */
+->>>>>>> refs/heads/file_reload_all
+ 	GEANY_KEYS_COUNT	/* must not be used by plugins */
+ };
+ 

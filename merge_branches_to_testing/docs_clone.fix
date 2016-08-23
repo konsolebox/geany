@@ -1,0 +1,101 @@
+diff --git a/src/sidebar.c b/src/sidebar.c
+index e6e460a..fce8949 100644
+--- a/src/sidebar.c
++++ b/src/sidebar.c
+@@ -60,11 +60,8 @@ static struct
+ 	GtkWidget *save;
+ 	GtkWidget *save_as;
+ 	GtkWidget *reload;
+-<<<<<<< HEAD
+ 	GtkWidget *rename;
+-=======
+ 	GtkWidget *clone;
+->>>>>>> refs/heads/docs_clone
+ 	GtkWidget *show_paths;
+ 	GtkWidget *find_in_files;
+ 	GtkWidget *expand_all;
+@@ -83,14 +80,10 @@ enum
+ 	OPENFILES_ACTION_REMOVE = 0,
+ 	OPENFILES_ACTION_REMOVE_RECURSIVE,
+ 	OPENFILES_ACTION_SAVE,
+-<<<<<<< HEAD
+ 	OPENFILES_ACTION_SAVE_AS,
+ 	OPENFILES_ACTION_RELOAD,
+-	OPENFILES_ACTION_RENAME
+-=======
+-	OPENFILES_ACTION_RELOAD,
++	OPENFILES_ACTION_RENAME,
+ 	OPENFILES_ACTION_CLONE
+->>>>>>> refs/heads/docs_clone
+ };
+ 
+ /* documents tree model columns */
+@@ -760,7 +753,6 @@ static void create_openfiles_popup_menu(void)
+ 			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_RELOAD));
+ 	doc_items.reload = item;
+ 
+-<<<<<<< HEAD
+ 	item = gtk_image_menu_item_new_with_mnemonic(_("Rena_me"));
+ 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
+ 			gtk_image_new_from_stock(GTK_STOCK_EDIT, GTK_ICON_SIZE_MENU));
+@@ -769,7 +761,7 @@ static void create_openfiles_popup_menu(void)
+ 	g_signal_connect(item, "activate",
+ 			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_RENAME));
+ 	doc_items.rename = item;
+-=======
++
+ 	item = gtk_image_menu_item_new_with_mnemonic(_("_Clone"));
+ 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
+ 			gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU));
+@@ -778,7 +770,6 @@ static void create_openfiles_popup_menu(void)
+ 	g_signal_connect(item, "activate",
+ 			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_CLONE));
+ 	doc_items.clone = item;
+->>>>>>> refs/heads/docs_clone
+ 
+ 	item = gtk_separator_menu_item_new();
+ 	gtk_widget_show(item);
+@@ -915,12 +906,16 @@ static void document_action(GeanyDocument *doc, gint action)
+ 			document_reload_prompt(doc, NULL);
+ 			break;
+ 		}
+-<<<<<<< HEAD
+ 		case OPENFILES_ACTION_RENAME:
+ 		{
+ 			rename_file_inplace(doc);
+ 			break;
+ 		}
++		case OPENFILES_ACTION_CLONE:
++		{
++			document_clone(doc);
++			break;
++		}
+ 	}
+ }
+ 
+@@ -936,13 +931,6 @@ static void document_action_recursive(GtkTreeModel *model, GtkTreeIter *parent,
+ 		gtk_tree_model_get(model, &child, DOCUMENTS_DOCUMENT, &doc, -1);
+ 		document_action(doc, action);
+ 		--i;
+-=======
+-		case OPENFILES_ACTION_CLONE:
+-		{
+-			document_clone(doc);
+-			break;
+-		}
+->>>>>>> refs/heads/docs_clone
+ 	}
+ }
+ 
+@@ -1196,11 +1184,8 @@ static void documents_menu_update(GtkTreeSelection *selection)
+ 	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
+ 	gtk_widget_set_sensitive(doc_items.save_as, doc != NULL);
+ 	gtk_widget_set_sensitive(doc_items.reload, doc && doc->real_path);
+-<<<<<<< HEAD
+ 	gtk_widget_set_sensitive(doc_items.rename, doc && doc->file_name);
+-=======
+ 	gtk_widget_set_sensitive(doc_items.clone, doc != NULL);
+->>>>>>> refs/heads/docs_clone
+ 	gtk_widget_set_sensitive(doc_items.find_in_files, sel);
+ 	g_free(shortname);
+ 

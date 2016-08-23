@@ -1,0 +1,20 @@
+diff --git a/src/dialogs.c b/src/dialogs.c
+index 42b668c..b01ed62 100644
+--- a/src/dialogs.c
++++ b/src/dialogs.c
+@@ -62,14 +62,9 @@
+ 
+ enum
+ {
+-<<<<<<< HEAD
+-	GEANY_RESPONSE_RENAME,
++	GEANY_RESPONSE_SAVE_AND_REMOVE_ORIG,
+ 	GEANY_RESPONSE_VIEW,
+ 	GEANY_RESPONSE_OPEN_RECURSIVELY
+-=======
+-	GEANY_RESPONSE_SAVE_AND_REMOVE_ORIG,
+-	GEANY_RESPONSE_VIEW
+->>>>>>> refs/heads/save_and_remove_orig
+ };
+ 
+ 

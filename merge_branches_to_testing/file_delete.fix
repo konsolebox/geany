@@ -1,0 +1,123 @@
+diff --git a/data/geany.glade b/data/geany.glade
+index 6f4804b..00c5068 100644
+--- a/data/geany.glade
++++ b/data/geany.glade
+@@ -549,17 +549,16 @@
+     <property name="stock">gtk-revert-to-saved</property>
+     <property name="icon-size">1</property>
+   </object>
+-<<<<<<< HEAD
+   <object class="GtkImage" id="image_rename1">
+     <property name="visible">True</property>
+     <property name="can_focus">False</property>
+     <property name="stock">gtk-edit</property>
+-=======
++    <property name="icon-size">1</property>
++  </object>
+   <object class="GtkImage" id="image_file_delete1">
+     <property name="visible">True</property>
+     <property name="can_focus">False</property>
+     <property name="stock">gtk-delete</property>
+->>>>>>> refs/heads/file_delete
+     <property name="icon-size">1</property>
+   </object>
+   <object class="GtkImage" id="image4060">
+@@ -6572,7 +6571,6 @@
+                           </object>
+                         </child>
+                         <child>
+-<<<<<<< HEAD
+                           <object class="GtkImageMenuItem" id="menu_rename1">
+                             <property name="label" translatable="yes">Rena_me</property>
+                             <property name="visible">True</property>
+@@ -6581,7 +6579,9 @@
+                             <property name="image">image_rename1</property>
+                             <property name="use_stock">False</property>
+                             <signal name="activate" handler="on_rename1_activate" swapped="no"/>
+-=======
++                          </object>
++                        </child>
++                        <child>
+                           <object class="GtkImageMenuItem" id="menu_file_delete1">
+                             <property name="label" translatable="yes">_Delete</property>
+                             <property name="visible">True</property>
+@@ -6590,7 +6590,6 @@
+                             <property name="image">image_file_delete1</property>
+                             <property name="use_stock">False</property>
+                             <signal name="activate" handler="on_file_delete1_activate" swapped="no"/>
+->>>>>>> refs/heads/file_delete
+                           </object>
+                         </child>
+                         <child>
+diff --git a/src/callbacks.c b/src/callbacks.c
+index deb8560..2dcd70b 100644
+--- a/src/callbacks.c
++++ b/src/callbacks.c
+@@ -181,11 +181,8 @@ static void on_file1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 	ui_widget_show_hide(ui_widgets.print_page_setup, printing_prefs.use_gtk_printing);
+ 
+ 	GeanyDocument *doc = document_get_current();
+-<<<<<<< HEAD
+ 	gtk_widget_set_sensitive(ui_widgets.rename_menuitem, doc && doc->file_name);
+-=======
+ 	gtk_widget_set_sensitive(ui_widgets.delete_file_menuitem, doc && doc->real_path);
+->>>>>>> refs/heads/file_delete
+ }
+ 
+ 
+@@ -342,7 +339,6 @@ void on_toolbutton_reload_clicked(GtkAction *action, gpointer user_data)
+ }
+ 
+ 
+-<<<<<<< HEAD
+ /* rename file */
+ void on_rename1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+@@ -351,12 +347,13 @@ void on_rename1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 	g_return_if_fail(doc && doc->file_name);
+ 
+ 	document_rename_prompt(doc);
+-=======
++}
++
++
+ /* delete file and close document */
+ void on_file_delete1_activate(GtkAction *action, gpointer user_data)
+ {
+ 	document_delete_prompt(document_get_current());
+->>>>>>> refs/heads/file_delete
+ }
+ 
+ 
+diff --git a/src/ui_utils.c b/src/ui_utils.c
+index 709c766..9371e8e 100644
+--- a/src/ui_utils.c
++++ b/src/ui_utils.c
+@@ -2522,11 +2522,8 @@ void ui_init(void)
+ 
+ 	ui_widgets.statusbar = ui_lookup_widget(main_widgets.window, "statusbar");
+ 	ui_widgets.print_page_setup = ui_lookup_widget(main_widgets.window, "page_setup1");
+-<<<<<<< HEAD
+ 	ui_widgets.rename_menuitem = ui_lookup_widget(main_widgets.window, "menu_rename1");
+-=======
+ 	ui_widgets.delete_file_menuitem = ui_lookup_widget(main_widgets.window, "menu_file_delete1");
+->>>>>>> refs/heads/file_delete
+ 
+ 	main_widgets.progressbar = progress_bar_create();
+ 
+diff --git a/src/ui_utils.h b/src/ui_utils.h
+index b38adf5..eafc632 100644
+--- a/src/ui_utils.h
++++ b/src/ui_utils.h
+@@ -191,11 +191,8 @@ typedef struct UIWidgets
+ 	GtkWidget	*recent_projects_menuitem;
+ 	GtkWidget	*recent_projects_menu_menubar;
+ 	GtkWidget	*config_files_filetype_menu;
+-<<<<<<< HEAD
+ 	GtkWidget	*rename_menuitem;
+-=======
+ 	GtkWidget	*delete_file_menuitem;
+->>>>>>> refs/heads/file_delete
+ 
+ 	/* dialogs */
+ 	GtkWidget	*open_colorsel;

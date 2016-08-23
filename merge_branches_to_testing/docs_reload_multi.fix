@@ -1,0 +1,94 @@
+diff --git a/src/sidebar.c b/src/sidebar.c
+index 4a866c2..132e2eb 100644
+--- a/src/sidebar.c
++++ b/src/sidebar.c
+@@ -85,16 +85,12 @@ enum
+ 	OPENFILES_ACTION_REMOVE = 0,
+ 	OPENFILES_ACTION_REMOVE_RECURSIVE,
+ 	OPENFILES_ACTION_SAVE,
+-<<<<<<< HEAD
+ 	OPENFILES_ACTION_SAVE_AS,
+ 	OPENFILES_ACTION_RELOAD,
++	OPENFILES_ACTION_RELOAD_NO_PROMPT,
+ 	OPENFILES_ACTION_RENAME,
+ 	OPENFILES_ACTION_CLONE,
+ 	OPENFILES_ACTION_DELETE
+-=======
+-	OPENFILES_ACTION_RELOAD,
+-	OPENFILES_ACTION_RELOAD_NO_PROMPT
+->>>>>>> refs/heads/docs_reload_multi
+ };
+ 
+ /* documents tree model columns */
+@@ -924,7 +920,13 @@ static void document_action(GeanyDocument *doc, gint action)
+ 			document_reload_prompt(doc, NULL);
+ 			break;
+ 		}
+-<<<<<<< HEAD
++		case OPENFILES_ACTION_RELOAD_NO_PROMPT:
++		{
++			if (doc->real_path)
++				document_reload_force(doc, NULL);
++
++			break;
++		}
+ 		case OPENFILES_ACTION_RENAME:
+ 		{
+ 			rename_file_inplace(doc);
+@@ -938,13 +940,6 @@ static void document_action(GeanyDocument *doc, gint action)
+ 		case OPENFILES_ACTION_DELETE:
+ 		{
+ 			document_delete_prompt(doc);
+-=======
+-		case OPENFILES_ACTION_RELOAD_NO_PROMPT:
+-		{
+-			if (doc->real_path)
+-				document_reload_force(doc, NULL);
+-
+->>>>>>> refs/heads/docs_reload_multi
+ 			break;
+ 		}
+ 	}
+@@ -987,7 +982,6 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
+ 
+ 			switch (action)
+ 			{
+-<<<<<<< HEAD
+ 				case OPENFILES_ACTION_REMOVE_RECURSIVE:
+ 				{
+ 					gchar *short_name_a, *short_name_b;
+@@ -1013,7 +1007,8 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
+ 					}
+ 
+ 					g_free(short_name_a);
+-=======
++					break;
++				}
+ 				case OPENFILES_ACTION_RELOAD:
+ 				{
+ 					gchar *short_name;
+@@ -1031,7 +1026,6 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
+ 						g_free(short_name);
+ 					}
+ 
+->>>>>>> refs/heads/docs_reload_multi
+ 					break;
+ 				}
+ 				default:
+@@ -1233,15 +1227,11 @@ static void documents_menu_update(GtkTreeSelection *selection)
+ 	gtk_widget_set_sensitive(doc_items.close, sel);
+ 	gtk_widget_set_sensitive(doc_items.close_recursively, sel && !doc);
+ 	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
+-<<<<<<< HEAD
+ 	gtk_widget_set_sensitive(doc_items.save_as, doc != NULL);
+-	gtk_widget_set_sensitive(doc_items.reload, doc && doc->real_path);
++	gtk_widget_set_sensitive(doc_items.reload, sel && (!doc || doc->real_path));
+ 	gtk_widget_set_sensitive(doc_items.rename, doc && doc->file_name);
+ 	gtk_widget_set_sensitive(doc_items.clone, doc != NULL);
+ 	gtk_widget_set_sensitive(doc_items.delete, doc && doc->real_path);
+-=======
+-	gtk_widget_set_sensitive(doc_items.reload, sel && (!doc || doc->real_path));
+->>>>>>> refs/heads/docs_reload_multi
+ 	gtk_widget_set_sensitive(doc_items.find_in_files, sel);
+ 	g_free(shortname);
+ 
