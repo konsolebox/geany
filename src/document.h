@@ -318,6 +318,8 @@ GeanyDocument *document_clone(GeanyDocument *old_doc);
 
 gboolean document_rename_file_and_save(GeanyDocument *doc, const gchar *new_filename);
 
+gboolean document_rename_and_save(GeanyDocument *doc, const gchar *new_filename, gboolean ask_overwrite);
+
 #endif /* GEANY_PRIVATE */
 
 G_END_DECLS
