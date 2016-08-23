@@ -354,6 +354,8 @@ static void init_default_kb(void)
 		"menu_close_all1");
 	add_kb(group, GEANY_KEYS_FILE_RELOAD, NULL,
 		GDK_r, GEANY_PRIMARY_MOD_MASK, "menu_reloadfile", _("Reload file"), "menu_reload1");
+	add_kb(group, GEANY_KEYS_FILE_RENAME, NULL,
+		0, 0, "menu_renamefile", _("Rename file"), "menu_rename1");
 	add_kb(group, GEANY_KEYS_FILE_OPENLASTTAB, NULL,
 		0, 0, "file_openlasttab", _("Re-open last closed tab"), NULL);
 	add_kb(group, GEANY_KEYS_FILE_QUIT, NULL,
@@ -1457,6 +1459,9 @@ static gboolean cb_func_file_action(guint key_id)
 			break;
 		case GEANY_KEYS_FILE_RELOAD:
 			on_toolbutton_reload_clicked(NULL, NULL);
+			break;
+		case GEANY_KEYS_FILE_RENAME:
+			on_rename1_activate(NULL, NULL);
 			break;
 		case GEANY_KEYS_FILE_PRINT:
 			on_print1_activate(NULL, NULL);
