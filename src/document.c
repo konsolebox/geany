@@ -1834,6 +1834,39 @@ cleanup:
 }
 
 
+gboolean document_rename_prompt(GeanyDocument *doc)
+{
+	g_return_val_if_fail(doc && doc->file_name, FALSE);
+
+	gchar *basename = g_path_get_basename(doc->file_name);
+
+	gchar *new_basename = dialogs_show_input("Rename File", GTK_WINDOW(main_widgets.window),
+								"This will automatically save the data.", basename);
+
+	gboolean ret = FALSE;
+
+	if (new_basename)
+	{
+		if (*new_basename && strcmp(basename, new_basename) != 0)
+		{
+			gchar *dirname = g_path_get_dirname(doc->file_name);
+			gchar *new_filename = g_strconcat(dirname, G_DIR_SEPARATOR_S, new_basename, NULL);
+
+			ret = document_rename_and_save(doc, new_filename, TRUE);
+
+			g_free(new_filename);
+			g_free(dirname);
+		}
+
+		g_free(new_basename);
+	}
+
+	g_free(basename);
+
+	return ret;
+}
+
+
 static void protect_document(GeanyDocument *doc)
 {
 	/* do not call queue_colourise because to we want to keep the text-changed indication! */
