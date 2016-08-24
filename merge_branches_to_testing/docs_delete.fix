@@ -1,5 +1,5 @@
 diff --git a/src/sidebar.c b/src/sidebar.c
-index 7ec4383..c8fb466 100644
+index de2b436..c631888 100644
 --- a/src/sidebar.c
 +++ b/src/sidebar.c
 @@ -64,12 +64,9 @@ static struct
@@ -37,7 +37,7 @@ index 7ec4383..c8fb466 100644
  	doc_items.reload = item;
  
 -<<<<<<< HEAD
- 	item = gtk_image_menu_item_new_with_mnemonic(_("Rena_me"));
+ 	item = gtk_image_menu_item_new_with_mnemonic(_("R_ename"));
  	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
  			gtk_image_new_from_stock(GTK_STOCK_EDIT, GTK_ICON_SIZE_MENU));
 @@ -784,14 +776,13 @@ static void create_openfiles_popup_menu(void)

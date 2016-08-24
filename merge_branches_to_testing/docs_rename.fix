@@ -1,8 +1,8 @@
 diff --git a/src/document.h b/src/document.h
-index a2bd2f2..6641855 100644
+index 8928b8d..6641855 100644
 --- a/src/document.h
 +++ b/src/document.h
-@@ -316,16 +316,14 @@ void document_grab_focus(GeanyDocument *doc);
+@@ -316,14 +316,11 @@ void document_grab_focus(GeanyDocument *doc);
  
  GeanyDocument *document_clone(GeanyDocument *old_doc);
  
@@ -11,15 +11,12 @@ index a2bd2f2..6641855 100644
  
  void document_open_files_recursively(const GSList *filenames, gboolean readonly, GeanyFiletype *ft,
  		const gchar *forced_enc, GtkFileFilter *filter, GError **error);
+ 
 -=======
-+
+->>>>>>> refs/heads/docs_rename
  gboolean document_rename_file_and_save(GeanyDocument *doc, const gchar *new_filename);
  
  gboolean document_rename_and_save(GeanyDocument *doc, const gchar *new_filename, gboolean ask_overwrite);
-->>>>>>> refs/heads/docs_rename
- 
- #endif /* GEANY_PRIVATE */
- 
 diff --git a/src/keybindings.h b/src/keybindings.h
 index 0fa0e09..ef09919 100644
 --- a/src/keybindings.h
@@ -40,7 +37,7 @@ index 0fa0e09..ef09919 100644
  };
  
 diff --git a/src/sidebar.c b/src/sidebar.c
-index 6d73cd9..9a1b8d0 100644
+index 3ac06cd..291d75b 100644
 --- a/src/sidebar.c
 +++ b/src/sidebar.c
 @@ -79,13 +79,9 @@ enum

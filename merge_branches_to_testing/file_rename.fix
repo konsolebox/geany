@@ -1,3 +1,52 @@
+diff --git a/src/document.c b/src/document.c
+index 6cbe268..b803392 100644
+--- a/src/document.c
++++ b/src/document.c
+@@ -1962,8 +1962,6 @@ cleanup:
+ }
+ 
+ 
+-<<<<<<< HEAD
+-=======
+ gboolean document_rename_prompt(GeanyDocument *doc)
+ {
+ 	g_return_val_if_fail(doc && doc->file_name, FALSE);
+@@ -1997,7 +1995,6 @@ gboolean document_rename_prompt(GeanyDocument *doc)
+ }
+ 
+ 
+->>>>>>> refs/heads/file_rename
+ static void protect_document(GeanyDocument *doc)
+ {
+ 	/* do not call queue_colourise because to we want to keep the text-changed indication! */
+diff --git a/src/document.h b/src/document.h
+index ec907dc..a86a287 100644
+--- a/src/document.h
++++ b/src/document.h
+@@ -316,23 +316,17 @@ void document_grab_focus(GeanyDocument *doc);
+ 
+ GeanyDocument *document_clone(GeanyDocument *old_doc);
+ 
+-<<<<<<< HEAD
+ GtkWidget *document_get_notebook_child(GeanyDocument *doc);
+ 
+ void document_open_files_recursively(const GSList *filenames, gboolean readonly, GeanyFiletype *ft,
+ 		const gchar *forced_enc, GtkFileFilter *filter, GError **error);
+ 
+-=======
+->>>>>>> refs/heads/file_rename
+ gboolean document_rename_file_and_save(GeanyDocument *doc, const gchar *new_filename);
+ 
+ gboolean document_rename_and_save(GeanyDocument *doc, const gchar *new_filename, gboolean ask_overwrite);
+ 
+-<<<<<<< HEAD
+-=======
+ gboolean document_rename_prompt(GeanyDocument *doc);
+ 
+->>>>>>> refs/heads/file_rename
+ #endif /* GEANY_PRIVATE */
+ 
+ G_END_DECLS
 diff --git a/src/keybindings.h b/src/keybindings.h
 index 1be638f..be46f63 100644
 --- a/src/keybindings.h

@@ -9,11 +9,11 @@ BRANCHES=(
 	sort_tabs_v2
 	open_files_recursively
 	docs_close_recursively
+	rework_save_as
 	docs_save_as
-	save_and_remove_orig
 	docs_rename
 	file_rename
-	clone_default_filename
+	clone_filename
 	docs_clone
 	docs_delete
 	file_delete
@@ -106,7 +106,7 @@ function main {
 			fi
 
 			call git commit -m X -a
-			call_s patch -p1 < "merge_branches_to_testing/$__.fix"
+			[[ -e merge_branches_to_testing/$__.fix ]] && call_s patch -p1 < "merge_branches_to_testing/$__.fix"
 			return 1
 		done
 
