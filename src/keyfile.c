@@ -223,6 +223,8 @@ static void init_pref_groups(void)
 		"mru_length", GEANY_DEFAULT_MRU_LENGTH, "spin_mru");
 	stash_group_add_spin_button_integer(group, &file_prefs.disk_check_timeout,
 		"disk_check_timeout", GEANY_DISK_CHECK_TIMEOUT, "spin_disk_check");
+	stash_group_add_combo_box(group, &file_prefs.default_new_file_dir,
+		"default_new_file_dir", NEW_FILE_DIR_NONE, "combo_default_new_file_dir");
 
 	/* various geany prefs */
 	group = stash_group_new(PACKAGE);

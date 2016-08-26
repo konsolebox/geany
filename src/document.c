@@ -890,6 +890,95 @@ GeanyDocument *document_new_file(const gchar *utf8_filename, GeanyFiletype *ft, 
 }
 
 
+GeanyDocument *document_new_file_with_default_dir(const gchar *utf8_basename, GeanyFiletype *ft,
+		const gchar *text, gint new_file_dir_class, gchar *custom_dir)
+{
+	gchar *new_filename = NULL;
+	gchar *dirname = NULL;
+
+	if (new_file_dir_class == NEW_FILE_DIR_PREFERRED)
+		new_file_dir_class = file_prefs.default_new_file_dir;
+
+	switch (new_file_dir_class)
+	{
+		case NEW_FILE_DIR_CURRENT_DOC:
+			dirname = utils_get_current_file_dir_utf8();
+			break;
+		case NEW_FILE_DIR_PROJECT:
+			if (app->project && !EMPTY(app->project->base_path))
+				dirname = g_strdup(app->project->base_path);
+
+			break;
+		case NEW_FILE_DIR_HOME:
+			dirname = utils_get_utf8_from_locale(g_get_home_dir());
+			break;
+		case NEW_FILE_DIR_ALL:
+			dirname = utils_get_current_file_dir_utf8();
+
+			if (!dirname)
+			{
+				if (app->project && !EMPTY(app->project->base_path))
+					dirname = g_strdup(app->project->base_path);
+				else
+					dirname = utils_get_utf8_from_locale(g_get_home_dir());
+			}
+
+			break;
+		case NEW_FILE_DIR_CUSTOM:
+			g_return_val_if_fail(custom_dir != NULL, NULL);
+			dirname = g_strdup(custom_dir);
+			break;
+	}
+
+	if (dirname)
+	{
+		gchar *candidate;
+		const gchar *basename_to_use = utf8_basename ? utf8_basename : GEANY_STRING_UNTITLED;
+		guint i, j;
+
+		for (i = 0; i <= 99; ++i)
+		{
+			if (i == 0)
+				candidate = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", dirname, basename_to_use);
+			else
+				candidate = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s%u", dirname,
+						basename_to_use, i);
+
+			gboolean unused = TRUE;
+
+			foreach_document(j)
+			{
+				if (documents[j]->file_name && strcmp(documents[j]->file_name, candidate) == 0)
+				{
+					unused = FALSE;
+					break;
+				}
+			}
+
+			if (unused)
+			{
+				gchar *locale_candidate = utils_get_locale_from_utf8(candidate);
+				gboolean file_exists = g_file_test(locale_candidate, G_FILE_TEST_EXISTS);
+				g_free(locale_candidate);
+
+				if (!file_exists)
+				{
+					new_filename = candidate;
+					break;
+				}
+			}
+
+			g_free(candidate);
+		}
+
+		g_free(dirname);
+	}
+
+	document_new_file(new_filename ? new_filename : utf8_basename, ft, text);
+	g_free(new_filename);
+}
+
+
 /**
  *  Opens a document specified by @a locale_filename.
  *  Afterwards, the @c "document-open" signal is emitted for plugins.
