@@ -450,9 +450,10 @@ static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 		dir_icon = ui_get_mime_icon("inode/directory");
 
 	gtk_tree_store_append(store_openfiles, &parent, NULL);
+	gchar *shortname = (doc->file_name && !utils_str_equal(dirname, ".")) ? dirname :
+			GEANY_STRING_UNTITLED;
 	gtk_tree_store_set(store_openfiles, &parent, DOCUMENTS_ICON, dir_icon,
-		DOCUMENTS_FILENAME, path,
-		DOCUMENTS_SHORTNAME, doc->file_name ? dirname : GEANY_STRING_UNTITLED, -1);
+			DOCUMENTS_FILENAME, path, DOCUMENTS_SHORTNAME, shortname, -1);
 
 	g_free(dirname);
 	g_free(path);
