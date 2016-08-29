@@ -31,6 +31,7 @@
 
 #include "app.h"
 #include "callbacks.h" /* FIXME: for ignore_callback */
+#include "dialogs.h"
 #include "documentprivate.h"
 #include "filetypesprivate.h"
 #include "geanyobject.h"
@@ -55,6 +56,7 @@ static gboolean may_steal_focus = FALSE;
 static struct
 {
 	GtkWidget *close;
+	GtkWidget *open;
 	GtkWidget *save;
 	GtkWidget *reload;
 	GtkWidget *show_paths;
@@ -62,7 +64,7 @@ static struct
 	GtkWidget *expand_all;
 	GtkWidget *collapse_all;
 }
-doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 enum
 {
@@ -73,6 +75,7 @@ enum
 enum
 {
 	OPENFILES_ACTION_REMOVE = 0,
+	OPENFILES_ACTION_OPEN,
 	OPENFILES_ACTION_SAVE,
 	OPENFILES_ACTION_RELOAD
 };
@@ -708,6 +711,17 @@ static void create_openfiles_popup_menu(void)
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
 
+	item = gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN, NULL);
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+	g_signal_connect(item, "activate",
+			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_OPEN));
+	doc_items.open = item;
+
+	item = gtk_separator_menu_item_new();
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+
 	item = gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE, NULL);
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
@@ -845,6 +859,36 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 	if (gtk_tree_selection_get_selected(selection, &model, &iter))
 	{
 		gtk_tree_model_get(model, &iter, DOCUMENTS_DOCUMENT, &doc, -1);
+
+		if (action == OPENFILES_ACTION_OPEN)
+		{
+			gchar *dir = NULL;
+
+			if (doc)
+			{
+				if (doc->file_name)
+					dir = g_path_get_dirname(doc->file_name);
+			}
+			else
+				gtk_tree_model_get(model, &iter, DOCUMENTS_FILENAME, &dir, -1);
+
+			if (!dir || !g_path_is_absolute(dir))
+			{
+				const gchar *tmp = utils_get_default_dir_utf8();
+
+				if (tmp)
+					dir = g_strdup(tmp);
+			}
+
+			if (dir && g_path_is_absolute(dir))
+				dialogs_show_open_file(dir);
+			else
+				dialogs_show_open_file(NULL);
+
+			g_free(dir);
+			return;
+		}
+
 		if (doc)
 		{
 			document_action(doc, action);
@@ -1056,6 +1100,7 @@ static void documents_menu_update(GtkTreeSelection *selection)
 
 	/* can close all, save all (except shortname), but only reload individually ATM */
 	gtk_widget_set_sensitive(doc_items.close, sel);
+	gtk_widget_set_sensitive(doc_items.open, sel);
 	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
 	gtk_widget_set_sensitive(doc_items.reload, doc && doc->real_path);
 	gtk_widget_set_sensitive(doc_items.find_in_files, sel);
