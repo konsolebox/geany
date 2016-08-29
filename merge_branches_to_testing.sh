@@ -6,19 +6,25 @@ BRANCHES=(
 	enhance_sh_tag_detection
 	add_no_new_instance_option
 	allow_disable_vte_bold
-	sort_tabs_v2
+	rework_get_doc_parent
+	sort_tabs_v2_1
 	open_files_recursively
 	docs_close_recursively
 	rework_save_as
 	docs_save_as
 	docs_rename
+	docs_rename_extra
 	file_rename
-	clone_filename
+	clone_filename_v2
+	clone_filename_v2_extra
 	docs_clone
 	docs_delete
 	file_delete
 	docs_reload_multi
 	file_reload_all
+	default_new_file_dir
+	docs_new
+	open_files_recursively_x_docs_open
 )
 
 UPSTREAM_REPO=origin
@@ -81,28 +87,31 @@ function main {
 			}
 
 			if [[ -e merge_branches_to_testing/$__.fix ]]; then
-				log "> patch -p1 < \"merge_branches_to_testing/$__.fix\""
+				log "> patch -p1 --dry-run < \"merge_branches_to_testing/$__.fix\""
 
-				call_s patch -p1 --dry-run < "merge_branches_to_testing/$__.fix" && \
-				call_s patch -p1 --quiet < "merge_branches_to_testing/$__.fix" && {
-					call git commit -m "Merge branch $__" -a && {
-						log "> git diff HEAD~1 HEAD 2>&1 | grep -Fe '>>>>>>>' -e '<<<<<<<'"
+				if [[ ! -e merge_branches_to_testing/$__.edit ]]; then
+					call_s patch -p1 --dry-run < "merge_branches_to_testing/$__.fix" && {
+						log "> patch -p1 --quiet < \"merge_branches_to_testing/$__.fix\""
 
-						call_s git diff HEAD~1 HEAD | grep -Fe '>>>>>>>' -e '<<<<<<<' || {
-							[[ -e merge_branches_to_testing/$__.fix.failed ]] && call rm -f -- "merge_branches_to_testing/$__.fix.failed"
-							continue
+						call_s patch -p1 --quiet < "merge_branches_to_testing/$__.fix" && {
+							call git commit -m "Merge branch $__" -a && {
+								log "> git diff HEAD~1 HEAD 2>&1 | grep -Fe '>>>>>>>' -e '<<<<<<<'"
+
+								call_s git diff HEAD~1 HEAD | grep -Fe '>>>>>>>' -e '<<<<<<<' || {
+									[[ -e merge_branches_to_testing/$__.fix.failed ]] && call rm -f -- "merge_branches_to_testing/$__.fix.failed"
+									continue
+								}
+
+								call git reset HEAD~1
+							}
+
+							log "Something was missed in the fix."
+							log
+							log "> patch -p1 -R < \"merge_branches_to_testing/$__.fix\""
+							call_s patch -p1 -R < "merge_branches_to_testing/$__.fix"
 						}
-
-						call git reset HEAD~1
 					}
-
-					log "Something was missed in the fix."
-					log
-					log "> patch -p1 -R < \"merge_branches_to_testing/$__.fix\""
-					call_s patch -p1 -R < "merge_branches_to_testing/$__.fix"
-				}
-
-				# call mv -- "merge_branches_to_testing/$__.fix"{,.failed}
+				fi
 			fi
 
 			call git commit -m X -a

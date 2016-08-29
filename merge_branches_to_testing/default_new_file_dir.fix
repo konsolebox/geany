@@ -1,0 +1,73 @@
+diff --git a/data/geany.glade b/data/geany.glade
+index e157c57..d50fb81 100644
+--- a/data/geany.glade
++++ b/data/geany.glade
+@@ -768,18 +768,13 @@
+       </row>
+     </data>
+   </object>
+-<<<<<<< HEAD
+   <object class="GtkListStore" id="notebook_auto_sort_mode_list">
+-=======
+-  <object class="GtkListStore" id="default_new_file_dir_list">
+->>>>>>> refs/heads/default_new_file_dir
+     <columns>
+       <!-- column-name item -->
+       <column type="gchararray"/>
+     </columns>
+     <data>
+       <row>
+-<<<<<<< HEAD
+         <col id="0" translatable="yes">Disabled</col>
+       </row>
+       <row>
+@@ -790,7 +785,16 @@
+       </row>
+       <row>
+         <col id="0" translatable="yes">By folder</col>
+-=======
++      </row>
++    </data>
++  </object>
++  <object class="GtkListStore" id="default_new_file_dir_list">
++    <columns>
++      <!-- column-name item -->
++      <column type="gchararray"/>
++    </columns>
++    <data>
++      <row>
+         <col id="0" translatable="yes">None</col>
+       </row>
+       <row>
+@@ -804,7 +808,6 @@
+       </row>
+       <row>
+         <col id="0" translatable="yes">Current Document's Dir., Project Dir., or Home Dir.</col>
+->>>>>>> refs/heads/default_new_file_dir
+       </row>
+     </data>
+   </object>
+diff --git a/src/document.h b/src/document.h
+index eb1f912..605420d 100644
+--- a/src/document.h
++++ b/src/document.h
+@@ -330,7 +330,6 @@ gboolean document_delete_prompt(GeanyDocument *doc);
+ 
+ GeanyDocument *document_clone(GeanyDocument *old_doc);
+ 
+-<<<<<<< HEAD
+ GtkWidget *document_get_notebook_child(GeanyDocument *doc);
+ 
+ void document_open_files_recursively(const GSList *filenames, gboolean readonly, GeanyFiletype *ft,
+@@ -341,10 +340,9 @@ gboolean document_rename_file_and_save(GeanyDocument *doc, const gchar *new_file
+ gboolean document_rename_and_save(GeanyDocument *doc, const gchar *new_filename, gboolean ask_overwrite);
+ 
+ gboolean document_rename_prompt(GeanyDocument *doc);
+-=======
++
+ GeanyDocument *document_new_file_with_default_dir(const gchar *utf8_basename, GeanyFiletype *ft,
+ 		const gchar *text, gint new_file_dir_class, gchar *custom_dir);
+->>>>>>> refs/heads/default_new_file_dir
+ 
+ #endif /* GEANY_PRIVATE */
+ 

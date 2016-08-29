@@ -1,0 +1,40 @@
+diff --git a/src/sidebar.c b/src/sidebar.c
+index dfec60a..143413e 100644
+--- a/src/sidebar.c
++++ b/src/sidebar.c
+@@ -60,11 +60,8 @@ static gboolean may_steal_focus = FALSE;
+ static struct
+ {
+ 	GtkWidget *close;
+-<<<<<<< HEAD
+ 	GtkWidget *close_recursively;
+-=======
+ 	GtkWidget *new;
+->>>>>>> refs/heads/docs_new
+ 	GtkWidget *save;
+ 	GtkWidget *save_as;
+ 	GtkWidget *reload;
+@@ -87,11 +84,8 @@ enum
+ enum
+ {
+ 	OPENFILES_ACTION_REMOVE = 0,
+-<<<<<<< HEAD
+ 	OPENFILES_ACTION_REMOVE_RECURSIVE,
+-=======
+ 	OPENFILES_ACTION_NEW,
+->>>>>>> refs/heads/docs_new
+ 	OPENFILES_ACTION_SAVE,
+ 	OPENFILES_ACTION_SAVE_AS,
+ 	OPENFILES_ACTION_RELOAD,
+@@ -1269,11 +1263,8 @@ static void documents_menu_update(GtkTreeSelection *selection)
+ 
+ 	/* can close all, save all (except shortname), but only reload individually ATM */
+ 	gtk_widget_set_sensitive(doc_items.close, sel);
+-<<<<<<< HEAD
+ 	gtk_widget_set_sensitive(doc_items.close_recursively, sel && !doc);
+-=======
+ 	gtk_widget_set_sensitive(doc_items.new, sel);
+->>>>>>> refs/heads/docs_new
+ 	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
+ 	gtk_widget_set_sensitive(doc_items.save_as, doc != NULL);
+ 	gtk_widget_set_sensitive(doc_items.reload, sel && (!doc || doc->real_path));

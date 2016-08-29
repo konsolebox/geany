@@ -1,0 +1,23 @@
+diff --git a/src/document.h b/src/document.h
+index 1d03cd2..10fb0d4 100644
+--- a/src/document.h
++++ b/src/document.h
+@@ -319,7 +319,6 @@ gboolean document_delete_prompt(GeanyDocument *doc);
+ 
+ GeanyDocument *document_clone(GeanyDocument *old_doc);
+ 
+-<<<<<<< HEAD
+ GtkWidget *document_get_notebook_child(GeanyDocument *doc);
+ 
+ void document_open_files_recursively(const GSList *filenames, gboolean readonly, GeanyFiletype *ft,
+@@ -330,9 +329,8 @@ gboolean document_rename_file_and_save(GeanyDocument *doc, const gchar *new_file
+ gboolean document_rename_and_save(GeanyDocument *doc, const gchar *new_filename, gboolean ask_overwrite);
+ 
+ gboolean document_rename_prompt(GeanyDocument *doc);
+-=======
++
+ GeanyDocument *document_new_file_with_default_filename(const gchar *utf8_basename, GeanyFiletype *ft, const gchar *text);
+->>>>>>> refs/heads/default_filenames
+ 
+ #endif /* GEANY_PRIVATE */
+ 

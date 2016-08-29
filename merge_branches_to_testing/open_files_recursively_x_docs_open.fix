@@ -1,0 +1,117 @@
+diff --git a/src/sidebar.c b/src/sidebar.c
+index 909457c..eb770b9 100644
+--- a/src/sidebar.c
++++ b/src/sidebar.c
+@@ -60,12 +60,9 @@ static gboolean may_steal_focus = FALSE;
+ static struct
+ {
+ 	GtkWidget *close;
+-<<<<<<< HEAD
+ 	GtkWidget *close_recursively;
+ 	GtkWidget *new;
+-=======
+ 	GtkWidget *open;
+->>>>>>> refs/heads/open_files_recursively_x_docs_open
+ 	GtkWidget *save;
+ 	GtkWidget *save_as;
+ 	GtkWidget *reload;
+@@ -77,7 +74,7 @@ static struct
+ 	GtkWidget *expand_all;
+ 	GtkWidget *collapse_all;
+ }
+-doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
++doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+ 
+ enum
+ {
+@@ -88,12 +85,9 @@ enum
+ enum
+ {
+ 	OPENFILES_ACTION_REMOVE = 0,
+-<<<<<<< HEAD
+ 	OPENFILES_ACTION_REMOVE_RECURSIVE,
+ 	OPENFILES_ACTION_NEW,
+-=======
+ 	OPENFILES_ACTION_OPEN,
+->>>>>>> refs/heads/open_files_recursively_x_docs_open
+ 	OPENFILES_ACTION_SAVE,
+ 	OPENFILES_ACTION_SAVE_AS,
+ 	OPENFILES_ACTION_RELOAD,
+@@ -754,10 +748,6 @@ static void create_openfiles_popup_menu(void)
+ 			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_NEW));
+ 	doc_items.new = item;
+ 
+-	item = gtk_separator_menu_item_new();
+-	gtk_widget_show(item);
+-	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+-
+ 	item = gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN, NULL);
+ 	gtk_widget_show(item);
+ 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+@@ -1005,11 +995,7 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
+ 	{
+ 		gtk_tree_model_get(model, &iter, DOCUMENTS_DOCUMENT, &doc, -1);
+ 
+-<<<<<<< HEAD
+ 		if (action == OPENFILES_ACTION_NEW)
+-=======
+-		if (action == OPENFILES_ACTION_OPEN)
+->>>>>>> refs/heads/open_files_recursively_x_docs_open
+ 		{
+ 			gchar *dir = NULL;
+ 
+@@ -1022,7 +1008,6 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
+ 				gtk_tree_model_get(model, &iter, DOCUMENTS_FILENAME, &dir, -1);
+ 
+ 			if (!dir || !g_path_is_absolute(dir))
+-<<<<<<< HEAD
+ 				if (app->project && !EMPTY(app->project->base_path))
+ 					dir = g_strdup(app->project->base_path);
+ 
+@@ -1030,7 +1015,24 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
+ 				document_new_file_with_default_dir(NULL, NULL, NULL, NEW_FILE_DIR_CUSTOM, dir);
+ 			else
+ 				document_new_file(NULL, NULL, NULL);
+-=======
++
++			g_free(dir);
++			return;
++		}
++
++		if (action == OPENFILES_ACTION_OPEN)
++		{
++			gchar *dir = NULL;
++
++			if (doc)
++			{
++				if (doc->file_name)
++					dir = g_path_get_dirname(doc->file_name);
++			}
++			else
++				gtk_tree_model_get(model, &iter, DOCUMENTS_FILENAME, &dir, -1);
++
++			if (!dir || !g_path_is_absolute(dir))
+ 			{
+ 				const gchar *tmp = utils_get_default_dir_utf8();
+ 
+@@ -1042,7 +1044,6 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
+ 				dialogs_show_open_file(FALSE, dir);
+ 			else
+ 				dialogs_show_open_file(FALSE, NULL);
+->>>>>>> refs/heads/open_files_recursively_x_docs_open
+ 
+ 			g_free(dir);
+ 			return;
+@@ -1301,12 +1302,9 @@ static void documents_menu_update(GtkTreeSelection *selection)
+ 
+ 	/* can close all, save all (except shortname), but only reload individually ATM */
+ 	gtk_widget_set_sensitive(doc_items.close, sel);
+-<<<<<<< HEAD
+ 	gtk_widget_set_sensitive(doc_items.close_recursively, sel && !doc);
+ 	gtk_widget_set_sensitive(doc_items.new, sel);
+-=======
+ 	gtk_widget_set_sensitive(doc_items.open, sel);
+->>>>>>> refs/heads/open_files_recursively_x_docs_open
+ 	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
+ 	gtk_widget_set_sensitive(doc_items.save_as, doc != NULL);
+ 	gtk_widget_set_sensitive(doc_items.reload, sel && (!doc || doc->real_path));
