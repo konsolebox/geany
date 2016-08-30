@@ -1,0 +1,49 @@
+diff --git a/data/geany.glade b/data/geany.glade
+index 884d50a..d50fb81 100644
+--- a/data/geany.glade
++++ b/data/geany.glade
+@@ -768,18 +768,13 @@
+       </row>
+     </data>
+   </object>
+-<<<<<<< HEAD
+   <object class="GtkListStore" id="notebook_auto_sort_mode_list">
+-=======
+-  <object class="GtkListStore" id="default_new_file_dir_list">
+->>>>>>> refs/heads/default_new_file_dir_v2
+     <columns>
+       <!-- column-name item -->
+       <column type="gchararray"/>
+     </columns>
+     <data>
+       <row>
+-<<<<<<< HEAD
+         <col id="0" translatable="yes">Disabled</col>
+       </row>
+       <row>
+@@ -790,7 +785,16 @@
+       </row>
+       <row>
+         <col id="0" translatable="yes">By folder</col>
+-=======
++      </row>
++    </data>
++  </object>
++  <object class="GtkListStore" id="default_new_file_dir_list">
++    <columns>
++      <!-- column-name item -->
++      <column type="gchararray"/>
++    </columns>
++    <data>
++      <row>
+         <col id="0" translatable="yes">None</col>
+       </row>
+       <row>
+@@ -804,7 +808,6 @@
+       </row>
+       <row>
+         <col id="0" translatable="yes">Current Document's Dir., Project Dir., or Home Dir.</col>
+->>>>>>> refs/heads/default_new_file_dir_v2
+       </row>
+     </data>
+   </object>

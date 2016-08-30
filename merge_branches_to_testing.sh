@@ -22,8 +22,8 @@ BRANCHES=(
 	file_delete
 	docs_reload_multi
 	file_reload_all
-	default_new_file_dir
-	docs_new
+	default_new_file_dir_v2
+	docs_new_v2
 	open_files_recursively_x_docs_open
 )
 
