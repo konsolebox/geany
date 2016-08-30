@@ -435,6 +435,7 @@ static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 			parent_found = utils_filenamecmp(stored_path, path) == 0 &&
 					utils_filenamecmp(stored_folder, folder) == 0;
 			g_free(stored_folder);
+			g_free(stored_path);
 
 			if (parent_found)
 				break;
