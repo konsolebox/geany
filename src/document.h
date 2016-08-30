@@ -239,6 +239,9 @@ extern GPtrArray *documents_array;
 
 GeanyDocument* document_new_file_if_non_open(void);
 
+GeanyDocument *document_new_file_in_dir(const gchar *utf8_dirname, const gchar *utf8_basename,
+		GeanyFiletype *ft, const gchar *text, gboolean unique);
+
 gboolean document_reload_prompt(GeanyDocument *doc, const gchar *forced_enc);
 
 void document_reload_config(GeanyDocument *doc);
