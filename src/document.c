@@ -894,6 +894,62 @@ GeanyDocument *document_new_file(const gchar *utf8_filename, GeanyFiletype *ft, 
 }
 
 
+GeanyDocument *document_new_file_in_dir(const gchar *utf8_dirname, const gchar *utf8_basename,
+		GeanyFiletype *ft, const gchar *text, gboolean unique)
+{
+	g_return_val_if_fail(!EMPTY(utf8_dirname), NULL);
+
+	gchar *new_filename = NULL;
+	const gchar *basename_to_use = utf8_basename ? utf8_basename : GEANY_STRING_UNTITLED;
+
+	if (unique)
+	{
+		gchar *candidate;
+		guint i, j;
+
+		for (i = 0; i <= 99; ++i)
+		{
+			if (i == 0)
+				candidate = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", utf8_dirname, basename_to_use);
+			else
+				candidate = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s%u", utf8_dirname,
+						basename_to_use, i);
+
+			gboolean unused = TRUE;
+
+			foreach_document(j)
+			{
+				if (documents[j]->file_name && strcmp(documents[j]->file_name, candidate) == 0)
+				{
+					unused = FALSE;
+					break;
+				}
+			}
+
+			if (unused)
+			{
+				gchar *locale_candidate = utils_get_locale_from_utf8(candidate);
+				gboolean file_exists = g_file_test(locale_candidate, G_FILE_TEST_EXISTS);
+				g_free(locale_candidate);
+
+				if (!file_exists)
+				{
+					new_filename = candidate;
+					break;
+				}
+			}
+
+			g_free(candidate);
+		}
+	}
+	else
+		new_filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", utf8_dirname, basename_to_use);
+
+	document_new_file(new_filename ? new_filename : utf8_basename, ft, text);
+	g_free(new_filename);
+}
+
+
 /**
  *  Opens a document specified by @a locale_filename.
  *  Afterwards, the @c "document-open" signal is emitted for plugins.
