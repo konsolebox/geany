@@ -950,6 +950,45 @@ GeanyDocument *document_new_file_in_dir(const gchar *utf8_dirname, const gchar *
 }
 
 
+GeanyDocument *document_new_file_in_default_dir(const gchar *utf8_basename, GeanyFiletype *ft,
+		const gchar *text, gboolean unique)
+{
+	gchar *dirname = NULL;
+
+	switch (file_prefs.default_new_file_dir)
+	{
+		case NEW_FILE_DIR_CURRENT_DOC:
+			dirname = utils_get_current_file_dir_utf8();
+			break;
+		case NEW_FILE_DIR_PROJECT:
+			if (app->project && !EMPTY(app->project->base_path))
+				dirname = g_strdup(app->project->base_path);
+
+			break;
+		case NEW_FILE_DIR_HOME:
+			dirname = utils_get_utf8_from_locale(g_get_home_dir());
+			break;
+		case NEW_FILE_DIR_ALL:
+			dirname = utils_get_current_file_dir_utf8();
+
+			if (!dirname)
+			{
+				if (app->project && !EMPTY(app->project->base_path))
+					dirname = g_strdup(app->project->base_path);
+				else
+					dirname = utils_get_utf8_from_locale(g_get_home_dir());
+			}
+	}
+
+	if (dirname)
+		document_new_file_in_dir(dirname, utf8_basename, ft, text, unique);
+	else
+		document_new_file(utf8_basename, ft, text);
+
+	g_free(dirname);
+}
+
+
 /**
  *  Opens a document specified by @a locale_filename.
  *  Afterwards, the @c "document-open" signal is emitted for plugins.
