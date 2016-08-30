@@ -66,6 +66,7 @@ typedef struct GeanyFilePrefs
 	gboolean		tab_close_switch_to_mru;
 	gboolean		keep_edit_history_on_reload; /* Keep undo stack upon, and allow undoing of, document reloading. */
 	gboolean		show_keep_edit_history_on_reload_msg; /* whether to show the message introducing the above feature */
+	gint			default_new_file_dir;
 }
 GeanyFilePrefs;
 
@@ -234,6 +235,15 @@ GeanyDocument *document_find_by_id(guint id);
 extern GeanyFilePrefs file_prefs;
 extern GPtrArray *documents_array;
 
+typedef enum DefaultNewFileDirectory
+{
+	NEW_FILE_DIR_NONE,
+	NEW_FILE_DIR_CURRENT_DOC,
+	NEW_FILE_DIR_PROJECT,
+	NEW_FILE_DIR_HOME,
+	NEW_FILE_DIR_ALL
+} DefaultNewFileDirectory;
+
 
 /* These functions will replace the older functions. For now they have a documents_ prefix. */
 
@@ -241,6 +251,9 @@ GeanyDocument* document_new_file_if_non_open(void);
 
 GeanyDocument *document_new_file_in_dir(const gchar *utf8_dirname, const gchar *utf8_basename,
 		GeanyFiletype *ft, const gchar *text, gboolean unique);
+
+GeanyDocument *document_new_file_in_default_dir(const gchar *utf8_basename, GeanyFiletype *ft,
+		const gchar *text, gboolean unique);
 
 gboolean document_reload_prompt(GeanyDocument *doc, const gchar *forced_enc);
 
