@@ -179,6 +179,9 @@ static void on_file1_activate(GtkMenuItem *menuitem, gpointer user_data)
 						g_queue_get_length(ui_prefs.recent_queue) > 0);
 	/* hide Page setup when GTK printing is not used */
 	ui_widget_show_hide(ui_widgets.print_page_setup, printing_prefs.use_gtk_printing);
+
+	GeanyDocument *doc = document_get_current();
+	gtk_widget_set_sensitive(ui_widgets.delete_file_menuitem, doc && doc->real_path);
 }
 
 
@@ -325,6 +328,13 @@ void on_toolbutton_reload_clicked(GtkAction *action, gpointer user_data)
 	g_return_if_fail(doc != NULL);
 
 	document_reload_prompt(doc, NULL);
+}
+
+
+/* delete file and close document */
+void on_file_delete1_activate(GtkAction *action, gpointer user_data)
+{
+	document_delete_prompt(document_get_current());
 }
 
 
