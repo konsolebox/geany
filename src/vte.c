@@ -120,6 +120,7 @@ struct VteFunctions
 	void (*vte_terminal_select_all) (VteTerminal *terminal);
 	void (*vte_terminal_set_audible_bell) (VteTerminal *terminal, gboolean is_audible);
 	void (*vte_terminal_set_background_image_file) (VteTerminal *terminal, const char *path);
+	void (*vte_terminal_set_allow_bold) (VteTerminal *terminal, gboolean allow_bold);
 };
 
 
@@ -517,6 +518,7 @@ static gboolean vte_register_symbols(GModule *mod)
 		BIND_REQUIRED_SYMBOL(vte_terminal_set_cursor_blinks);
 	BIND_REQUIRED_SYMBOL(vte_terminal_select_all);
 	BIND_REQUIRED_SYMBOL(vte_terminal_set_audible_bell);
+	BIND_REQUIRED_SYMBOL(vte_terminal_set_allow_bold);
 
 	#undef BIND_REQUIRED_SYMBOL
 	#undef BIND_SYMBOL
@@ -541,6 +543,7 @@ void vte_apply_user_settings(void)
 	vf->vte_terminal_set_background_image_file(VTE_TERMINAL(vc->vte), vc->image);
 	vf->vte_terminal_set_audible_bell(VTE_TERMINAL(vc->vte), prefs.beep_on_errors);
 	vte_set_cursor_blink_mode();
+	vf->vte_terminal_set_allow_bold(VTE_TERMINAL(vc->vte), vc->allow_bold);
 
 	override_menu_key();
 }
