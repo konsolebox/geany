@@ -36,16 +36,23 @@ gboolean main_is_realized(void);
 
 #ifdef GEANY_PRIVATE
 
+typedef enum NewInstanceMode
+{
+	NEW_INSTANCE_EXPLICITLY_DISABLED,
+	NEW_INSTANCE_DISABLED,
+	NEW_INSTANCE_ENABLED
+} NewInstanceMode;
+
 typedef struct
 {
-	gboolean	new_instance;
-	gchar	   *socket_filename;
-	gboolean	load_session;
-	gint		goto_line;
-	gint		goto_column;
-	gboolean	ignore_global_tags;
-	gboolean	list_documents;
-	gboolean 	readonly;
+	NewInstanceMode  new_instance_mode;
+	gchar           *socket_filename;
+	gboolean         load_session;
+	gint             goto_line;
+	gint             goto_column;
+	gboolean         ignore_global_tags;
+	gboolean         list_documents;
+	gboolean         readonly;
 }
 CommandLineOptions;
 
