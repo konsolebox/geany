@@ -855,7 +855,10 @@ static void document_action(GeanyDocument *doc, gint action)
 				gchar *file_name_locale = utils_get_locale_from_utf8(doc->file_name);
 
 				if (g_remove(file_name_locale) == 0)
+				{
+					docs->changed = FALSE;
 					document_close(doc);
+				}
 				else
 					dialogs_show_msgbox_with_secondary(GTK_MESSAGE_ERROR,
 							_("Failed to delete file."), g_strerror(errno));
