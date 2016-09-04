@@ -1297,21 +1297,19 @@ static void documents_menu_update(GtkTreeSelection *selection)
 		gtk_tree_model_get(model, &iter, DOCUMENTS_DOCUMENT, &doc,
 			DOCUMENTS_SHORTNAME, &shortname, -1);
 	}
-	path = !EMPTY(shortname) &&
-		(g_path_is_absolute(shortname) ||
-		(app->project && g_str_has_prefix(shortname, app->project->name)));
 
 	/* can close all, save all (except shortname), but only reload individually ATM */
 	gtk_widget_set_sensitive(doc_items.close, sel);
 	gtk_widget_set_sensitive(doc_items.close_recursively, sel && !doc);
 	gtk_widget_set_sensitive(doc_items.new, sel);
 	gtk_widget_set_sensitive(doc_items.open, sel);
-	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
+	gtk_widget_set_sensitive(doc_items.save, doc ? doc->changed && doc->file_name && g_path_is_absolute(doc->file_name) : sel);
 	gtk_widget_set_sensitive(doc_items.save_as, doc != NULL);
 	gtk_widget_set_sensitive(doc_items.reload, sel && (!doc || doc->real_path));
 	gtk_widget_set_sensitive(doc_items.rename, doc && doc->file_name);
 	gtk_widget_set_sensitive(doc_items.clone, doc != NULL);
 	gtk_widget_set_sensitive(doc_items.delete, doc && doc->real_path);
+	gtk_widget_set_sensitive(doc_items.reload, doc && doc->real_path);
 	gtk_widget_set_sensitive(doc_items.find_in_files, sel);
 	g_free(shortname);
 
