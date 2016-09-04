@@ -87,6 +87,7 @@ enum
 	OPENFILES_ACTION_SAVE,
 	OPENFILES_ACTION_SAVE_AS,
 	OPENFILES_ACTION_RELOAD,
+	OPENFILES_ACTION_RELOAD_NO_PROMPT,
 	OPENFILES_ACTION_RENAME,
 	OPENFILES_ACTION_CLONE,
 	OPENFILES_ACTION_DELETE
@@ -920,6 +921,13 @@ static void document_action(GeanyDocument *doc, gint action)
 			document_reload_prompt(doc, NULL);
 			break;
 		}
+		case OPENFILES_ACTION_RELOAD_NO_PROMPT:
+		{
+			if (doc->real_path)
+				document_reload_force(doc, NULL);
+
+			break;
+		}
 		case OPENFILES_ACTION_RENAME:
 		{
 			rename_file_inplace(doc);
@@ -1000,6 +1008,25 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 					}
 
 					g_free(short_name_a);
+					break;
+				}
+				case OPENFILES_ACTION_RELOAD:
+				{
+					gchar *short_name;
+					gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name, -1);
+
+					if (short_name)
+					{
+						if (dialogs_show_question_full(NULL, _("_Reload"), GTK_STOCK_CANCEL,
+								_("Any unsaved changes and undo history will be lost."),
+								_("Reload all documents under '%s'?"), short_name))
+						{
+							document_action_recursive(model, &iter, OPENFILES_ACTION_RELOAD_NO_PROMPT);
+						}
+
+						g_free(short_name);
+					}
+
 					break;
 				}
 				default:
@@ -1202,7 +1229,7 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gtk_widget_set_sensitive(doc_items.close_recursively, sel && !doc);
 	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
 	gtk_widget_set_sensitive(doc_items.save_as, doc != NULL);
-	gtk_widget_set_sensitive(doc_items.reload, doc && doc->real_path);
+	gtk_widget_set_sensitive(doc_items.reload, sel && (!doc || doc->real_path));
 	gtk_widget_set_sensitive(doc_items.rename, doc && doc->file_name);
 	gtk_widget_set_sensitive(doc_items.clone, doc != NULL);
 	gtk_widget_set_sensitive(doc_items.delete, doc && doc->real_path);
