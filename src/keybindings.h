@@ -280,6 +280,7 @@ enum GeanyKeyBindingID
 	GEANY_KEYS_NOTEBOOK_SORTTABSBYFOLDER,		/**< Keybinding. */
 	GEANY_KEYS_FILE_OPENRECURSIVE,				/**< Keybinding. */
 	GEANY_KEYS_SIDEBAR_RENAME_FILE,				/**< Keybinding. */
+	GEANY_KEYS_FILE_RENAME,						/**< Keybinding. */
 	GEANY_KEYS_COUNT	/* must not be used by plugins */
 };
 
