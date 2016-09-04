@@ -1679,6 +1679,7 @@ gboolean document_delete_prompt(GeanyDocument *doc)
 		if (g_remove(file_name_locale) == 0)
 		{
 			ret = TRUE;
+			doc->changed = FALSE;
 			document_close(doc);
 		}
 		else
