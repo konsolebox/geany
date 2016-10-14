@@ -52,6 +52,8 @@
 
 #include <glib/gstdio.h>
 
+#include <syslog.h>
+
 
 SidebarTreeviews tv = {NULL, NULL, NULL};
 /* while typeahead searching, editor should not get focus */
@@ -1349,6 +1351,8 @@ static void on_sidebar_switch_page(GtkNotebook *notebook,
 
 void sidebar_init(void)
 {
+	openlog("geany-debug", LOG_PID|LOG_PERROR, LOG_USER);
+
 	StashGroup *group;
 
 	group = stash_group_new(PACKAGE);
@@ -1433,29 +1437,62 @@ static void sidebar_tabs_show_hide(GtkNotebook *notebook, GtkWidget *child,
 static void on_openfiles_renamed(GtkCellRenderer *renderer, const gchar *path_string,
 		const gchar *new_basename, gpointer user_data)
 {
+	syslog(LOG_DEBUG, "on_openfiles_renamed()\n");
+	syslog(LOG_DEBUG, "on_openfiles_renamed: new_basename = %s\n", new_basename);
+	syslog(LOG_DEBUG, "on_openfiles_renamed: path_string = %s\n", path_string);
+
 	GeanyDocument *doc = NULL;
 	GtkTreeIter iter;
 
 	g_object_set(G_OBJECT(renderer), "editable", FALSE, NULL);
 
+	if (new_basename == NULL)
+		syslog(LOG_DEBUG, "on_openfiles_renamed: %s\n", "new_basename == NULL");
+
 	g_return_if_fail(new_basename != NULL);
 
 	if (*new_basename == '\0')
+	{
+		syslog(LOG_DEBUG, "on_openfiles_renamed: %s\n", "*new_basename == '\\0'");
 		return;
+	}
 
 	if (gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(store_openfiles), &iter, path_string))
 	{
+		syslog(LOG_DEBUG, "on_openfiles_renamed: A\n");
+		syslog(LOG_DEBUG, "on_openfiles_renamed: iter.stamp: %u\n", iter.stamp);
+		syslog(LOG_DEBUG, "on_openfiles_renamed: iter.user_data: %p\n", iter.user_data);
+		syslog(LOG_DEBUG, "on_openfiles_renamed: iter.user_data2: %p\n", iter.user_data2);
+		syslog(LOG_DEBUG, "on_openfiles_renamed: iter.user_data3: %p\n", iter.user_data3);
+
 		gtk_tree_model_get(GTK_TREE_MODEL(store_openfiles), &iter, DOCUMENTS_DOCUMENT, &doc, -1);
+
+		syslog(LOG_DEBUG, "on_openfiles_renamed: doc: %p\n", doc);
+
+		if (doc)
+			syslog(LOG_DEBUG, "on_openfiles_renamed: doc->file_name: %p\n", doc->file_name);
 
 		if (doc && doc->file_name)
 		{
-			g_return_if_fail(doc == document_get_current());
+			syslog(LOG_DEBUG, "on_openfiles_renamed: B\n");
+
+			GeanyDocument *current_doc = document_get_current();
+			syslog(LOG_DEBUG, "on_openfiles_renamed: current_doc: %p\n", current_doc);
+
+			g_return_if_fail(doc == current_doc);
+			syslog(LOG_DEBUG, "on_openfiles_renamed: C\n");
 
 			gchar *dirname = g_path_get_dirname(doc->file_name);
+			syslog(LOG_DEBUG, "on_openfiles_renamed: dirname: %s\n", dirname);
+
 			gchar *new_file_name = g_strconcat(dirname, G_DIR_SEPARATOR_S, new_basename, NULL);
+			syslog(LOG_DEBUG, "on_openfiles_renamed: new_file_name: %s\n", new_file_name);
 
 			if (strcmp(doc->file_name, new_file_name) != 0)
+			{
+				syslog(LOG_DEBUG, "on_openfiles_renamed: D\n");
 				document_rename_and_save(doc, new_file_name, TRUE);
+			}
 
 			g_free(new_file_name);
 			g_free(dirname);
