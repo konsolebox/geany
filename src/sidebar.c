@@ -1242,8 +1242,6 @@ static void on_openfiles_renamed(GtkCellRenderer *renderer, const gchar *path_st
 
 		if (doc && doc->file_name)
 		{
-			g_return_if_fail(doc == document_get_current());
-
 			gchar *dirname = g_path_get_dirname(doc->file_name);
 			gchar *new_file_name = g_strconcat(dirname, G_DIR_SEPARATOR_S, new_basename, NULL);
 
