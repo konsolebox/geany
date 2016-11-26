@@ -48,6 +48,10 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <errno.h>
+
+#include <glib/gstdio.h>
+
 
 SidebarTreeviews tv = {NULL, NULL, NULL};
 /* while typeahead searching, editor should not get focus */
@@ -62,6 +66,7 @@ static struct
 	GtkWidget *reload;
 	GtkWidget *rename;
 	GtkWidget *clone;
+	GtkWidget *delete;
 	GtkWidget *show_paths;
 	GtkWidget *find_in_files;
 	GtkWidget *expand_all;
@@ -84,7 +89,8 @@ enum
 	OPENFILES_ACTION_RELOAD,
 	OPENFILES_ACTION_RELOAD_NO_PROMPT,
 	OPENFILES_ACTION_RENAME,
-	OPENFILES_ACTION_CLONE
+	OPENFILES_ACTION_CLONE,
+	OPENFILES_ACTION_DELETE
 };
 
 /* documents tree model columns */
@@ -773,6 +779,13 @@ static void create_openfiles_popup_menu(void)
 			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_CLONE));
 	doc_items.clone = item;
 
+	item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+	g_signal_connect(item, "activate",
+			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_DELETE));
+	doc_items.delete = item;
+
 	item = gtk_separator_menu_item_new();
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
@@ -923,6 +936,11 @@ static void document_action(GeanyDocument *doc, gint action)
 		case OPENFILES_ACTION_CLONE:
 		{
 			document_clone(doc);
+			break;
+		}
+		case OPENFILES_ACTION_DELETE:
+		{
+			document_delete_prompt(doc);
 			break;
 		}
 	}
@@ -1214,6 +1232,7 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gtk_widget_set_sensitive(doc_items.reload, sel && (!doc || doc->real_path));
 	gtk_widget_set_sensitive(doc_items.rename, doc && doc->file_name);
 	gtk_widget_set_sensitive(doc_items.clone, doc != NULL);
+	gtk_widget_set_sensitive(doc_items.delete, doc && doc->real_path);
 	gtk_widget_set_sensitive(doc_items.find_in_files, sel);
 	g_free(shortname);
 

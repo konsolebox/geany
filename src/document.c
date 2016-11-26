@@ -1794,6 +1794,37 @@ gboolean document_reload_prompt(GeanyDocument *doc, const gchar *forced_enc)
 }
 
 
+gboolean document_delete_prompt(GeanyDocument *doc)
+{
+	g_return_val_if_fail(DOC_VALID(doc), FALSE);
+	g_return_val_if_fail(doc->real_path != NULL, FALSE);
+	g_return_val_if_fail(doc->file_name != NULL, FALSE);
+
+	gboolean ret = FALSE;
+
+	if (dialogs_show_question_full(NULL, _("_Delete"), GTK_STOCK_CANCEL,
+			_("This will remove the file from the filesystem and close the document."),
+			_("Delete '%s'?"), doc->file_name))
+	{
+		gchar *file_name_locale = utils_get_locale_from_utf8(doc->file_name);
+
+		if (g_remove(file_name_locale) == 0)
+		{
+			ret = TRUE;
+			doc->changed = FALSE;
+			document_close(doc);
+		}
+		else
+			dialogs_show_msgbox_with_secondary(GTK_MESSAGE_ERROR,
+					_("Failed to delete file."), g_strerror(errno));
+
+		g_free(file_name_locale);
+	}
+
+	return ret;
+}
+
+
 static void document_update_timestamp(GeanyDocument *doc, const gchar *locale_filename)
 {
 #ifndef USE_GIO_FILEMON
