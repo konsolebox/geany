@@ -117,6 +117,7 @@ enum GeanyKeyGroupID
 	GEANY_KEY_GROUP_BUILD,			/**< Group. */
 	GEANY_KEY_GROUP_TOOLS,			/**< Group. */
 	GEANY_KEY_GROUP_HELP,			/**< Group. */
+	GEANY_KEY_GROUP_SIDEBAR,		/**< Group. */
 	GEANY_KEY_GROUP_COUNT	/* must not be used by plugins */
 };
 
@@ -279,6 +280,7 @@ enum GeanyKeyBindingID
 	GEANY_KEYS_NOTEBOOK_SORTTABSBYFOLDER,		/**< Keybinding. */
 	GEANY_KEYS_FILE_OPENRECURSIVE,				/**< Keybinding. */
 	GEANY_KEYS_FILE_RELOAD_ALL,					/**< Keybinding. */
+	GEANY_KEYS_SIDEBAR_RENAME_FILE,				/**< Keybinding. */
 	GEANY_KEYS_COUNT	/* must not be used by plugins */
 };
 
