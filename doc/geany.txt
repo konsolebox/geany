@@ -512,6 +512,27 @@ order. It is not alphabetical as shown in the documents list
 See the `Notebook tab keybindings`_ section for useful
 shortcuts including for Most-Recently-Used document switching.
 
+Sorting tabs
+^^^^^^^^^^^^
+
+You can sort editor tabs based on the basic names of the opened files
+they represent (By filename), based on the complete path of those files
+(By pathname), or based on how they are sorted in the documents list in
+the sidebar when Show Paths is enabled (BY folder).  This can be done by
+activating the sort command item in the popup menu that's shown by
+right-clicking an editor tab.
+
+You can also activate the commands by using shortcut keys.  See
+`Notebook tab keybindings`_ section.
+
+Sorting tabs automatically
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Tabs can also be automatically sorted everytime a file or a group of
+files are opened, or when a document is saved to a new file.  This can
+be enabled in Preferences->Interface->Notebook tabs.  See `Editor tabs`_
+section.
+
 Cloning documents
 ^^^^^^^^^^^^^^^^^
 The `Document->Clone` menu item copies the current document's text,
@@ -1969,6 +1990,16 @@ Next to current
 Double-clicking hides all additional widgets
     Whether to call the View->Toggle All Additional Widgets command
     when double-clicking on a notebook tab.
+
+Automatically sort tabs
+    Whether to automatically sort editor tabs everytime files are
+    opened, or when documents are saved to a new file.
+
+    Sorting by filename means sorting it based on the basic name of the
+    file and it excludes the directory parts, while sorting by pathname
+    means sorting it based on the complete path of the file.  Sorting
+    tabs by folder on the other hand makes the resulting arrangement the
+    same as the one in the documents list when Show Paths is enabled.
 
 Tab positions
 `````````````
@@ -3717,6 +3748,15 @@ Move document right             Ctrl-Shift-PageDown       Changes the current do
 Move document first                                       Moves the current document to the first position.
 
 Move document last                                        Moves the current document to the last position.
+
+Sort tabs by filename                                     Sorts tabs based on the basic name of the file.
+
+Sort tabs by pathname                                     Sorts tabs based on the complete path of the file.
+
+Sort tabs by folder                                       Sorts tabs based on how they are arranged in the
+                                                          documents list in the sidebar when Show Paths is
+                                                          enabled.
+
 =============================== ========================= ==================================================
 
 
