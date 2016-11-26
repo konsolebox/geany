@@ -62,6 +62,7 @@ static struct
 	GtkWidget *close;
 	GtkWidget *close_recursively;
 	GtkWidget *new;
+	GtkWidget *open;
 	GtkWidget *save;
 	GtkWidget *save_as;
 	GtkWidget *reload;
@@ -86,6 +87,7 @@ enum
 	OPENFILES_ACTION_REMOVE = 0,
 	OPENFILES_ACTION_REMOVE_RECURSIVE,
 	OPENFILES_ACTION_NEW,
+	OPENFILES_ACTION_OPEN,
 	OPENFILES_ACTION_SAVE,
 	OPENFILES_ACTION_SAVE_AS,
 	OPENFILES_ACTION_RELOAD,
@@ -751,6 +753,17 @@ static void create_openfiles_popup_menu(void)
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
 
+	item = gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN, NULL);
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+	g_signal_connect(item, "activate",
+			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_OPEN));
+	doc_items.open = item;
+
+	item = gtk_separator_menu_item_new();
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+
 	item = gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE, NULL);
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
@@ -1012,6 +1025,35 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 			return;
 		}
 
+		if (action == OPENFILES_ACTION_OPEN)
+		{
+			gchar *dir = NULL;
+
+			if (doc)
+			{
+				if (doc->file_name)
+					dir = g_path_get_dirname(doc->file_name);
+			}
+			else
+				gtk_tree_model_get(model, &iter, DOCUMENTS_FILENAME, &dir, -1);
+
+			if (!dir || !g_path_is_absolute(dir))
+			{
+				const gchar *tmp = utils_get_default_dir_utf8();
+
+				if (tmp)
+					dir = g_strdup(tmp);
+			}
+
+			if (dir && g_path_is_absolute(dir))
+				dialogs_show_open_file(FALSE, dir);
+			else
+				dialogs_show_open_file(FALSE, NULL);
+
+			g_free(dir);
+			return;
+		}
+
 		if (doc)
 		{
 			document_action(doc, action);
@@ -1267,6 +1309,7 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gtk_widget_set_sensitive(doc_items.close, sel);
 	gtk_widget_set_sensitive(doc_items.close_recursively, sel && !doc);
 	gtk_widget_set_sensitive(doc_items.new, sel);
+	gtk_widget_set_sensitive(doc_items.open, sel);
 	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
 	gtk_widget_set_sensitive(doc_items.save_as, doc != NULL);
 	gtk_widget_set_sensitive(doc_items.reload, sel && (!doc || doc->real_path));
