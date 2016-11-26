@@ -52,11 +52,7 @@ gchar *dialogs_show_input(const gchar *title, GtkWindow *parent,
 typedef void (*GeanyInputCallback)(const gchar *text, gpointer data);
 
 
-<<<<<<< HEAD
-void dialogs_show_open_file(gboolean recursive);
-=======
-void dialogs_show_open_file(const gchar *utf8_initial_dir);
->>>>>>> docs_open@1.29
+void dialogs_show_open_file(gboolean recursive, const gchar *utf8_initial_dir);
 
 gboolean dialogs_show_unsaved_file(GeanyDocument *doc);
 

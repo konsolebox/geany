@@ -518,11 +518,7 @@ static void open_file_dialog_apply_settings(GtkWidget *dialog)
 
 
 /* This shows the file selection dialog to open a file. */
-<<<<<<< HEAD
-void dialogs_show_open_file(gboolean recursive)
-=======
-void dialogs_show_open_file(const gchar *utf8_initial_dir)
->>>>>>> docs_open@1.29
+void dialogs_show_open_file(gboolean recursive, const gchar *utf8_initial_dir)
 {
 	gchar *initdir = NULL;
 

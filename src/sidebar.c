@@ -881,9 +881,9 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 			}
 
 			if (dir && g_path_is_absolute(dir))
-				dialogs_show_open_file(dir);
+				dialogs_show_open_file(FALSE, dir);
 			else
-				dialogs_show_open_file(NULL);
+				dialogs_show_open_file(FALSE, NULL);
 
 			g_free(dir);
 			return;
