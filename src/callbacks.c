@@ -182,6 +182,7 @@ static void on_file1_activate(GtkMenuItem *menuitem, gpointer user_data)
 
 	GeanyDocument *doc = document_get_current();
 	gtk_widget_set_sensitive(ui_widgets.rename_menuitem, doc && doc->file_name);
+	gtk_widget_set_sensitive(ui_widgets.delete_file_menuitem, doc && doc->real_path);
 }
 
 
@@ -368,6 +369,13 @@ void on_rename1_activate(GtkMenuItem *menuitem, gpointer user_data)
 	g_return_if_fail(doc && doc->file_name);
 
 	document_rename_prompt(doc);
+}
+
+
+/* delete file and close document */
+void on_file_delete1_activate(GtkAction *action, gpointer user_data)
+{
+	document_delete_prompt(document_get_current());
 }
 
 

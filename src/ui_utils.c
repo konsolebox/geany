@@ -2526,6 +2526,7 @@ void ui_init(void)
 	ui_widgets.statusbar = ui_lookup_widget(main_widgets.window, "statusbar");
 	ui_widgets.print_page_setup = ui_lookup_widget(main_widgets.window, "page_setup1");
 	ui_widgets.rename_menuitem = ui_lookup_widget(main_widgets.window, "menu_rename1");
+	ui_widgets.delete_file_menuitem = ui_lookup_widget(main_widgets.window, "menu_file_delete1");
 
 	main_widgets.progressbar = progress_bar_create();
 
