@@ -328,6 +328,10 @@ GtkWidget *document_get_notebook_child(GeanyDocument *doc);
 void document_open_files_recursively(const GSList *filenames, gboolean readonly, GeanyFiletype *ft,
 		const gchar *forced_enc, GtkFileFilter *filter, GError **error);
 
+gboolean document_rename_file_and_save(GeanyDocument *doc, const gchar *new_filename);
+
+gboolean document_rename_and_save(GeanyDocument *doc, const gchar *new_filename, gboolean ask_overwrite);
+
 #endif /* GEANY_PRIVATE */
 
 G_END_DECLS
