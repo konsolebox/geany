@@ -795,23 +795,6 @@ void notebook_remove_page(gint page_num)
 }
 
 
-static gchar *get_doc_folder(const GeanyDocument *doc)
-{
-	gchar *folder, *dirname;
-
-	if (doc->file_name == NULL)
-		folder = g_strdup(GEANY_STRING_UNTITLED);
-	else
-	{
-		dirname = g_path_get_dirname(doc->file_name);
-		folder = sidebar_get_doc_folder(dirname);
-		g_free(dirname);
-	}
-
-	return folder;
-}
-
-
 static gchar *get_doc_dirname(const GeanyDocument *doc)
 {
 	return doc->real_path ? g_path_get_dirname(doc->real_path) : g_strdup("");
@@ -857,8 +840,8 @@ static gint compare_docs_by_pathname(gconstpointer a, gconstpointer b)
 
 static gint compare_docs_by_folder(gconstpointer a, gconstpointer b)
 {
-	gchar *folder_a = get_doc_folder(*(GeanyDocument **) a);
-	gchar *folder_b = get_doc_folder(*(GeanyDocument **) b);
+	gchar *folder_a = sidebar_get_doc_folder(*(GeanyDocument **) a, NULL);
+	gchar *folder_b = sidebar_get_doc_folder(*(GeanyDocument **) b, NULL);
 	gint cmp = compare_filenames(folder_a, folder_b);
 
 	if (cmp == 0)
