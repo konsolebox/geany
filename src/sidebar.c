@@ -344,11 +344,7 @@ static gboolean utils_filename_has_prefix(const gchar *str, const gchar *prefix)
 }
 
 
-<<<<<<< HEAD
-gchar *sidebar_get_doc_folder(const gchar *path)
-=======
-static gchar *get_doc_folder(GeanyDocument *doc, gchar **out_path)
->>>>>>> f8e5fe20804c2f58bdbc30042c4c5959ea9eca35
+gchar *sidebar_get_doc_folder(GeanyDocument *doc, gchar **out_path)
 {
 	if (out_path)
 		*out_path = NULL;
@@ -423,17 +419,12 @@ static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 	if (!documents_show_paths)
 		return NULL;
 
-<<<<<<< HEAD
-	path = g_path_get_dirname(DOC_FILENAME(doc));
-	dirname = sidebar_get_doc_folder(path);
-=======
 	static GtkTreeIter parent;
 	GtkTreeModel *model = GTK_TREE_MODEL(store_openfiles);
 	gboolean parent_found = FALSE;
 	gchar *path, *folder, *stored_path, *stored_folder;
 
-	folder = get_doc_folder(doc, &path);
->>>>>>> f8e5fe20804c2f58bdbc30042c4c5959ea9eca35
+	folder = sidebar_get_doc_folder(doc, &path);
 
 	if (gtk_tree_model_get_iter_first(model, &parent))
 	{

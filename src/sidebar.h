@@ -55,7 +55,7 @@ void sidebar_finalize(void);
 
 void sidebar_update_tag_list(GeanyDocument *doc, gboolean update);
 
-gchar* sidebar_get_doc_folder(const gchar *path);
+gchar *sidebar_get_doc_folder(GeanyDocument *doc, gchar **out_path);
 
 void sidebar_openfiles_add(GeanyDocument *doc);
 
