@@ -103,6 +103,8 @@ void on_toolbutton_reload_clicked(GtkAction *action, gpointer user_data);
 
 void on_reload_all1_activate(GtkMenuItem *menuitem, gpointer user_data);
 
+void on_rename1_activate(GtkMenuItem *menuitem, gpointer user_data);
+
 void on_go_to_line_activate(GtkMenuItem *menuitem, gpointer user_data);
 
 void on_help1_activate(GtkMenuItem *menuitem, gpointer user_data);
