@@ -113,6 +113,8 @@ typedef struct GeanyDocumentPrivate
 	GtkWidget		*info_bars[NUM_MSG_TYPES];
 	/* Keyed Data List to attach arbitrary data to the document */
 	GData			*data;
+	/* Whether filename is just a generated 'untitled' */
+	gboolean		 has_untitled_filename;
 }
 GeanyDocumentPrivate;
 

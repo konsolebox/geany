@@ -171,7 +171,11 @@ GeanyDocument;
 	(G_LIKELY((doc)->file_name != NULL) ? ((doc)->file_name) : GEANY_STRING_UNTITLED)
 
 
-GeanyDocument* document_new_file(const gchar *filename, GeanyFiletype *ft, const gchar *text);
+GeanyDocument *document_new_file(const gchar *utf8_filename, GeanyFiletype *ft,
+		const gchar *text);
+
+GeanyDocument *document_new_file_v2(const gchar *utf8_filename, gboolean filename_is_untitled,
+		GeanyFiletype *ft, const gchar *text);
 
 GeanyDocument *document_get_current(void);
 

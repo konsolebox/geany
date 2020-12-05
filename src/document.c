@@ -620,7 +620,7 @@ static gboolean on_idle_focus(gpointer doc)
 
 /* Creates a new document and editor, adding a tab in the notebook.
  * @return The created document */
-static GeanyDocument *document_create(const gchar *utf8_filename)
+static GeanyDocument *document_create(const gchar *utf8_filename, gboolean filename_is_untitled)
 {
 	GeanyDocument *doc;
 	gint new_idx;
@@ -652,6 +652,7 @@ static GeanyDocument *document_create(const gchar *utf8_filename)
 	doc->id = ++doc_id_counter;
 	doc->index = new_idx;
 	doc->file_name = g_strdup(utf8_filename);
+	doc->priv->has_untitled_filename = filename_is_untitled;
 	doc->editor = editor_create(doc);
 #ifndef USE_GIO_FILEMON
 	doc->priv->last_check = time(NULL);
@@ -824,6 +825,12 @@ GeanyDocument *document_new_file_if_non_open(void)
 GEANY_API_SYMBOL
 GeanyDocument *document_new_file(const gchar *utf8_filename, GeanyFiletype *ft, const gchar *text)
 {
+	return document_new_file_v2(utf8_filename, FALSE, ft, text);
+}
+
+GeanyDocument *document_new_file_v2(const gchar *utf8_filename, gboolean filename_is_untitled,
+		GeanyFiletype *ft, const gchar *text)
+{
 	GeanyDocument *doc;
 
 	if (utf8_filename && g_path_is_absolute(utf8_filename))
@@ -833,7 +840,7 @@ GeanyDocument *document_new_file(const gchar *utf8_filename, GeanyFiletype *ft, 
 		utils_tidy_path(tmp);
 		utf8_filename = tmp;
 	}
-	doc = document_create(utf8_filename);
+	doc = document_create(utf8_filename, filename_is_untitled);
 
 	g_assert(doc != NULL);
 
@@ -945,7 +952,7 @@ GeanyDocument *document_new_file_in_dir(const gchar *utf8_dirname, const gchar *
 	else
 		new_filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", utf8_dirname, basename_to_use);
 
-	document_new_file(new_filename ? new_filename : utf8_basename, ft, text);
+	document_new_file_v2(new_filename ? new_filename : basename_to_use, !utf8_basename, ft, text);
 	g_free(new_filename);
 }
 
@@ -1439,7 +1446,7 @@ GeanyDocument *document_open_file_full(GeanyDocument *doc, const gchar *filename
 
 		if (! reload)
 		{
-			doc = document_create(utf8_filename);
+			doc = document_create(utf8_filename, FALSE);
 			g_return_val_if_fail(doc != NULL, NULL); /* really should not happen */
 
 			/* file exists on disk, set real_path */
@@ -2154,7 +2161,7 @@ gboolean document_need_save_as(GeanyDocument *doc)
 {
 	g_return_val_if_fail(doc != NULL, FALSE);
 
-	return (doc->file_name == NULL || !g_path_is_absolute(doc->file_name));
+	return (doc->file_name == NULL || doc->priv->has_untitled_filename || !g_path_is_absolute(doc->file_name));
 }
 
 
@@ -2178,8 +2185,10 @@ gboolean document_save_file_as(GeanyDocument *doc, const gchar *utf8_fname)
 	g_return_val_if_fail(doc != NULL, FALSE);
 
 	new_file = document_need_save_as(doc) || (utf8_fname != NULL && strcmp(doc->file_name, utf8_fname) != 0);
-	if (utf8_fname != NULL)
+	if (utf8_fname != NULL) {
 		SETPTR(doc->file_name, g_strdup(utf8_fname));
+		doc->priv->has_untitled_filename = FALSE;
+	}
 
 	/* reset real path, it's retrieved again in document_save() */
 	SETPTR(doc->real_path, NULL);
