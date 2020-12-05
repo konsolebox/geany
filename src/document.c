@@ -675,6 +675,7 @@ static GeanyDocument *document_create(const gchar *utf8_filename, gboolean filen
 	ui_document_buttons_update();
 
 	doc->is_valid = TRUE;	/* do this last to prevent UI updating with NULL items. */
+	doc->changed = TRUE;
 	return doc;
 }
 
@@ -875,7 +876,7 @@ GeanyDocument *document_new_file_v2(const gchar *utf8_filename, gboolean filenam
 
 	ui_set_window_title(doc);
 	build_menu_update(doc);
-	document_set_text_changed(doc, FALSE);
+	document_set_text_changed(doc, doc->changed);
 	ui_document_show_hide(doc); /* update the document menu */
 
 	sci_set_line_numbers(doc->editor->sci, editor_prefs.show_linenumber_margin);
