@@ -332,6 +332,8 @@ gboolean document_rename_file_and_save(GeanyDocument *doc, const gchar *new_file
 
 gboolean document_rename_and_save(GeanyDocument *doc, const gchar *new_filename, gboolean ask_overwrite);
 
+gboolean document_rename_prompt(GeanyDocument *doc);
+
 #endif /* GEANY_PRIVATE */
 
 G_END_DECLS

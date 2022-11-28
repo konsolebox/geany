@@ -179,6 +179,9 @@ static void on_file1_activate(GtkMenuItem *menuitem, gpointer user_data)
 						g_queue_get_length(ui_prefs.recent_queue) > 0);
 	/* hide Page setup when GTK printing is not used */
 	ui_widget_show_hide(ui_widgets.print_page_setup, printing_prefs.use_gtk_printing);
+
+	GeanyDocument *doc = document_get_current();
+	gtk_widget_set_sensitive(ui_widgets.rename_menuitem, doc && doc->file_name);
 }
 
 
@@ -354,6 +357,17 @@ void on_reload_all1_activate(GtkMenuItem *menuitem, gpointer user_data)
 				document_reload_force(doc, NULL);
 		}
 	}
+}
+
+
+/* rename file */
+void on_rename1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	GeanyDocument *doc = document_get_current();
+
+	g_return_if_fail(doc && doc->file_name);
+
+	document_rename_prompt(doc);
 }
 
 
