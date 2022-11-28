@@ -31,6 +31,7 @@
 
 #include "app.h"
 #include "callbacks.h" /* FIXME: for ignore_callback */
+#include "dialogs.h"
 #include "documentprivate.h"
 #include "filetypesprivate.h"
 #include "geanyobject.h"
@@ -57,6 +58,7 @@ static struct
 	GtkWidget *close;
 	GtkWidget *close_recursively;
 	GtkWidget *save;
+	GtkWidget *save_as;
 	GtkWidget *reload;
 	GtkWidget *show_paths;
 	GtkWidget *find_in_files;
@@ -76,6 +78,7 @@ enum
 	OPENFILES_ACTION_REMOVE = 0,
 	OPENFILES_ACTION_REMOVE_RECURSIVE,
 	OPENFILES_ACTION_SAVE,
+	OPENFILES_ACTION_SAVE_AS,
 	OPENFILES_ACTION_RELOAD
 };
 
@@ -727,6 +730,13 @@ static void create_openfiles_popup_menu(void)
 			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_SAVE));
 	doc_items.save = item;
 
+	item = gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE_AS, NULL);
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+	g_signal_connect(item, "activate",
+			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_SAVE_AS));
+	doc_items.save_as = item;
+
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Reload"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
 		gtk_image_new_from_stock(GTK_STOCK_REVERT_TO_SAVED, GTK_ICON_SIZE_MENU));
@@ -835,6 +845,12 @@ static void document_action(GeanyDocument *doc, gint action)
 		case OPENFILES_ACTION_SAVE:
 		{
 			document_save_file(doc, FALSE);
+			break;
+		}
+		case OPENFILES_ACTION_SAVE_AS:
+		{
+			document_show_tab(doc);
+			dialogs_show_save_as();
 			break;
 		}
 		case OPENFILES_ACTION_RELOAD:
@@ -1108,6 +1124,7 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gtk_widget_set_sensitive(doc_items.close, sel);
 	gtk_widget_set_sensitive(doc_items.close_recursively, sel && !doc);
 	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
+	gtk_widget_set_sensitive(doc_items.save_as, doc != NULL);
 	gtk_widget_set_sensitive(doc_items.reload, doc && doc->real_path);
 	gtk_widget_set_sensitive(doc_items.find_in_files, sel);
 	g_free(shortname);
