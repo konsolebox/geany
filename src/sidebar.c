@@ -55,6 +55,7 @@ static gboolean may_steal_focus = FALSE;
 static struct
 {
 	GtkWidget *close;
+	GtkWidget *close_recursively;
 	GtkWidget *save;
 	GtkWidget *reload;
 	GtkWidget *show_paths;
@@ -62,7 +63,7 @@ static struct
 	GtkWidget *expand_all;
 	GtkWidget *collapse_all;
 }
-doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 enum
 {
@@ -73,6 +74,7 @@ enum
 enum
 {
 	OPENFILES_ACTION_REMOVE = 0,
+	OPENFILES_ACTION_REMOVE_RECURSIVE,
 	OPENFILES_ACTION_SAVE,
 	OPENFILES_ACTION_RELOAD
 };
@@ -705,6 +707,15 @@ static void create_openfiles_popup_menu(void)
 			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_REMOVE));
 	doc_items.close = item;
 
+	item = gtk_image_menu_item_new_with_mnemonic(_("Close Recursi_vely"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
+			gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU));
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+	g_signal_connect(item, "activate",
+				G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_REMOVE_RECURSIVE));
+	doc_items.close_recursively = item;
+
 	item = gtk_separator_menu_item_new();
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
@@ -835,6 +846,21 @@ static void document_action(GeanyDocument *doc, gint action)
 }
 
 
+static void document_action_recursive(GtkTreeModel *model, GtkTreeIter *parent, gint action)
+{
+	GtkTreeIter child;
+	gint i = gtk_tree_model_iter_n_children(model, parent) - 1;
+	GeanyDocument *doc;
+
+	while (i >= 0 && gtk_tree_model_iter_nth_child(model, &child, parent, i))
+	{
+		gtk_tree_model_get(model, &child, DOCUMENTS_DOCUMENT, &doc, -1);
+		document_action(doc, action);
+		--i;
+	}
+}
+
+
 static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_data)
 {
 	GtkTreeIter iter;
@@ -853,15 +879,38 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 		else
 		{
 			/* parent item selected */
-			GtkTreeIter child;
-			gint i = gtk_tree_model_iter_n_children(model, &iter) - 1;
 
-			while (i >= 0 && gtk_tree_model_iter_nth_child(model, &child, &iter, i))
+			switch (action)
 			{
-				gtk_tree_model_get(model, &child, DOCUMENTS_DOCUMENT, &doc, -1);
+				case OPENFILES_ACTION_REMOVE_RECURSIVE:
+				{
+					gchar *short_name_a, *short_name_b;
 
-				document_action(doc, action);
-				i--;
+					gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name_a, -1);
+					g_return_if_fail(short_name_a);
+
+					gint len = strlen(short_name_a);
+					gint i = gtk_tree_model_iter_n_children(model, NULL) - 1;
+
+					while (i >= 0 && gtk_tree_model_iter_nth_child(model, &iter, NULL, i))
+					{
+						gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name_b, -1);
+
+						if (short_name_b && g_ascii_strncasecmp(short_name_a, short_name_b, len) == 0 &&
+								(short_name_b[len] == '\0' || short_name_b[len] == G_DIR_SEPARATOR))
+						{
+							document_action_recursive(model, &iter, OPENFILES_ACTION_REMOVE);
+							g_free(short_name_b);
+						}
+
+						--i;
+					}
+
+					g_free(short_name_a);
+					break;
+				}
+				default:
+					document_action_recursive(model, &iter, action);
 			}
 		}
 	}
@@ -1057,6 +1106,7 @@ static void documents_menu_update(GtkTreeSelection *selection)
 
 	/* can close all, save all (except shortname), but only reload individually ATM */
 	gtk_widget_set_sensitive(doc_items.close, sel);
+	gtk_widget_set_sensitive(doc_items.close_recursively, sel && !doc);
 	gtk_widget_set_sensitive(doc_items.save, (doc && doc->real_path) || path);
 	gtk_widget_set_sensitive(doc_items.reload, doc && doc->real_path);
 	gtk_widget_set_sensitive(doc_items.find_in_files, sel);
