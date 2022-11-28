@@ -2164,7 +2164,7 @@ msgstr "Messaggi"
 # Uhm... non mi è venuto in mente di meglio...
 # Io pensavo al nome di un "luogo" ove mettere bigliettini (Bacheca). Comunque appunti non è male.
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Appunti"
 
 #: ../data/geany.glade.h:463
@@ -3709,7 +3709,7 @@ msgid "Switch to Messages"
 msgstr "Passa ai Messaggi"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "Passa agli appunti"
 
 #: ../src/keybindings.c:630

@@ -2256,7 +2256,7 @@ msgid "Messages"
 msgstr "Повідомлення"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Друк"
 
 #: ../data/geany.glade.h:463
@@ -3851,7 +3851,7 @@ msgid "Switch to Messages"
 msgstr "Перемкнутися до панелі пошуку"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "Перемкнутися до друку"
 
 #: ../src/keybindings.c:630

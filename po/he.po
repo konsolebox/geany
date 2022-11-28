@@ -2063,7 +2063,7 @@ msgid "Messages"
 msgstr "הודעות"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "הערות"
 
 #: ../data/geany.glade.h:463
@@ -3575,7 +3575,7 @@ msgid "Switch to Messages"
 msgstr "מעבר ללשונית ההודעות"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "מעבר ללשונית ההערות"
 
 #: ../src/keybindings.c:630

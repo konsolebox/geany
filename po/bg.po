@@ -2319,7 +2319,7 @@ msgid "Messages"
 msgstr "Съобщения"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Бележник"
 
 #: ../data/geany.glade.h:463
@@ -3928,7 +3928,7 @@ msgid "Switch to Messages"
 msgstr "Превключи към страничната лента"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "Превключи към бележника"
 
 #: ../src/keybindings.c:630

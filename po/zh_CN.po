@@ -2028,7 +2028,7 @@ msgid "Messages"
 msgstr "信息"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "便签"
 
 #: ../data/geany.glade.h:463
@@ -3516,7 +3516,7 @@ msgid "Switch to Messages"
 msgstr "切换到信息"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "切换到便签"
 
 #: ../src/keybindings.c:630

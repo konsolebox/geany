@@ -2086,7 +2086,7 @@ msgid "Messages"
 msgstr "訊息"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "草稿"
 
 #: ../data/geany.glade.h:463
@@ -3604,7 +3604,7 @@ msgid "Switch to Messages"
 msgstr "切換至訊息"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "切換至草稿"
 
 #: ../src/keybindings.c:630

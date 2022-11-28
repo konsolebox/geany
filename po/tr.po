@@ -2102,7 +2102,7 @@ msgid "Messages"
 msgstr "Mesajlar"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Karalama"
 
 #: ../data/geany.glade.h:463
@@ -3613,7 +3613,7 @@ msgid "Switch to Messages"
 msgstr "Mesajlara Geç"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "Karalama defterine geç"
 
 #: ../src/keybindings.c:630

@@ -2189,7 +2189,7 @@ msgid "Messages"
 msgstr "Thông điệp"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Viết tháu"
 
 #: ../data/geany.glade.h:463
@@ -3755,7 +3755,7 @@ msgid "Switch to Messages"
 msgstr "Chuyển sang Khung lề"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "Chuyển sang Viết tháu"
 
 #: ../src/keybindings.c:630

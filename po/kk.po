@@ -2033,7 +2033,7 @@ msgid "Messages"
 msgstr "Хабарламалар"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Жазбалар"
 
 #: ../data/geany.glade.h:463
@@ -3523,7 +3523,7 @@ msgid "Switch to Messages"
 msgstr "Хабарламаларға ауысу"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "Жазбаларға ауысу"
 
 #: ../src/keybindings.c:630

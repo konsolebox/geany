@@ -2226,7 +2226,7 @@ msgid "Messages"
 msgstr "Mesaje"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr ""
 
 #: ../data/geany.glade.h:463
@@ -3799,7 +3799,7 @@ msgid "Switch to Messages"
 msgstr "Treci la bara laterală"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "Treci la scribble"
 
 #: ../src/keybindings.c:630

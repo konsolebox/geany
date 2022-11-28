@@ -633,7 +633,7 @@ static void init_default_kb(void)
 	add_kb(group, GEANY_KEYS_FOCUS_MESSAGES, NULL,
 		0, 0, "switch_messages", _("Switch to Messages"), NULL);
 	add_kb(group, GEANY_KEYS_FOCUS_SCRIBBLE, NULL,
-		GDK_F6, 0, "switch_scribble", _("Switch to Scribble"), NULL);
+		GDK_F6, 0, "switch_scribble", _("Switch to Snippets"), NULL);
 	add_kb(group, GEANY_KEYS_FOCUS_VTE, NULL,
 		GDK_F4, 0, "switch_vte", _("Switch to VTE"), NULL);
 	add_kb(group, GEANY_KEYS_FOCUS_SIDEBAR, NULL,

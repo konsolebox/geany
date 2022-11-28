@@ -2137,7 +2137,7 @@ msgid "Messages"
 msgstr "Mensagens"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Rabiscar"
 
 #: ../data/geany.glade.h:463
@@ -3658,7 +3658,7 @@ msgid "Switch to Messages"
 msgstr "Mudar para mensagens"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "Mudar para \"Rabiscar\""
 
 #: ../src/keybindings.c:630

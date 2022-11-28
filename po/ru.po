@@ -2122,7 +2122,7 @@ msgid "Messages"
 msgstr "Сообщения"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Заметки"
 
 #: ../data/geany.glade.h:463
@@ -3646,7 +3646,7 @@ msgid "Switch to Messages"
 msgstr "Перейти к сообщениям"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "Перейти к заметкам"
 
 #: ../src/keybindings.c:630

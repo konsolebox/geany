@@ -2047,7 +2047,7 @@ msgid "Messages"
 msgstr "Број порука"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Забелешка"
 
 #: ../data/geany.glade.h:463
@@ -3552,7 +3552,7 @@ msgstr "Пређи у поруке"
 
 #: ../src/keybindings.c:628
 #, fuzzy
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "Пређи у бочну траку"
 
 #: ../src/keybindings.c:630

@@ -2033,7 +2033,7 @@ msgid "Messages"
 msgstr "Sõnumid"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Sodi"
 
 #: ../data/geany.glade.h:463
@@ -3543,7 +3543,7 @@ msgid "Switch to Messages"
 msgstr "Lülitu teadetele"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "Lülitu sodile"
 
 #: ../src/keybindings.c:630

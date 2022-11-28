@@ -238,7 +238,7 @@ The workspace has the following parts:
   * Status - A list of status messages.
   * Compiler - The output of compiling or building programs.
   * Messages - Results of 'Find Usage', 'Find in Files' and other actions
-  * Scribble - A text scratchpad for any use.
+  * Snippets - A text scratchpad for any use.
   * Terminal - An optional terminal window.
 
 * A status bar
@@ -2591,7 +2591,7 @@ msgwin_compiler_visible           Whether to show the Compiler tab in the      t
                                   Messages Window
 msgwin_messages_visible           Whether to show the Messages tab in the      true        immediately
                                   Messages Window
-msgwin_scribble_visible           Whether to show the Scribble tab in the      true        immediately
+msgwin_scribble_visible           Whether to show the Snippets tab in the      true        immediately
                                   Messages Window
 **VTE related**
 send_selection_unsafe             By default, Geany strips any trailing        false       immediately
@@ -3716,7 +3716,7 @@ Switch to Compiler                                         Focus the Compiler me
 
 Switch to Messages                                         Focus the Messages message window tab.
 
-Switch to Scribble               F6                        Switches to scribble widget.
+Switch to Snippets               F6                        Switches to scribble widget.
 
 Switch to VTE                    F4                        Switches to VTE widget.
 

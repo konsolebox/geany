@@ -2014,7 +2014,7 @@ msgid "Messages"
 msgstr "Meldingar"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Tavle"
 
 #: ../data/geany.glade.h:463
@@ -3493,7 +3493,7 @@ msgid "Switch to Messages"
 msgstr ""
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr ""
 
 #: ../src/keybindings.c:630

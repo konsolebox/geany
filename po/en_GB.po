@@ -2130,8 +2130,8 @@ msgid "Messages"
 msgstr "Messages"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
-msgstr "Scribble"
+msgid "Snippets"
+msgstr "Snippets"
 
 #: ../data/geany.glade.h:463
 msgid "Project Properties"
@@ -3656,8 +3656,8 @@ msgid "Switch to Messages"
 msgstr "Switch to Messages"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
-msgstr "Switch to Scribble"
+msgid "Switch to Snippets"
+msgstr "Switch to Snippets"
 
 #: ../src/keybindings.c:630
 msgid "Switch to VTE"

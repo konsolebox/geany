@@ -2103,7 +2103,7 @@ msgid "Messages"
 msgstr "Meddelanden"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Klotterplank"
 
 #: ../data/geany.glade.h:463
@@ -3619,8 +3619,8 @@ msgid "Switch to Messages"
 msgstr "Växla till Meddelanden"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
-msgstr "Byt till Scribble"
+msgid "Switch to Snippets"
+msgstr "Byt till Snippets"
 
 #: ../src/keybindings.c:630
 msgid "Switch to VTE"

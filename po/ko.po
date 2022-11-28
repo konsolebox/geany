@@ -2107,7 +2107,7 @@ msgid "Messages"
 msgstr "메시지"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "낙서"
 
 #: ../data/geany.glade.h:463
@@ -3620,7 +3620,7 @@ msgid "Switch to Messages"
 msgstr "가장자리창으로 포커스 전환"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "낙서창으로 포커스 전환"
 
 #: ../src/keybindings.c:630

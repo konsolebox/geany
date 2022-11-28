@@ -8586,7 +8586,7 @@
                   <object class="GtkLabel" id="notebook_info_label_scribble">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Scribble</property>
+                    <property name="label" translatable="yes">Snippets</property>
                   </object>
                   <packing>
                     <property name="position">3</property>

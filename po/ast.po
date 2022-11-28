@@ -2193,7 +2193,7 @@ msgid "Messages"
 msgstr "Mensaxes"
 
 #: ../data/geany.glade.h:462
-msgid "Scribble"
+msgid "Snippets"
 msgstr "Borrador"
 
 #: ../data/geany.glade.h:463
@@ -3751,7 +3751,7 @@ msgid "Switch to Messages"
 msgstr "Camudar a Mensaxes"
 
 #: ../src/keybindings.c:628
-msgid "Switch to Scribble"
+msgid "Switch to Snippets"
 msgstr "Dir al Borrador"
 
 #: ../src/keybindings.c:630
