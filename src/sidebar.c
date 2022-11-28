@@ -787,7 +787,7 @@ static void create_openfiles_popup_menu(void)
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
 
-	doc_items.expand_all = ui_image_menu_item_new(GTK_STOCK_ADD, _("_Expand All"));
+	doc_items.expand_all = ui_image_menu_item_new(GTK_STOCK_ADD, _("E_xpand All"));
 	gtk_widget_show(doc_items.expand_all);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), doc_items.expand_all);
 	g_signal_connect(doc_items.expand_all, "activate",
