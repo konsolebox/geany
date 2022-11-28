@@ -73,6 +73,8 @@ void sidebar_focus_openfiles_tab(void);
 
 void sidebar_focus_symbols_tab(void);
 
+void sidebar_rename_file_cb(guint key_id);
+
 G_END_DECLS
 
 #endif /* GEANY_SIDEBAR_H */
