@@ -192,6 +192,7 @@ typedef struct UIWidgets
 	GtkWidget	*recent_projects_menu_menubar;
 	GtkWidget	*config_files_filetype_menu;
 	GtkWidget	*rename_menuitem;
+	GtkWidget	*delete_file_menuitem;
 
 	/* dialogs */
 	GtkWidget	*open_colorsel;
