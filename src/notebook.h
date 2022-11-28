@@ -46,6 +46,16 @@ void notebook_switch_tablastused(void);
  * document yet). */
 gboolean notebook_switch_in_progress(void);
 
+typedef enum NotebookTabSortMethod
+{
+	NOTEBOOK_TAB_SORT_NONE,
+	NOTEBOOK_TAB_SORT_BY_FILENAME,
+	NOTEBOOK_TAB_SORT_BY_PATHNAME,
+	NOTEBOOK_TAB_SORT_BY_FOLDER
+} NotebookTabSortMethod;
+
+void notebook_sort_tabs(NotebookTabSortMethod method);
+
 G_END_DECLS
 
 #endif /* GEANY_NOTEBOOK_H */

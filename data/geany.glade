@@ -744,6 +744,26 @@
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="notebook_auto_sort_mode_list">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Disabled</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By filename</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By pathname</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By folder</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkDialog" id="prefs_dialog">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Preferences</property>
@@ -2182,6 +2202,49 @@
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
                                     <property name="position">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkHBox" id="hbox_notebook_auto_sort_tabs">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="spacing">12</property>
+                                    <child>
+                                      <object class="GtkLabel" id="label_notebook_auto_sort_tabs">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="xalign">0</property>
+                                        <property name="label" translatable="yes">Automatically sort tabs:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="position">0</property>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="combo_notebook_auto_sort_tabs">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="model">notebook_auto_sort_mode_list</property>
+                                        <child>
+                                          <object class="GtkCellRendererText" id="cellrenderertext_notebook_auto_sort_tabs"/>
+                                          <attributes>
+                                            <attribute name="text">0</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">5</property>
                                   </packing>
                                 </child>
                               </object>
