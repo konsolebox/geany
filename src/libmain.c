@@ -826,7 +826,7 @@ gboolean main_handle_filename(const gchar *locale_filename)
 		g_free(filename);
 		return TRUE;
 	}
-	else if (file_prefs.cmdline_new_files)
+	else if (file_prefs.cmdline_new_files && g_file_test(filename, G_FILE_TEST_EXISTS) == FALSE)
 	{	/* create new file with the given filename */
 		gchar *utf8_filename = utils_get_utf8_from_locale(filename);
 
