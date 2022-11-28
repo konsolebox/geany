@@ -518,12 +518,16 @@ static void open_file_dialog_apply_settings(GtkWidget *dialog)
 
 
 /* This shows the file selection dialog to open a file. */
-void dialogs_show_open_file(gboolean recursive)
+void dialogs_show_open_file(gboolean recursive, const gchar *utf8_initial_dir)
 {
-	gchar *initdir;
+	gchar *initdir = NULL;
+
+	if (utf8_initial_dir)
+		initdir = g_strdup(utf8_initial_dir);
 
 	/* set dialog directory to the current file's directory, if present */
-	initdir = utils_get_current_file_dir_utf8();
+	if (! initdir)
+		initdir = utils_get_current_file_dir_utf8();
 
 	/* use project or default startup directory (if set) if no files are open */
 	/** TODO should it only be used when initially open the dialog and not on every show? */
