@@ -668,6 +668,18 @@
     <property name="stock">gtk-jump-to</property>
     <property name="icon-size">1</property>
   </object>
+  <object class="GtkImage" id="image_next_location">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-go-forward</property>
+    <property name="icon-size">1</property>
+  </object>
+  <object class="GtkImage" id="image_previous_location">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-go-back</property>
+    <property name="icon-size">1</property>
+  </object>
   <object class="GtkImage" id="image4076">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -7368,6 +7380,34 @@
                             <property name="image">image4074</property>
                             <property name="use_stock">False</property>
                             <signal name="activate" handler="on_previous_message1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorMenuItem" id="separator64">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkImageMenuItem" id="go_to_next_location1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Go to Next _Location</property>
+                            <property name="use_underline">True</property>
+                            <property name="image">image_next_location</property>
+                            <property name="use_stock">False</property>
+                            <signal name="activate" handler="on_go_to_next_location1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkImageMenuItem" id="go_to_previous_location1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Go to Previ_ous Location</property>
+                            <property name="use_underline">True</property>
+                            <property name="image">image_previous_location</property>
+                            <property name="use_stock">False</property>
+                            <signal name="activate" handler="on_go_to_previous_location1_activate" swapped="no"/>
                           </object>
                         </child>
                         <child>

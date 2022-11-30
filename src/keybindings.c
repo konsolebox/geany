@@ -565,9 +565,11 @@ static void init_default_kb(void)
 	group = keybindings_get_core_group(GEANY_KEY_GROUP_GOTO);
 
 	add_kb(group, GEANY_KEYS_GOTO_BACK, NULL,
-		GDK_Left, GDK_MOD1_MASK, "nav_back", _("Navigate back a location"), NULL);
+		GDK_Left, GDK_MOD1_MASK, "nav_back", _("Navigate back a location"),
+		"go_to_previous_location1");
 	add_kb(group, GEANY_KEYS_GOTO_FORWARD, NULL,
-		GDK_Right, GDK_MOD1_MASK, "nav_forward", _("Navigate forward a location"), NULL);
+		GDK_Right, GDK_MOD1_MASK, "nav_forward", _("Navigate forward a location"),
+		"go_to_next_location1");
 	add_kb(group, GEANY_KEYS_GOTO_LINE, NULL,
 		GDK_l, GEANY_PRIMARY_MOD_MASK, "menu_gotoline", _("Go to Line"), "go_to_line1");
 	add_kb(group, GEANY_KEYS_GOTO_MATCHINGBRACE, NULL,

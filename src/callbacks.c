@@ -1863,6 +1863,18 @@ static void on_insert_alternative_white_space1_activate(GtkMenuItem *menuitem, g
 }
 
 
+static void on_go_to_next_location1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	keybindings_send_command(GEANY_KEY_GROUP_GOTO, GEANY_KEYS_GOTO_FORWARD);
+}
+
+
+static void on_go_to_previous_location1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	keybindings_send_command(GEANY_KEY_GROUP_GOTO, GEANY_KEYS_GOTO_BACK);
+}
+
+
 static void on_go_to_next_marker1_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	keybindings_send_command(GEANY_KEY_GROUP_GOTO, GEANY_KEYS_GOTO_NEXTMARKER);
