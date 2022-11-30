@@ -7361,6 +7361,23 @@
                           </object>
                         </child>
                         <child>
+                          <object class="GtkImageMenuItem" id="go_to_line1">
+                            <property name="label" translatable="yes">_Go to Line</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="use_underline">True</property>
+                            <property name="image">image4075</property>
+                            <property name="use_stock">False</property>
+                            <signal name="activate" handler="on_go_to_line_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorMenuItem" id="separator35">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                          </object>
+                        </child>
+                        <child>
                           <object class="GtkImageMenuItem" id="go_to_next_location1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -7408,23 +7425,6 @@
                         </child>
                         <child>
                           <object class="GtkSeparatorMenuItem" id="separator32">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkImageMenuItem" id="go_to_line1">
-                            <property name="label" translatable="yes">_Go to Line...</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="image">image4075</property>
-                            <property name="use_stock">False</property>
-                            <signal name="activate" handler="on_go_to_line_activate" swapped="no"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkSeparatorMenuItem" id="separator35">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
