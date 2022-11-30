@@ -445,10 +445,9 @@ static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 
 	static GtkTreeIter parent;
 	GtkTreeModel *model = GTK_TREE_MODEL(store_openfiles);
+	gchar *path, *stored_path, *stored_folder;
+	gchar *folder = sidebar_get_doc_folder(doc, &path);
 	gboolean parent_found = FALSE;
-	gchar *path, *folder, *stored_path, *stored_folder;
-
-	folder = sidebar_get_doc_folder(doc, &path);
 
 	if (gtk_tree_model_get_iter_first(model, &parent))
 	{
@@ -456,15 +455,15 @@ static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 		{
 			gtk_tree_model_get(model, &parent, DOCUMENTS_FILENAME, &stored_path,
 					DOCUMENTS_SHORTNAME, &stored_folder, -1);
-			parent_found = utils_filenamecmp(stored_path, path) == 0 &&
-					utils_filenamecmp(stored_folder, folder) == 0;
+
+			if (utils_filenamecmp(stored_path, path) == 0)
+				if (utils_filenamecmp(stored_folder, folder) == 0)
+					parent_found = TRUE;
+
 			g_free(stored_folder);
 			g_free(stored_path);
-
-			if (parent_found)
-				break;
 		}
-		while (gtk_tree_model_iter_next(model, &parent));
+		while (!parent_found && gtk_tree_model_iter_next(model, &parent));
 	}
 
 	if (!parent_found)
