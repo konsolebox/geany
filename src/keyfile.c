@@ -433,6 +433,8 @@ static void save_dialog_prefs(GKeyFile *config)
 	/* interface */
 	g_key_file_set_boolean(config, PACKAGE, "sidebar_symbol_visible", interface_prefs.sidebar_symbol_visible);
 	g_key_file_set_boolean(config, PACKAGE, "sidebar_openfiles_visible", interface_prefs.sidebar_openfiles_visible);
+	g_key_file_set_boolean(config, PACKAGE, "sidebar_folders_use_real_path", interface_prefs.sidebar_folders_use_real_path);
+
 	g_key_file_set_string(config, PACKAGE, "editor_font", interface_prefs.editor_font);
 	g_key_file_set_string(config, PACKAGE, "tagbar_font", interface_prefs.tagbar_font);
 	g_key_file_set_string(config, PACKAGE, "msgwin_font", interface_prefs.msgwin_font);
@@ -770,6 +772,7 @@ static void load_dialog_prefs(GKeyFile *config)
 	interface_prefs.tab_pos_msgwin = utils_get_setting_integer(config, PACKAGE, "tab_pos_msgwin",GTK_POS_LEFT);
 	interface_prefs.sidebar_symbol_visible = utils_get_setting_boolean(config, PACKAGE, "sidebar_symbol_visible", TRUE);
 	interface_prefs.sidebar_openfiles_visible = utils_get_setting_boolean(config, PACKAGE, "sidebar_openfiles_visible", TRUE);
+	interface_prefs.sidebar_folders_use_real_path = utils_get_setting_boolean(config, PACKAGE, "sidebar_folders_use_real_path", FALSE);
 	interface_prefs.statusbar_visible = utils_get_setting_boolean(config, PACKAGE, "statusbar_visible", TRUE);
 	file_prefs.tab_order_ltr = utils_get_setting_boolean(config, PACKAGE, "tab_order_ltr", TRUE);
 	file_prefs.tab_order_beside = utils_get_setting_boolean(config, PACKAGE, "tab_order_beside", FALSE);

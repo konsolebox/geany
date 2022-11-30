@@ -92,6 +92,7 @@ static void on_enable_plugins_toggled(GtkToggleButton *togglebutton, gpointer us
 static void on_use_folding_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 static void on_open_encoding_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 static void on_sidebar_visible_toggled(GtkToggleButton *togglebutton, gpointer user_data);
+static void on_sidebar_folders_use_real_path_toggled(GtkToggleButton *button, gpointer user_data);
 static void on_prefs_print_radio_button_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 static void on_prefs_print_page_header_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 static void open_preferences_help(void);
@@ -456,6 +457,9 @@ static void prefs_init_dialog(void)
 
 	widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_list_openfiles");
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), interface_prefs.sidebar_openfiles_visible);
+
+	widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_sidebar_folders_use_real_path");
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), interface_prefs.sidebar_folders_use_real_path);
 
 	widget = ui_lookup_widget(ui_widgets.prefs_dialog, "tagbar_font");
 	gtk_font_button_set_font_name(GTK_FONT_BUTTON(widget), interface_prefs.tagbar_font);
@@ -939,6 +943,9 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_list_openfiles");
 		interface_prefs.sidebar_openfiles_visible = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+
+		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_sidebar_folders_use_real_path");
+		on_sidebar_folders_use_real_path_toggled(GTK_TOGGLE_BUTTON(widget), NULL);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_long_line");
 		editor_prefs.long_line_enabled = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
@@ -1564,6 +1571,23 @@ static void on_sidebar_visible_toggled(GtkToggleButton *togglebutton, gpointer u
 	gboolean sens = gtk_toggle_button_get_active(togglebutton);
 
 	gtk_widget_set_sensitive(ui_lookup_widget(ui_widgets.prefs_dialog, "box_sidebar_visible_children"), sens);
+}
+
+
+static void on_sidebar_folders_use_real_path_toggled(GtkToggleButton *button, gpointer user_data)
+{
+	gboolean new_value = gtk_toggle_button_get_active(button);
+
+	if (interface_prefs.sidebar_folders_use_real_path != new_value)
+	{
+		interface_prefs.sidebar_folders_use_real_path = new_value;
+		guint i;
+
+		foreach_document(i)
+			SETPTR(documents[i]->priv->folder, NULL);
+
+		sidebar_openfiles_update_all();
+	}
 }
 
 

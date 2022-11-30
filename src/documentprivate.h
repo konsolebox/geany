@@ -115,6 +115,9 @@ typedef struct GeanyDocumentPrivate
 	GData			*data;
 	/* Whether filename is just a generated 'untitled' */
 	gboolean		 has_untitled_filename;
+	/* Calculated folder name and path used for caching */
+	gchar			*folder;
+	gchar			*folder_path;
 }
 GeanyDocumentPrivate;
 

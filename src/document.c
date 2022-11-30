@@ -755,6 +755,9 @@ static gboolean remove_page(guint page_num)
 
 	document_undo_clear(doc);
 
+	g_free(doc->priv->folder);
+	g_free(doc->priv->folder_path);
+
 	g_free(doc->priv);
 
 	/* reset document settings to defaults for re-use */
@@ -2193,6 +2196,9 @@ gboolean document_save_file_as(GeanyDocument *doc, const gchar *utf8_fname)
 
 	/* reset real path, it's retrieved again in document_save() */
 	SETPTR(doc->real_path, NULL);
+
+	/* also reset folder */
+	SETPTR(doc->priv->folder, NULL);
 
 	/* detect filetype */
 	if (doc->file_type->id == GEANY_FILETYPES_NONE)

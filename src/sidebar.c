@@ -375,22 +375,66 @@ gchar *sidebar_get_doc_folder(GeanyDocument *doc, gchar **out_path)
 
 	g_return_val_if_fail(doc != NULL, NULL);
 
-	gchar *folder = NULL;
-	gchar *path = g_path_get_dirname(DOC_FILENAME(doc));
-
-	g_return_val_if_fail(path != NULL, NULL);
-
-	if (!doc->file_name || strcmp(path, ".") == 0)
-	{
-		folder = g_strdup(GEANY_STRING_UNTITLED);
+	if (doc->priv->folder && doc->priv->folder_path)
 		goto exit;
+
+	gchar *folder = NULL;
+	gchar *path = NULL;
+
+	if (interface_prefs.sidebar_folders_use_real_path)
+	{
+		gchar *real_path_locale = NULL;
+
+		if (doc->real_path)
+			real_path_locale = tm_get_real_path(doc->real_path);
+		else if (doc->file_name)
+		{
+			gchar *dirname = g_path_get_dirname(doc->file_name);
+
+			if (strcmp(dirname, ".") != 0)
+			{
+				gchar *filename_locale = utils_get_locale_from_utf8(doc->file_name);
+				real_path_locale = tm_get_real_path(filename_locale);
+				g_free(filename_locale);
+			}
+
+			g_free(dirname);
+		}
+
+		if (real_path_locale)
+		{
+			gchar *real_path_utf8 = utils_get_utf8_from_locale(real_path_locale);
+			path = g_path_get_dirname(real_path_utf8);
+			g_free(real_path_utf8);
+			g_free(real_path_locale);
+		}
+	}
+
+	if (path == NULL)
+	{
+		path = g_path_get_dirname(DOC_FILENAME(doc));
+		g_return_val_if_fail(path != NULL, NULL);
+
+		if (strcmp(path, ".") == 0)
+		{
+			folder = g_strdup(GEANY_STRING_UNTITLED);
+			goto save_and_exit;
+		}
 	}
 
 	/* replace the project base path with the project name */
 	gchar *project_base_path = project_get_base_path();
 
-	if (project_base_path != NULL)
+	if (project_base_path)
 	{
+		if (interface_prefs.sidebar_folders_use_real_path)
+		{
+			gchar *real_path = tm_get_real_path(project_base_path);
+
+			if (real_path)
+				SETPTR(project_base_path, real_path);
+		}
+
 		gsize len = strlen(project_base_path);
 
 		/* remove trailing separator so we can match base path exactly */
@@ -421,20 +465,22 @@ gchar *sidebar_get_doc_folder(GeanyDocument *doc, gchar **out_path)
 			if (*rest == G_DIR_SEPARATOR || *rest == '\0')
 			{
 				folder = g_strdup_printf("~%s", rest);
-				goto exit;
+				goto save_and_exit;
 			}
 		}
 
 		folder = g_strdup(path);
 	}
 
+save_and_exit:
+	SETPTR(doc->priv->folder, folder);
+	SETPTR(doc->priv->folder_path, path);
+
 exit:
 	if (out_path)
-		*out_path = path;
-	else
-		g_free(path);
+		*out_path = g_strdup(doc->priv->folder_path);
 
-	return folder;
+	return g_strdup(doc->priv->folder);
 }
 
 
