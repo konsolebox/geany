@@ -864,6 +864,7 @@ static void init_document_widgets(void)
 	 * when using ui_document_buttons_update(). */
 	add_doc_widget("menu_close1");
 	add_doc_widget("close_other_documents1");
+	add_doc_widget("menu_close_inexistent_documents1");
 	add_doc_widget("menu_change_font1");
 	add_doc_widget("menu_close_all1");
 	add_doc_widget("menu_save1");

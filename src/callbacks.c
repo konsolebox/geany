@@ -1749,6 +1749,21 @@ void on_close_other_documents1_activate(GtkMenuItem *menuitem, gpointer user_dat
 }
 
 
+static void on_menu_close_inexistent_documents1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	guint i;
+
+	foreach_document(i)
+	{
+		GeanyDocument *doc = documents[i];
+
+		if (doc->real_path && ! g_file_test(doc->real_path, G_FILE_TEST_EXISTS))
+			if (! document_close(doc))
+				break;
+	}
+}
+
+
 static void on_menu_reload_configuration1_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	main_reload_configuration();
