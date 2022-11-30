@@ -7355,34 +7355,6 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkSeparatorMenuItem" id="separator35">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkImageMenuItem" id="next_message1">
-                            <property name="label" translatable="yes">Next Me_ssage</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="image">image4073</property>
-                            <property name="use_stock">False</property>
-                            <signal name="activate" handler="on_next_message1_activate" swapped="no"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkImageMenuItem" id="previous_message1">
-                            <property name="label" translatable="yes">Pr_evious Message</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="image">image4074</property>
-                            <property name="use_stock">False</property>
-                            <signal name="activate" handler="on_previous_message1_activate" swapped="no"/>
-                          </object>
-                        </child>
-                        <child>
                           <object class="GtkSeparatorMenuItem" id="separator64">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -7449,6 +7421,40 @@
                             <property name="image">image4075</property>
                             <property name="use_stock">False</property>
                             <signal name="activate" handler="on_go_to_line_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorMenuItem" id="separator35">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkImageMenuItem" id="next_message1">
+                            <property name="label" translatable="yes">Go to Next Me_ssage</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="use_underline">True</property>
+                            <property name="image">image4073</property>
+                            <property name="use_stock">False</property>
+                            <signal name="activate" handler="on_next_message1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkImageMenuItem" id="previous_message1">
+                            <property name="label" translatable="yes">Go to Pr_evious Message</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="use_underline">True</property>
+                            <property name="image">image4074</property>
+                            <property name="use_stock">False</property>
+                            <signal name="activate" handler="on_previous_message1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorMenuItem" id="separator65">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                           </object>
                         </child>
                         <child>
