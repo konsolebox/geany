@@ -1687,7 +1687,8 @@ static GFileEnumerator *enumerate_children(const char *dir_path, GError **error)
 
 
 void document_open_files_recursively(const GSList *filenames, gboolean readonly, GeanyFiletype *ft,
-		const gchar *forced_enc, GtkFileFilter *filter, GError **error)
+		const gchar *forced_enc, GtkFileFilter *filter, GError **error_ptr, gboolean *cancelled_ptr,
+		GCallback iteration_callback, gpointer user_data, gpointer user_data_2)
 {
 	const GSList *item;
 	gchar *file_path, *dir_path;
@@ -1695,7 +1696,8 @@ void document_open_files_recursively(const GSList *filenames, gboolean readonly,
 	GFileEnumerator *enumerator;
 	GFileInfo *file_info;
 	GFileType file_type;
-	GError *my_error = NULL;
+	GError *error = NULL;
+	gboolean quit = FALSE;
 
 	typedef struct EnumeratorData
 	{
@@ -1709,23 +1711,30 @@ void document_open_files_recursively(const GSList *filenames, gboolean readonly,
 	guint enum_stack_index = 0;
 
 	GtkFileFilterInfo filter_info;
-	filter_info.contains = GTK_FILE_FILTER_FILENAME|GTK_FILE_FILTER_DISPLAY_NAME|GTK_FILE_FILTER_MIME_TYPE;
+	filter_info.contains = GTK_FILE_FILTER_FILENAME|GTK_FILE_FILTER_DISPLAY_NAME|
+			GTK_FILE_FILTER_MIME_TYPE;
 	filter_info.uri = NULL;
 
-	for (item = filenames; item != NULL; item = g_slist_next(item))
+	typedef gboolean (*t_iteration_callback)(const gchar *, gpointer *, gpointer *);
+	t_iteration_callback callback = (t_iteration_callback) iteration_callback;
+
+	for (item = filenames; item != NULL && error == NULL && !quit; item = g_slist_next(item))
 	{
 		file_path = item->data;
+
+		if (! callback(file_path, user_data, user_data_2))
+			break;
 
 		if (g_file_test(file_path, G_FILE_TEST_IS_DIR))
 		{
 			dir_path = file_path;
-			enumerator = enumerate_children(dir_path, &my_error);
+			enumerator = enumerate_children(dir_path, &error);
 
 			while (TRUE)
 			{
-				while (my_error == NULL)
+				while (error == NULL && !quit)
 				{
-					file_info = g_file_enumerator_next_file(enumerator, NULL, &my_error);
+					file_info = g_file_enumerator_next_file(enumerator, NULL, &error);
 
 					if (file_info == NULL)
 						break;
@@ -1737,20 +1746,19 @@ void document_open_files_recursively(const GSList *filenames, gboolean readonly,
 						filename = g_file_info_get_name(file_info);
 
 						if (filename == NULL)
-							my_error = g_error_new(0, 0, "Failed to get filename of a file");
+							error = g_error_new(0, 0, "Failed to get filename of a file");
 						else
 						{
 							if (file_type == G_FILE_TYPE_DIRECTORY)
 							{
 								if (enum_stack_index == ENUM_STACK_SIZE)
-									my_error = g_error_new(0, 0, "Recursion depth limit reached");
+									error = g_error_new(0, 0, "Recursion depth limit reached");
 								else
 								{
 									enum_stack[enum_stack_index].enumerator = enumerator;
 									enum_stack[enum_stack_index++].dir_path = dir_path;
-
 									dir_path = g_build_filename(dir_path, filename, NULL);
-									enumerator = enumerate_children(dir_path, &my_error);
+									enumerator = enumerate_children(dir_path, &error);
 								}
 							}
 							else
@@ -1760,11 +1768,20 @@ void document_open_files_recursively(const GSList *filenames, gboolean readonly,
 								if (file_path)
 								{
 									filter_info.filename = filename;
-									filter_info.display_name = g_file_info_get_display_name(file_info);
+									filter_info.display_name =
+											g_file_info_get_display_name(file_info);
 									filter_info.mime_type = g_file_info_get_content_type(file_info);
 
 									if (gtk_file_filter_filter(filter, &filter_info))
+									{
+										if (! callback(file_path, user_data, user_data_2))
+										{
+											quit = TRUE;
+											break;
+										}
+
 										document_open_file(file_path, readonly, ft, forced_enc);
+									}
 
 									g_free(file_path);
 								}
@@ -1789,17 +1806,16 @@ void document_open_files_recursively(const GSList *filenames, gboolean readonly,
 			document_open_file(file_path, readonly, ft, forced_enc);
 	}
 
-	if (my_error)
-	{
-		if (error)
-			*error = g_error_new(my_error->domain, my_error->code,
-					"Failed to open files recursively: %s", my_error->message);
+	if (error_ptr)
+		*error_ptr = error == NULL ? NULL :
+				g_error_new(error->domain, error->code,
+						"Failed to open files recursively: %s", error->message);
 
-		g_error_free(my_error);
-	}
-	else
-		if (error)
-			*error = NULL;
+	if (error)
+		g_error_free(error);
+
+	if (cancelled_ptr)
+		*cancelled_ptr = quit;
 }
 
 

@@ -125,11 +125,92 @@ static void file_chooser_set_filter_idx(GtkFileChooser *chooser, guint idx)
 }
 
 
-static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint response, gboolean recursive)
+static void on_cancellable_status_window_key_press(GtkWidget *widget, GdkEventKey *event,
+		gpointer data)
+{
+	if (event->keyval == GDK_KEY_Escape)
+		gtk_widget_destroy(widget);
+}
+
+
+void dialogs_create_cancellable_status_window(GtkWidget **window_ptr, GtkWidget **label_ptr,
+		const gchar *title, const gchar *initial_label_text, gboolean show)
+{
+	GtkWidget *label = gtk_label_new(initial_label_text);
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_label_set_single_line_mode(GTK_LABEL(label), FALSE);
+	gtk_widget_set_size_request(label, 300, -1);
+
+	GtkWidget *cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+
+	GtkWidget *h_button_box = gtk_hbutton_box_new();
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(h_button_box), GTK_BUTTONBOX_CENTER);
+	gtk_container_add(GTK_CONTAINER(h_button_box), cancel_button);
+
+	GtkWidget *vbox = gtk_vbox_new(FALSE, 10);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 10);
+	gtk_box_pack_end(GTK_BOX(vbox), h_button_box, FALSE, FALSE, 10);
+
+	GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_transient_for(GTK_WINDOW(window), GTK_WINDOW(main_widgets.window));
+	gtk_window_set_destroy_with_parent(GTK_WINDOW(window), TRUE);
+	gtk_window_set_modal(GTK_WINDOW(window), TRUE);
+	gtk_window_set_title(GTK_WINDOW(window), title);
+	gtk_window_set_default_size(GTK_WINDOW(window), 340, -1);
+	gtk_widget_set_size_request(window, 340, 150);
+	gtk_widget_set_name(window, "GeanyCancellableStatusWindow");
+	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_MENU);
+	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ON_PARENT);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+
+	*window_ptr = window;
+	*label_ptr = label;
+
+	g_signal_connect(window, "destroy", G_CALLBACK(gtk_widget_destroyed), window_ptr);
+	g_signal_connect(window, "key_press_event",
+			G_CALLBACK(on_cancellable_status_window_key_press), NULL);
+	g_signal_connect_swapped(G_OBJECT(cancel_button), "clicked", G_CALLBACK(gtk_widget_destroy),
+			window);
+
+	if (show)
+		gtk_widget_show_all(window);
+}
+
+
+static gboolean on_recursive_open_iterate(const char *file_path, GtkWidget **window_ptr,
+		GtkLabel *label)
+{
+	while (gtk_events_pending())
+		gtk_main_iteration();
+
+	if (*window_ptr != NULL)
+	{
+		if (file_path)
+		{
+			gchar *file_path_utf8 = utils_get_utf8_from_locale(file_path);
+			gchar *message = g_strconcat("Opening '", file_path_utf8, "'...", NULL);
+			gtk_label_set_text(label, message);
+			g_free(message);
+			g_free(file_path_utf8);
+
+			while (gtk_events_pending())
+				gtk_main_iteration();
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+
+static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint response,
+		gboolean recursive)
 {
 	gboolean ret = TRUE;
 
-	if (response == GTK_RESPONSE_ACCEPT || response == GEANY_RESPONSE_VIEW || response == GEANY_RESPONSE_OPEN_RECURSIVELY)
+	if (response == GTK_RESPONSE_ACCEPT || response == GEANY_RESPONSE_VIEW ||
+			response == GEANY_RESPONSE_OPEN_RECURSIVELY)
 	{
 		GSList *filelist;
 		GeanyFiletype *ft = NULL;
@@ -141,14 +222,17 @@ static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint respons
 
 		filesel_state.open.more_options_visible = gtk_expander_get_expanded(GTK_EXPANDER(expander));
 		filesel_state.open.filter_idx = file_chooser_get_filter_idx(GTK_FILE_CHOOSER(dialog));
-		filesel_state.open.filetype_idx = filetype_combo_box_get_active_filetype(GTK_COMBO_BOX(filetype_combo));
+		filesel_state.open.filetype_idx =
+				filetype_combo_box_get_active_filetype(GTK_COMBO_BOX(filetype_combo));
 
 		/* ignore detect from file item */
 		if (filesel_state.open.filetype_idx >= 0)
 			ft = filetypes_index(filesel_state.open.filetype_idx);
 
-		filesel_state.open.encoding_idx = ui_encodings_combo_box_get_active_encoding(GTK_COMBO_BOX(encoding_combo));
-		if (filesel_state.open.encoding_idx >= 0 && filesel_state.open.encoding_idx < GEANY_ENCODINGS_MAX)
+		filesel_state.open.encoding_idx =
+				ui_encodings_combo_box_get_active_encoding(GTK_COMBO_BOX(encoding_combo));
+		if (filesel_state.open.encoding_idx >= 0 && filesel_state.open.encoding_idx <
+				GEANY_ENCODINGS_MAX)
 			charset = encodings[filesel_state.open.encoding_idx].charset;
 
 		filelist = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
@@ -190,6 +274,7 @@ static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint respons
 					const gchar *filter_name = gtk_file_filter_get_name(filter);
 					GError *error;
 					gchar *message;
+					gboolean cancelled;
 
 					if (only_dir)
 						message = g_strdup_printf(_("Open files in \"%s\" using filter \"%s\"?"),
@@ -202,13 +287,24 @@ static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint respons
 							_("This may take a while depending on the files and the filter."),
 							"%s", message))
 					{
-						document_open_files_recursively(filelist, ro, ft, charset, filter, &error);
+						GtkWidget *status_window, *label;
+						dialogs_create_cancellable_status_window(&status_window, &label,
+								"Opening Files Recursively", "Opening files recursively...", TRUE);
+
+						document_open_files_recursively(filelist, ro, ft, charset, filter, &error,
+								&cancelled, G_CALLBACK(on_recursive_open_iterate), &status_window,
+								label);
 
 						if (error)
 						{
 							dialogs_show_msgbox(GTK_MESSAGE_ERROR, "%s", error->message);
 							g_error_free(error);
 						}
+						else if (cancelled)
+							dialogs_show_msgbox(GTK_MESSAGE_WARNING, "Cancelled.");
+
+						if (status_window)
+							gtk_widget_destroy(status_window);
 					}
 					else
 						ret = FALSE;
@@ -218,13 +314,17 @@ static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint respons
 				else
 					document_open_files(filelist, ro, ft, charset);
 			}
+
 			g_slist_foreach(filelist, (GFunc) g_free, NULL);	/* free filenames */
 		}
+
 		g_slist_free(filelist);
 	}
+
 	if (app->project && !EMPTY(app->project->base_path))
 		gtk_file_chooser_remove_shortcut_folder(GTK_FILE_CHOOSER(dialog),
-			app->project->base_path, NULL);
+				app->project->base_path, NULL);
+
 	return ret;
 }
 
@@ -553,11 +653,13 @@ void dialogs_show_open_file(gboolean recursive, const gchar *utf8_initial_dir)
 			gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(dialog),
 					app->project->base_path, NULL);
 
-		while (!open_file_dialog_handle_response(dialog, gtk_dialog_run(GTK_DIALOG(dialog)),
+		while (! open_file_dialog_handle_response(dialog, gtk_dialog_run(GTK_DIALOG(dialog)),
 				recursive))
 			;
+
 		gtk_widget_destroy(dialog);
 	}
+
 	g_free(initdir);
 }
 

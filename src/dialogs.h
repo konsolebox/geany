@@ -81,6 +81,9 @@ gint dialogs_show_prompt(GtkWidget *parent,
 
 void dialogs_show_msgbox_with_secondary(GtkMessageType type, const gchar *text, const gchar *secondary);
 
+void dialogs_create_cancellable_status_window(GtkWidget **window_ptr, GtkWidget **label_ptr,
+		const gchar *title, const gchar *initial_label_text, gboolean show);
+
 #endif /* GEANY_PRIVATE */
 
 G_END_DECLS
