@@ -199,6 +199,8 @@ gboolean document_remove_page(guint page_num);
 
 gboolean document_reload_force(GeanyDocument *doc, const gchar *forced_enc);
 
+void document_reload_all();
+
 void document_set_encoding(GeanyDocument *doc, const gchar *new_encoding);
 
 void document_set_text_changed(GeanyDocument *doc, gboolean changed);

@@ -1916,6 +1916,57 @@ gboolean document_reload_prompt(GeanyDocument *doc, const gchar *forced_enc)
 }
 
 
+void document_reload_all()
+{
+	if (dialogs_show_question_full(NULL, _("_Reload"), GTK_STOCK_CANCEL,
+			_("Any unsaved changes and undo history will be lost."),
+			_("Reload all opened documents?")))
+	{
+		GtkWidget *status_window, *label;
+		gint i;
+
+		dialogs_create_cancellable_status_window(&status_window, &label, "Reloading Files",
+				"Reloading files...", TRUE);
+
+		while (gtk_events_pending())
+			gtk_main_iteration();
+
+		foreach_document(i)
+		{
+			GeanyDocument *doc = documents[i];
+
+			if (doc->real_path)
+			{
+				gchar *real_path_utf8 = utils_get_utf8_from_locale(doc->real_path);
+				gchar *message = g_strconcat("Reloading '", real_path_utf8, "'...", NULL);
+				gtk_label_set_text(GTK_LABEL(label), message);
+				g_free(message);
+				g_free(real_path_utf8);
+
+				while (gtk_events_pending())
+					gtk_main_iteration();
+
+				if (status_window == NULL)
+				{
+					dialogs_show_msgbox(GTK_MESSAGE_WARNING, "Cancelled.");
+					break;
+				}
+
+				if (document_reload_force(doc, NULL) == FALSE)
+				{
+					dialogs_show_msgbox(GTK_MESSAGE_ERROR, "Failed to reload '%s'.",
+							doc->file_name);
+					break;
+				}
+			}
+		}
+
+		if (status_window)
+			gtk_widget_destroy(status_window);
+	}
+}
+
+
 gboolean document_delete_prompt(GeanyDocument *doc)
 {
 	g_return_val_if_fail(DOC_VALID(doc), FALSE);

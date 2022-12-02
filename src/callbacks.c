@@ -342,22 +342,7 @@ void on_toolbutton_reload_clicked(GtkAction *action, gpointer user_data)
 /* reload all documents */
 void on_reload_all1_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
-	gint i;
-
-	if (dialogs_show_question_full(NULL, _("_Reload"), GTK_STOCK_CANCEL,
-			_("Any unsaved changes and undo history will be lost."),
-			_("Reload all opened documents?")))
-	{
-		gint i;
-
-		foreach_document(i)
-		{
-			GeanyDocument *doc = documents[i];
-
-			if (doc->real_path)
-				document_reload_force(doc, NULL);
-		}
-	}
+	document_reload_all();
 }
 
 
