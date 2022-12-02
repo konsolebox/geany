@@ -26,14 +26,12 @@
 #include "ui_utils.h"
 #include "main.h"
 
-
 static gboolean app_block_termination_cb(GtkosxApplication *app, gpointer data)
 {
 	return !main_quit();
 }
 
-
-/* For some reason osx doesn't like when the NSApplicationOpenFile handler blocks for 
+/* For some reason osx doesn't like when the NSApplicationOpenFile handler blocks for
  * a long time which may be caused by the project_ask_close() below. Finish the
  * NSApplicationOpenFile handler immediately and perform the potentially blocking
  * code on idle in this function. */
@@ -42,14 +40,13 @@ static gboolean open_project_idle(gchar *locale_path)
 	gchar *utf8_path;
 
 	utf8_path = utils_get_utf8_from_locale(locale_path);
-	if (app->project == NULL || 
+	if (app->project == NULL ||
 		(g_strcmp0(utf8_path, app->project->file_name) != 0 && project_ask_close()))
 		project_load_file_with_session(locale_path);
 	g_free(utf8_path);
 	g_free(locale_path);
 	return FALSE;
 }
-
 
 static gboolean app_open_file_cb(GtkosxApplication *osx_app, gchar *path, gpointer user_data)
 {
@@ -79,12 +76,10 @@ static gboolean app_open_file_cb(GtkosxApplication *osx_app, gchar *path, gpoint
 	return opened;
 }
 
-
 static void on_new_window(GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer user_data)
 {
 	utils_start_new_geany_instance(NULL);
 }
-
 
 void osx_ui_init(void)
 {

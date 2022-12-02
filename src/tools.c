@@ -46,7 +46,6 @@
 #include <string.h>
 #include <errno.h>
 
-
 enum
 {
 	CC_COLUMN_ID,
@@ -71,7 +70,6 @@ struct cc_dialog
 	GtkWidget *button_down;
 };
 
-
 /* update STATUS and TOOLTIP columns according to cmd */
 static void cc_dialog_update_row_status(GtkListStore *store, GtkTreeIter *iter, const gchar *cmd)
 {
@@ -90,7 +88,6 @@ static void cc_dialog_update_row_status(GtkListStore *store, GtkTreeIter *iter, 
 	gtk_list_store_set(store, iter, CC_COLUMN_STATUS, stock_id, CC_COLUMN_TOOLTIP, tooltip, -1);
 	g_free(tooltip);
 }
-
 
 /* adds a new row for custom command @p idx, or an new empty one if < 0 */
 static void cc_dialog_add_command(struct cc_dialog *cc, gint idx, gboolean start_editing)
@@ -122,12 +119,10 @@ static void cc_dialog_add_command(struct cc_dialog *cc, gint idx, gboolean start
 	}
 }
 
-
 static void cc_on_dialog_add_clicked(GtkButton *button, struct cc_dialog *cc)
 {
 	cc_dialog_add_command(cc, -1, TRUE);
 }
-
 
 static void scroll_to_cursor(GtkTreeView *view)
 {
@@ -153,7 +148,6 @@ static void cc_on_dialog_remove_clicked(GtkButton *button, struct cc_dialog *cc)
 	}
 }
 
-
 static void cc_on_dialog_move_up_clicked(GtkButton *button, struct cc_dialog *cc)
 {
 	GtkTreeIter iter;
@@ -174,7 +168,6 @@ static void cc_on_dialog_move_up_clicked(GtkButton *button, struct cc_dialog *cc
 	}
 }
 
-
 static void cc_on_dialog_move_down_clicked(GtkButton *button, struct cc_dialog *cc)
 {
 	GtkTreeIter iter;
@@ -191,7 +184,6 @@ static void cc_on_dialog_move_down_clicked(GtkButton *button, struct cc_dialog *
 	}
 }
 
-
 /* Executes command (which should include all necessary command line args) and passes the current
  * selection through the standard input of command. The whole output of command replaces the
  * current selection. */
@@ -205,7 +197,7 @@ void tools_execute_custom_command(GeanyDocument *doc, const gchar *command)
 	gint status;
 
 	g_return_if_fail(doc != NULL && command != NULL);
- 
+
 	if (! sci_has_selection(doc->editor->sci))
 		editor_select_lines(doc->editor, FALSE);
 
@@ -249,7 +241,6 @@ void tools_execute_custom_command(GeanyDocument *doc, const gchar *command)
 	g_free(sel);
 }
 
-
 static void cc_dialog_on_command_edited(GtkCellRendererText *renderer, gchar *path, gchar *text,
 		struct cc_dialog *cc)
 {
@@ -260,7 +251,6 @@ static void cc_dialog_on_command_edited(GtkCellRendererText *renderer, gchar *pa
 	cc_dialog_update_row_status(cc->store, &iter, text);
 }
 
-
 static void cc_dialog_on_label_edited(GtkCellRendererText *renderer, gchar *path, gchar *text,
 		struct cc_dialog *cc)
 {
@@ -269,7 +259,6 @@ static void cc_dialog_on_label_edited(GtkCellRendererText *renderer, gchar *path
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(cc->store), &iter, path);
 	gtk_list_store_set(cc->store, &iter, CC_COLUMN_LABEL, text, -1);
 }
-
 
 /* re-compute IDs to reflect the current store state */
 static void cc_dialog_update_ids(struct cc_dialog *cc)
@@ -287,7 +276,6 @@ static void cc_dialog_update_ids(struct cc_dialog *cc)
 	}
 	while (gtk_tree_model_iter_next(GTK_TREE_MODEL(cc->store), &iter));
 }
-
 
 /* update sensitiveness of the buttons according to the selection */
 static void cc_dialog_update_sensitive(struct cc_dialog *cc)
@@ -316,12 +304,10 @@ static void cc_dialog_update_sensitive(struct cc_dialog *cc)
 	gtk_widget_set_sensitive(cc->button_down, has_selection && ! last_selected);
 }
 
-
 static void cc_dialog_on_tree_selection_changed(GtkTreeSelection *selection, struct cc_dialog *cc)
 {
 	cc_dialog_update_sensitive(cc);
 }
-
 
 static void cc_dialog_on_row_inserted(GtkTreeModel *model, GtkTreePath  *path, GtkTreeIter *iter,
 		struct cc_dialog *cc)
@@ -330,13 +316,11 @@ static void cc_dialog_on_row_inserted(GtkTreeModel *model, GtkTreePath  *path, G
 	cc_dialog_update_sensitive(cc);
 }
 
-
 static void cc_dialog_on_row_deleted(GtkTreeModel *model, GtkTreePath  *path, struct cc_dialog *cc)
 {
 	cc_dialog_update_ids(cc);
 	cc_dialog_update_sensitive(cc);
 }
-
 
 static void cc_dialog_on_rows_reordered(GtkTreeModel *model, GtkTreePath  *path, GtkTreeIter *iter,
 		gpointer new_order, struct cc_dialog *cc)
@@ -344,7 +328,6 @@ static void cc_dialog_on_rows_reordered(GtkTreeModel *model, GtkTreePath  *path,
 	cc_dialog_update_ids(cc);
 	cc_dialog_update_sensitive(cc);
 }
-
 
 static void cc_show_dialog_custom_commands(void)
 {
@@ -520,7 +503,6 @@ static void cc_show_dialog_custom_commands(void)
 	gtk_widget_destroy(dialog);
 }
 
-
 static void cc_on_custom_command_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	GeanyDocument *doc = document_get_current();
@@ -541,7 +523,6 @@ static void cc_on_custom_command_activate(GtkMenuItem *menuitem, gpointer user_d
 	 * will be replaced */
 	tools_execute_custom_command(doc, ui_prefs.custom_commands[command_idx]);
 }
-
 
 static void cc_insert_custom_command_items(GtkMenu *me, const gchar *label, const gchar *tooltip, gint idx)
 {
@@ -578,7 +559,6 @@ static void cc_insert_custom_command_items(GtkMenu *me, const gchar *label, cons
 	g_signal_connect(item, "activate", G_CALLBACK(cc_on_custom_command_activate),
 		GINT_TO_POINTER(idx));
 }
-
 
 void tools_create_insert_custom_command_menu_items(void)
 {
@@ -625,7 +605,6 @@ void tools_create_insert_custom_command_menu_items(void)
 
 	cc_insert_custom_command_items(menu_edit, _("Set Custom Commands"), NULL, -1);
 }
-
 
 /* (stolen from bluefish, thanks)
  * Returns number of characters, lines and words in the supplied gchar*.
@@ -679,7 +658,6 @@ static void word_count(gchar *text, guint *chars, guint *lines, guint *words)
 	if (*chars > 0)
 		(*lines)++;
 }
-
 
 void tools_word_count(void)
 {
@@ -777,7 +755,6 @@ void tools_word_count(void)
 	gtk_widget_show_all(dialog);
 }
 
-
 /*
  * color dialog callbacks
  */
@@ -810,7 +787,6 @@ static void on_color_dialog_response(GtkDialog *dialog, gint response, gpointer 
 			gtk_widget_hide(ui_widgets.open_colorsel);
 	}
 }
-
 
 /* This shows the color selection dialog to choose a color. */
 void tools_color_chooser(const gchar *color)

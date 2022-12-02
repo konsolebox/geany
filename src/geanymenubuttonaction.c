@@ -35,7 +35,6 @@ typedef struct _GeanyMenubuttonActionPrivate		GeanyMenubuttonActionPrivate;
 
 #define GEANY_MENU_BUTTON_ACTION_GET_PRIVATE(obj)	(GEANY_MENU_BUTTON_ACTION(obj)->priv)
 
-
 struct _GeanyMenubuttonActionPrivate
 {
 	GtkWidget	*menu;
@@ -56,9 +55,7 @@ enum
 };
 static guint signals[LAST_SIGNAL];
 
-
 G_DEFINE_TYPE(GeanyMenubuttonAction, geany_menu_button_action, GTK_TYPE_ACTION)
-
 
 static void geany_menu_button_action_finalize(GObject *object)
 {
@@ -70,12 +67,10 @@ static void geany_menu_button_action_finalize(GObject *object)
 	(* G_OBJECT_CLASS(geany_menu_button_action_parent_class)->finalize)(object);
 }
 
-
 static void delegate_button_activated(GtkAction *action)
 {
 	g_signal_emit(action, signals[BUTTON_CLICKED], 0);
 }
-
 
 static void geany_menu_button_action_set_property(GObject *object, guint prop_id,
 												  const GValue *value, GParamSpec *pspec)
@@ -95,7 +90,6 @@ static void geany_menu_button_action_set_property(GObject *object, guint prop_id
 	}
 }
 
-
 static GtkWidget *geany_menu_button_action_create_tool_item(GtkAction *action)
 {
 	GtkWidget *toolitem;
@@ -106,7 +100,6 @@ static GtkWidget *geany_menu_button_action_create_tool_item(GtkAction *action)
 
 	return toolitem;
 }
-
 
 static void geany_menu_button_action_class_init(GeanyMenubuttonActionClass *klass)
 {
@@ -141,7 +134,6 @@ static void geany_menu_button_action_class_init(GeanyMenubuttonActionClass *klas
 										G_TYPE_NONE, 0);
 }
 
-
 static void geany_menu_button_action_init(GeanyMenubuttonAction *action)
 {
 	GeanyMenubuttonActionPrivate *priv;
@@ -153,7 +145,6 @@ static void geany_menu_button_action_init(GeanyMenubuttonAction *action)
 	priv->tooltip_arrow = NULL;
 	priv->menu = NULL;
 }
-
 
 GtkAction *geany_menu_button_action_new(const gchar *name,
 										const gchar *label,
@@ -172,7 +163,6 @@ GtkAction *geany_menu_button_action_new(const gchar *name,
 	return action;
 }
 
-
 GtkWidget *geany_menu_button_action_get_menu(GeanyMenubuttonAction *action)
 {
 	GeanyMenubuttonActionPrivate *priv;
@@ -183,7 +173,6 @@ GtkWidget *geany_menu_button_action_get_menu(GeanyMenubuttonAction *action)
 
 	return priv->menu;
 }
-
 
 static void menu_items_changed_cb(GtkContainer *container, GtkWidget *widget, GeanyMenubuttonAction *action)
 {
@@ -221,7 +210,6 @@ static void menu_items_changed_cb(GtkContainer *container, GtkWidget *widget, Ge
 			gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(l->data), NULL);
 	}
 }
-
 
 void geany_menu_button_action_set_menu(GeanyMenubuttonAction *action, GtkWidget *menu)
 {

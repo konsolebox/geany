@@ -24,7 +24,6 @@ G_BEGIN_DECLS
 /* Evaluates to X is X is defined, else evaluates to Y */
 #define FALLBACK(X,Y) (X)?(X):(Y)
 
-
 /**
  * The TMSourceFile structure represents the source file and its tags in the tag manager.
  **/

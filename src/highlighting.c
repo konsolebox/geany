@@ -28,7 +28,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
- 
+
 #include "highlighting.h"
 #include "highlightingmappings.h"
 
@@ -51,15 +51,12 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
-
 #define GEANY_COLORSCHEMES_SUBDIR "colorschemes"
 
 /* Whitespace has to be set after setting wordchars. */
 #define GEANY_WHITESPACE_CHARS " \t" "!\"#$%&'()*+,-./:;<=>?@[\\]^`{|}~"
 
-
 static gchar *whitespace_chars = NULL;
-
 
 typedef struct
 {
@@ -73,7 +70,6 @@ typedef struct
 
 /* each filetype has a styleset but GEANY_FILETYPES_NONE uses common_style_set for styling */
 static StyleSet *style_sets = NULL;
-
 
 enum	/* Geany common styling */
 {
@@ -115,7 +111,6 @@ static struct
 	gchar			*wordchars;
 } common_style_set = { { { 0 } }, 0, 0, 0, NULL };
 
-
 /* For filetypes.common [named_styles] section.
  * 0xBBGGRR format.
  * e.g. "comment" => &GeanyLexerStyle{0x0000d0, 0xffffff, FALSE, FALSE} */
@@ -123,7 +118,6 @@ static GHashTable *named_style_hash = NULL;
 
 /* 0xBBGGRR format, set by "default" named style. */
 static GeanyLexerStyle gsd_default = {0x000000, 0xffffff, FALSE, FALSE};
-
 
 /* Note: use sciwrappers.h instead where possible.
  * Do not use SSM in files unrelated to scintilla. */
@@ -135,7 +129,6 @@ static void sci_set_property(ScintillaObject *sci, const gchar *name, const gcha
 	SSM(sci, SCI_SETPROPERTY, (uptr_t) name, (sptr_t) value);
 }
 
-
 static void new_styleset(guint file_type_id, gsize styling_count)
 {
 	StyleSet *set = &style_sets[file_type_id];
@@ -143,7 +136,6 @@ static void new_styleset(guint file_type_id, gsize styling_count)
 	set->count = styling_count;
 	set->styling = g_new0(GeanyLexerStyle, styling_count);
 }
-
 
 static void free_styleset(guint file_type_id)
 {
@@ -163,7 +155,6 @@ static void free_styleset(guint file_type_id)
 	style_ptr->property_values = NULL;
 }
 
-
 static void get_keyfile_keywords(GKeyFile *config, GKeyFile *configh,
 				const gchar *key, guint ft_id, guint pos)
 {
@@ -171,14 +162,12 @@ static void get_keyfile_keywords(GKeyFile *config, GKeyFile *configh,
 		utils_get_setting(string, configh, config, "keywords", key, "");
 }
 
-
 static void get_keyfile_wordchars(GKeyFile *config, GKeyFile *configh, gchar **wordchars,
 		const gchar *default_wordchars)
 {
 	*wordchars = utils_get_setting(string, configh, config,
 		"settings", "wordchars", default_wordchars);
 }
-
 
 static gboolean read_named_style(const gchar *named_style, GeanyLexerStyle *style)
 {
@@ -214,7 +203,6 @@ static gboolean read_named_style(const gchar *named_style, GeanyLexerStyle *styl
 	return (cs != NULL);
 }
 
-
 /* Parses a color in `str` which can be an HTML color (ex. #0099cc),
  * an abbreviated HTML color (ex. #09c) or a hex string color
  * (ex. 0x0099cc). The result of the conversion is stored into the
@@ -241,7 +229,6 @@ static void parse_color(GKeyFile *kf, const gchar *str, gint *clr)
 
 	g_free(named_color);
 }
-
 
 static void parse_keyfile_style(GKeyFile *kf, gchar **list,
 		const GeanyLexerStyle *default_style, GeanyLexerStyle *style)
@@ -297,7 +284,6 @@ static void parse_keyfile_style(GKeyFile *kf, gchar **list,
 	}
 }
 
-
 static void get_keyfile_style(GKeyFile *config, GKeyFile *configh,
 		const gchar *key_name, GeanyLexerStyle *style)
 {
@@ -321,7 +307,6 @@ static void get_keyfile_style(GKeyFile *config, GKeyFile *configh,
 	g_strfreev(list);
 }
 
-
 static void convert_int(const gchar *int_str, gint *val)
 {
 	gchar *end;
@@ -330,7 +315,6 @@ static void convert_int(const gchar *int_str, gint *val)
 	if (int_str != end)
 		*val = v;
 }
-
 
 /* Get first and second integer numbers, store in foreground and background fields of @a style. */
 static void get_keyfile_int(GKeyFile *config, GKeyFile *configh, const gchar *section,
@@ -365,7 +349,6 @@ static void get_keyfile_int(GKeyFile *config, GKeyFile *configh, const gchar *se
 	g_strfreev(list);
 }
 
-
 /* first or second can be NULL. */
 static void get_keyfile_ints(GKeyFile *config, GKeyFile *configh, const gchar *section,
 							const gchar *key,
@@ -381,7 +364,6 @@ static void get_keyfile_ints(GKeyFile *config, GKeyFile *configh, const gchar *s
 		*second = tmp_style.background;
 }
 
-
 static guint invert(guint icolour)
 {
 	if (interface_prefs.highlighting_invert_all)
@@ -389,7 +371,6 @@ static guint invert(guint icolour)
 
 	return icolour;
 }
-
 
 static GeanyLexerStyle *get_style(guint ft_id, guint styling_index)
 {
@@ -409,7 +390,6 @@ static GeanyLexerStyle *get_style(guint ft_id, guint styling_index)
 	}
 }
 
-
 static void set_sci_style(ScintillaObject *sci, guint style, guint ft_id, guint styling_index)
 {
 	GeanyLexerStyle *style_ptr = get_style(ft_id, styling_index);
@@ -419,7 +399,6 @@ static void set_sci_style(ScintillaObject *sci, guint style, guint ft_id, guint 
 	SSM(sci, SCI_STYLESETBOLD, style,	style_ptr->bold);
 	SSM(sci, SCI_STYLESETITALIC, style,	style_ptr->italic);
 }
-
 
 void highlighting_free_styles(void)
 {
@@ -434,14 +413,12 @@ void highlighting_free_styles(void)
 	g_free(style_sets);
 }
 
-
 static gchar*
 get_keyfile_whitespace_chars(GKeyFile *config, GKeyFile *configh)
 {
 	return utils_get_setting(string, configh, config,
 		"settings", "whitespace_chars", GEANY_WHITESPACE_CHARS);
 }
-
 
 static void add_named_style(GKeyFile *config, const gchar *key)
 {
@@ -460,7 +437,6 @@ static void add_named_style(GKeyFile *config, const gchar *key)
 	}
 	g_strfreev(list);
 }
-
 
 static void get_named_styles(GKeyFile *config)
 {
@@ -487,7 +463,6 @@ static void get_named_styles(GKeyFile *config)
 	g_strfreev(keys);
 }
 
-
 static GKeyFile *utils_key_file_new(const gchar *filename)
 {
 	GKeyFile *config = g_key_file_new();
@@ -495,7 +470,6 @@ static GKeyFile *utils_key_file_new(const gchar *filename)
 	g_key_file_load_from_file(config, filename, G_KEY_FILE_KEEP_COMMENTS, NULL);
 	return config;
 }
-
 
 static void load_named_styles(GKeyFile *config, GKeyFile *config_home)
 {
@@ -541,7 +515,6 @@ static void load_named_styles(GKeyFile *config, GKeyFile *config_home)
 	}
 }
 
-
 static void styleset_common_init(GKeyFile *config, GKeyFile *config_home)
 {
 	load_named_styles(config, config_home);
@@ -586,7 +559,6 @@ static void styleset_common_init(GKeyFile *config, GKeyFile *config_home)
 	whitespace_chars = get_keyfile_whitespace_chars(config, config_home);
 }
 
-
 static void set_character_classes(ScintillaObject *sci, guint ft_id)
 {
 	const gchar *word = (ft_id == GEANY_FILETYPES_NONE ?
@@ -610,7 +582,6 @@ static void set_character_classes(ScintillaObject *sci, guint ft_id)
 
 	g_free(whitespace);
 }
-
 
 static void styleset_common(ScintillaObject *sci, guint ft_id)
 {
@@ -804,7 +775,6 @@ static void styleset_common(ScintillaObject *sci, guint ft_id)
 		SSM(sci, SCI_CALLTIPSETBACK, invert(common_style_set.styling[GCS_CALLTIPS].background), 1);
 }
 
-
 /* Merge & assign global typedefs and user secondary keywords.
  * keyword_idx is used for both style_sets[].keywords and scintilla keyword style number */
 static void merge_type_keywords(ScintillaObject *sci, guint ft_id, guint keyword_idx)
@@ -823,7 +793,6 @@ static void merge_type_keywords(ScintillaObject *sci, guint ft_id, guint keyword
 	sci_set_keywords(sci, keyword_idx, s->str);
 	g_string_free(s, TRUE);
 }
-
 
 static void styleset_init_from_mapping(guint ft_id, GKeyFile *config, GKeyFile *config_home,
 		const HLStyle *styles, gsize n_styles,
@@ -851,7 +820,6 @@ static void styleset_init_from_mapping(guint ft_id, GKeyFile *config, GKeyFile *
 		style_sets[ft_id].keywords[i] = NULL;
 	}
 }
-
 
 /* STYLE_DEFAULT will be set to match the first style. */
 static void styleset_from_mapping(ScintillaObject *sci, guint ft_id, guint lexer,
@@ -894,8 +862,6 @@ static void styleset_from_mapping(ScintillaObject *sci, guint ft_id, guint lexer
 		sci_set_property(sci, properties[i].property, properties[i].value);
 }
 
-
-
 static void styleset_default(ScintillaObject *sci, guint ft_id)
 {
 	sci_set_lexer(sci, SCLEX_NULL);
@@ -905,7 +871,6 @@ static void styleset_default(ScintillaObject *sci, guint ft_id)
 
 	styleset_common(sci, ft_id);
 }
-
 
 static void get_key_values(GKeyFile *config, const gchar *group, gchar **keys, gchar **values)
 {
@@ -920,7 +885,6 @@ static void get_key_values(GKeyFile *config, const gchar *group, gchar **keys, g
 		values++;
 	}
 }
-
 
 static void read_properties(GeanyFiletype *ft, GKeyFile *config, GKeyFile *configh)
 {
@@ -949,13 +913,11 @@ static void read_properties(GeanyFiletype *ft, GKeyFile *config, GKeyFile *confi
 	}
 }
 
-
 static guint get_lexer_filetype(GeanyFiletype *ft)
 {
 	ft = FALLBACK(ft->lexer_filetype, ft);
 	return ft->id;
 }
-
 
 #define init_styleset_case(LANG_NAME) \
 	case (GEANY_FILETYPES_##LANG_NAME): \
@@ -1062,7 +1024,6 @@ void highlighting_init_styles(guint filetype_idx, GKeyFile *config, GKeyFile *co
 			common_style_set.wordchars);
 }
 
-
 #define styleset_case(LANG_NAME) \
 	case (GEANY_FILETYPES_##LANG_NAME): \
 		styleset_from_mapping(sci, ft->id, highlighting_lexer_##LANG_NAME, \
@@ -1158,7 +1119,6 @@ void highlighting_set_styles(ScintillaObject *sci, GeanyFiletype *ft)
 	}
 }
 
-
 /** Retrieves a style @a style_id for the filetype @a ft_id.
  * If the style was not already initialised
  * (e.g. by by opening a file of this type), it will be initialised. The returned pointer is
@@ -1180,7 +1140,6 @@ const GeanyLexerStyle *highlighting_get_style(gint ft_id, gint style_id)
 	 * with array indices) */
 	return get_style((guint) ft_id, (guint) style_id);
 }
-
 
 enum
 {
@@ -1232,7 +1191,6 @@ static void on_color_scheme_changed(GtkTreeSelection *treesel, gpointer dummy)
 	g_free(fname);
 }
 
-
 static gchar *utils_get_setting_locale_string(GKeyFile *keyfile,
 		const gchar *group, const gchar *key, const gchar *default_value)
 {
@@ -1240,7 +1198,6 @@ static gchar *utils_get_setting_locale_string(GKeyFile *keyfile,
 
 	return FALLBACK(result, g_strdup(default_value));
 }
-
 
 static void add_color_scheme_item(GtkListStore *store,
 	gchar *name, gchar *desc, const gchar *fn, GtkTreeIter *current_iter)
@@ -1267,7 +1224,6 @@ static void add_color_scheme_item(GtkListStore *store,
 		*current_iter = iter;
 }
 
-
 static void add_color_scheme_file(GtkListStore *store, const gchar *fname, GtkTreeIter *current_iter)
 {
 	GKeyFile *hkeyfile, *skeyfile;
@@ -1291,7 +1247,6 @@ static void add_color_scheme_file(GtkListStore *store, const gchar *fname, GtkTr
 	g_key_file_free(skeyfile);
 }
 
-
 static gboolean add_color_scheme_items(GtkListStore *store, GtkTreeIter *current_iter)
 {
 	GSList *list, *node;
@@ -1312,14 +1267,12 @@ static gboolean add_color_scheme_items(GtkListStore *store, GtkTreeIter *current
 	return list != NULL;
 }
 
-
 static void on_color_scheme_dialog_response(GtkWidget *dialog,
 	gint response, gpointer *dialog_ptr)
 {
 	*dialog_ptr = NULL;
 	gtk_widget_destroy(dialog);
 }
-
 
 void highlighting_show_color_scheme_dialog(void)
 {
@@ -1381,7 +1334,6 @@ void highlighting_show_color_scheme_dialog(void)
 	g_signal_connect(dialog, "response", G_CALLBACK(on_color_scheme_dialog_response), &dialog);
 	gtk_widget_show_all(dialog);
 }
-
 
 /** Checks whether the given style is a string for the given lexer.
  *
@@ -1570,7 +1522,6 @@ gboolean highlighting_is_string_style(gint lexer, gint style)
 	return FALSE;
 }
 
-
 /** Checks whether the given style is a comment for the given lexer.
  *
  * @param lexer Scintilla lexer type (@c SCLEX_*).
@@ -1742,7 +1693,6 @@ gboolean highlighting_is_comment_style(gint lexer, gint style)
 	}
 	return FALSE;
 }
-
 
 /** Checks whether the given style is normal code (not string, comment, preprocessor, etc).
  *

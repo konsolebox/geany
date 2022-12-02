@@ -30,7 +30,6 @@
 
 G_BEGIN_DECLS
 
-
 /* GtkComboBoxText */
 /* This is actually available in GTK 2.24, but we expose GtkComboBoxText in the
  * API so we don't want the type to change for no good reason (although this
@@ -68,7 +67,6 @@ G_BEGIN_DECLS
 #	define gtk_widget_get_allocated_width(widget)	(((GtkWidget *) (widget))->allocation.width)
 #endif
 
-
 /* Mappings below only prevent some deprecation warnings on GTK3 for things
  * that didn't exist on GTK2.  That's not future-proof. */
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -96,7 +94,6 @@ G_BEGIN_DECLS
 #	define gtk_vscrollbar_new(adj)	gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, (adj))
 #	define gtk_hscrollbar_new(adj)	gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, (adj))
 #endif
-
 
 G_END_DECLS
 

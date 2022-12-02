@@ -91,7 +91,6 @@ void stash_group_update(StashGroup *group, GtkWidget *owner);
 
 void stash_group_free_settings(StashGroup *group);
 
-
 #ifdef GEANY_PRIVATE
 
 void stash_group_set_various(StashGroup *group, gboolean write_once);

@@ -25,7 +25,6 @@
  * Simple code navigation
  **/
 
-
 #ifndef GEANY_NAVQUEUE_H
 #define GEANY_NAVQUEUE_H 1
 
@@ -36,7 +35,6 @@
 G_BEGIN_DECLS
 
 gboolean navqueue_goto_line(GeanyDocument *old_doc, GeanyDocument *new_doc, gint line);
-
 
 #ifdef GEANY_PRIVATE
 

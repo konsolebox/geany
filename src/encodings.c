@@ -46,7 +46,6 @@
 
 #include <string.h>
 
-
 /* <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> */
 #define PATTERN_HTMLMETA "<meta\\s+http-equiv\\s*=\\s*\"?content-type\"?\\s+content\\s*=\\s*\"text/x?html;\\s*charset=([a-z0-9_-]+)\"\\s*/?>"
 /* " geany_encoding=utf-8 " or " coding: utf-8 " */
@@ -56,9 +55,7 @@
 static GRegex *pregs[2];
 static gboolean pregs_loaded = FALSE;
 
-
 GeanyEncoding encodings[GEANY_ENCODINGS_MAX];
-
 
 #define fill(Order, Group, Idx, Charset, Name) \
 		encodings[Idx].idx = Idx; \
@@ -143,7 +140,6 @@ static void init_encodings(void)
 	fill(0,		NONE,			GEANY_ENCODING_NONE,			"None",				_("Without encoding"));
 }
 
-
 /* compares two encoding names in a permissive fashion.
  * e.g. "utf8" matches "UTF-8", "iso8859_1" matches "ISO-8859-1", etc. */
 static gboolean encodings_charset_equals(const gchar *a, const gchar *b)
@@ -193,7 +189,6 @@ static gboolean encodings_charset_equals(const gchar *a, const gchar *b)
 	return *a == *b;
 }
 
-
 GeanyEncodingIndex encodings_get_idx_from_charset(const gchar *charset)
 {
 	gint i;
@@ -211,7 +206,6 @@ GeanyEncodingIndex encodings_get_idx_from_charset(const gchar *charset)
 	}
 	return GEANY_ENCODING_UTF_8;
 }
-
 
 const GeanyEncoding *encodings_get_from_charset(const gchar *charset)
 {
@@ -232,7 +226,6 @@ const GeanyEncoding *encodings_get_from_charset(const gchar *charset)
 	return NULL;
 }
 
-
 static const gchar *encodings_normalize_charset(const gchar *charset)
 {
 	const GeanyEncoding *encoding;
@@ -244,14 +237,12 @@ static const gchar *encodings_normalize_charset(const gchar *charset)
 	return NULL;
 }
 
-
 const GeanyEncoding *encodings_get_from_index(gint idx)
 {
 	g_return_val_if_fail(idx >= 0 && idx < GEANY_ENCODINGS_MAX, NULL);
 
 	return &encodings[idx];
 }
-
 
 /**
  *  Gets the character set name of the specified index e.g. for use with
@@ -272,7 +263,6 @@ const gchar* encodings_get_charset_from_index(gint idx)
 	return encodings[idx].charset;
 }
 
-
 gchar *encodings_to_string(const GeanyEncoding* enc)
 {
 	g_return_val_if_fail(enc != NULL, NULL);
@@ -282,7 +272,6 @@ gchar *encodings_to_string(const GeanyEncoding* enc)
 	return g_strdup_printf("%s (%s)", enc->name, enc->charset);
 }
 
-
 const gchar *encodings_get_charset(const GeanyEncoding* enc)
 {
 	g_return_val_if_fail(enc != NULL, NULL);
@@ -291,9 +280,7 @@ const gchar *encodings_get_charset(const GeanyEncoding* enc)
 	return enc->charset;
 }
 
-
 static GtkWidget *radio_items[GEANY_ENCODINGS_MAX];
-
 
 void encodings_select_radio_item(const gchar *charset)
 {
@@ -315,7 +302,6 @@ void encodings_select_radio_item(const gchar *charset)
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(radio_items[i]), TRUE);
 }
 
-
 /* Regexp detection of file encoding declared in the file itself.
  * Idea and parts of code taken from Bluefish, thanks.
  * regex_compile() is used to compile regular expressions on program init and keep it in memory
@@ -333,7 +319,6 @@ static GRegex *regex_compile(const gchar *pattern)
 	}
 	return regex;
 }
-
 
 static gchar *regex_match(GRegex *preg, const gchar *buffer, gsize size)
 {
@@ -357,7 +342,6 @@ static gchar *regex_match(GRegex *preg, const gchar *buffer, gsize size)
 	g_match_info_free(minfo);
 	return encoding;
 }
-
 
 static void encodings_radio_item_change_cb(GtkCheckMenuItem *menuitem, gpointer user_data)
 {
@@ -388,7 +372,6 @@ static void encodings_reload_radio_item_change_cb(GtkMenuItem *menuitem, gpointe
 	document_reload_prompt(doc, user_data);
 }
 
-
 void encodings_finalize(void)
 {
 	if (pregs_loaded)
@@ -401,7 +384,6 @@ void encodings_finalize(void)
 		}
 	}
 }
-
 
 void encodings_init(void)
 {
@@ -491,7 +473,6 @@ void encodings_init(void)
 	}
 }
 
-
 static gint encoding_combo_store_sort_func(GtkTreeModel *model,
 										   GtkTreeIter *a,
 										   GtkTreeIter *b,
@@ -513,7 +494,6 @@ static gint encoding_combo_store_sort_func(GtkTreeModel *model,
 	g_free(b_string);
 	return cmp_res;
 }
-
 
 GtkTreeStore *encodings_encoding_store_new(gboolean has_detect)
 {
@@ -571,14 +551,12 @@ GtkTreeStore *encodings_encoding_store_new(gboolean has_detect)
 	return store;
 }
 
-
 gint encodings_encoding_store_get_encoding(GtkTreeStore *store, GtkTreeIter *iter)
 {
 	gint enc;
 	gtk_tree_model_get(GTK_TREE_MODEL(store), iter, 0, &enc, -1);
 	return enc;
 }
-
 
 gboolean encodings_encoding_store_get_iter(GtkTreeStore *store, GtkTreeIter *iter, gint enc)
 {
@@ -594,7 +572,6 @@ gboolean encodings_encoding_store_get_iter(GtkTreeStore *store, GtkTreeIter *ite
 	return FALSE;
 }
 
-
 void encodings_encoding_store_cell_data_func(GtkCellLayout *cell_layout,
 											 GtkCellRenderer *cell,
 											 GtkTreeModel *tree_model,
@@ -608,7 +585,6 @@ void encodings_encoding_store_cell_data_func(GtkCellLayout *cell_layout,
 	g_object_set(cell, "sensitive", sensitive, "text", text, NULL);
 	g_free(text);
 }
-
 
 /**
  *  Tries to convert @a buffer into UTF-8 encoding from the encoding specified with @a charset.
@@ -665,7 +641,6 @@ gchar *encodings_convert_to_utf8_from_charset(const gchar *buffer, gssize size,
 	return utf8_content;
 }
 
-
 static gchar *encodings_check_regexes(const gchar *buffer, gsize size)
 {
 	guint i;
@@ -679,7 +654,6 @@ static gchar *encodings_check_regexes(const gchar *buffer, gsize size)
 	}
 	return NULL;
 }
-
 
 static gchar *encodings_convert_to_utf8_with_suggestion(const gchar *buffer, gssize size,
 		const gchar *suggested_charset, gchar **used_encoding)
@@ -769,7 +743,6 @@ static gchar *encodings_convert_to_utf8_with_suggestion(const gchar *buffer, gss
 	return NULL;
 }
 
-
 /**
  *  Tries to convert @a buffer into UTF-8 encoding and store the detected original encoding in
  *  @a used_encoding.
@@ -794,7 +767,6 @@ gchar *encodings_convert_to_utf8(const gchar *buffer, gssize size, gchar **used_
 
 	return utf8;
 }
-
 
 /* If there's a BOM, return a corresponding GEANY_ENCODING_UTF_* index,
  * otherwise GEANY_ENCODING_NONE.
@@ -852,7 +824,6 @@ GeanyEncodingIndex encodings_scan_unicode_bom(const gchar *string, gsize len, gu
 	return GEANY_ENCODING_NONE;
 }
 
-
 gboolean encodings_is_unicode_charset(const gchar *string)
 {
 	if (string != NULL &&
@@ -863,7 +834,6 @@ gboolean encodings_is_unicode_charset(const gchar *string)
 	return FALSE;
 }
 
-
 typedef struct
 {
 	gchar		*data;	/* null-terminated data */
@@ -873,7 +843,6 @@ typedef struct
 	gboolean	 bom;
 	gboolean	 partial;
 } BufferData;
-
 
 /* convert data with the specified encoding */
 static gboolean
@@ -907,7 +876,6 @@ handle_forced_encoding(BufferData *buffer, const gchar *forced_enc)
 	buffer->enc = g_strdup(forced_enc);
 	return TRUE;
 }
-
 
 /* detect encoding and convert to UTF-8 if necessary */
 static gboolean
@@ -979,7 +947,6 @@ handle_encoding(BufferData *buffer, GeanyEncodingIndex enc_idx)
 	return TRUE;
 }
 
-
 static void
 handle_bom(BufferData *buffer)
 {
@@ -994,7 +961,6 @@ handle_bom(BufferData *buffer)
 	memmove(buffer->data, buffer->data + bom_len, buffer->len + 1);
 	buffer->data = g_realloc(buffer->data, buffer->len + 1);
 }
-
 
 /* loads textfile data, verifies and converts to forced_enc or UTF-8. Also handles BOM. */
 static gboolean handle_buffer(BufferData *buffer, const gchar *forced_enc)
@@ -1038,7 +1004,6 @@ static gboolean handle_buffer(BufferData *buffer, const gchar *forced_enc)
 		handle_bom(buffer);
 	return TRUE;
 }
-
 
 /*
  * Tries to convert @a buffer into UTF-8 encoding. Unlike encodings_convert_to_utf8()

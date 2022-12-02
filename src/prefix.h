@@ -17,7 +17,6 @@
 #ifndef GEANY_PREFIX_H
 #define GEANY_PREFIX_H 1
 
-
 /*
  * enrico - all the code below is only compiled and used if ENABLE_BINRELOC is set in config.h,
  *          this only happens if configure option --enable-binreloc was used
@@ -27,7 +26,6 @@
 #include <glib.h>
 
 G_BEGIN_DECLS
-
 
 /* WARNING, BEFORE YOU MODIFY PREFIX.C:
  *
@@ -42,7 +40,6 @@ G_BEGIN_DECLS
  */
 #undef BR_NAMESPACE
 #define BR_NAMESPACE(funcName) geany_ ## funcName
-
 
 #define br_thread_local_store BR_NAMESPACE(br_thread_local_store)
 #define br_locate BR_NAMESPACE(br_locate)
@@ -85,7 +82,6 @@ G_BEGIN_DECLS
 	#define GEANY_DOCDIR		(br_thread_local_store (br_prepend_prefix ((void *) "", "/share/doc/geany")))
 	#define GEANY_LOCALEDIR		(br_thread_local_store (br_prepend_prefix ((void *) "", "/share/locale")))
 #endif /* BR_NO_MACROS */
-
 
 /* The following functions are used internally by BinReloc
    and shouldn't be used directly in applications. */

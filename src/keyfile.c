@@ -67,7 +67,6 @@
 #include <unistd.h>
 #endif
 
-
 /* some default settings which are used at the very first start of Geany to fill
  * the configuration file */
 #define GEANY_MAX_SYMBOLLIST_HEIGHT		10
@@ -101,7 +100,6 @@
 #define GEANY_MAX_SYMBOLS_UPDATE_FREQ	250
 #define GEANY_DEFAULT_FILETYPE_REGEX    "-\\*-\\s*([^\\s]+)\\s*-\\*-"
 
-
 static gchar *scribble_text = NULL;
 static gint scribble_pos = -1;
 static GPtrArray *session_files = NULL;
@@ -122,7 +120,6 @@ static struct
 }
 build_menu_prefs;
 
-
 /* The group will be free'd on quitting.
  * @param for_prefs_dialog is whether the group also has Prefs dialog items. */
 void configuration_add_pref_group(struct StashGroup *group, gboolean for_prefs_dialog)
@@ -133,14 +130,12 @@ void configuration_add_pref_group(struct StashGroup *group, gboolean for_prefs_d
 		g_ptr_array_add(pref_groups, group);
 }
 
-
 /* The group will be free'd on quitting. */
 void configuration_add_various_pref_group(struct StashGroup *group)
 {
 	configuration_add_pref_group(group, TRUE);
 	stash_group_set_various(group, TRUE);
 }
-
 
 static void init_pref_groups(void)
 {
@@ -275,7 +270,6 @@ static void init_pref_groups(void)
 		"number_exec_menu_items", 0);
 }
 
-
 typedef enum SettingAction
 {
 	SETTING_READ,
@@ -299,7 +293,6 @@ static void settings_action(GKeyFile *config, SettingAction action)
 		}
 	}
 }
-
 
 static void save_recent_files(GKeyFile *config, GQueue *queue, gchar const *key)
 {
@@ -326,7 +319,6 @@ static void save_recent_files(GKeyFile *config, GQueue *queue, gchar const *key)
 				(const gchar**)recent_files, file_prefs.mru_length);
 	g_strfreev(recent_files);
 }
-
 
 static gchar *get_session_file_string(GeanyDocument *doc)
 {
@@ -357,7 +349,6 @@ static gchar *get_session_file_string(GeanyDocument *doc)
 	return fname;
 }
 
-
 static void remove_session_files(GKeyFile *config)
 {
 	gchar **ptr;
@@ -370,7 +361,6 @@ static void remove_session_files(GKeyFile *config)
 	}
 	g_strfreev(keys);
 }
-
 
 void configuration_save_session_files(GKeyFile *config)
 {
@@ -410,7 +400,6 @@ void configuration_save_session_files(GKeyFile *config)
 	}
 #endif
 }
-
 
 static void save_dialog_prefs(GKeyFile *config)
 {
@@ -554,7 +543,6 @@ static void save_dialog_prefs(GKeyFile *config)
 #endif
 }
 
-
 static void save_ui_prefs(GKeyFile *config)
 {
 	g_key_file_set_boolean(config, PACKAGE, "sidebar_visible", ui_prefs.sidebar_visible);
@@ -606,7 +594,6 @@ static void save_ui_prefs(GKeyFile *config)
 	}
 }
 
-
 void configuration_save(void)
 {
 	GKeyFile *config = g_key_file_new();
@@ -643,7 +630,6 @@ void configuration_save(void)
 	g_free(configfile);
 }
 
-
 static void load_recent_files(GKeyFile *config, GQueue *queue, const gchar *key)
 {
 	gchar **recent_files;
@@ -660,7 +646,6 @@ static void load_recent_files(GKeyFile *config, GQueue *queue, const gchar *key)
 		g_strfreev(recent_files);
 	}
 }
-
 
 /*
  * Load session list from the given keyfile, and store it in the global
@@ -718,7 +703,6 @@ void configuration_load_session_files(GKeyFile *config, gboolean read_recent_fil
 #endif
 }
 
-
 #ifdef HAVE_VTE
 static void get_setting_color(GKeyFile *config, const gchar *section, const gchar *key,
 		GdkColor *color, const gchar *default_color)
@@ -729,7 +713,6 @@ static void get_setting_color(GKeyFile *config, const gchar *section, const gcha
 	g_free(str);
 }
 #endif
-
 
 /* note: new settings should be added in init_pref_groups() */
 static void load_dialog_prefs(GKeyFile *config)
@@ -993,7 +976,6 @@ static void load_dialog_prefs(GKeyFile *config)
 	build_load_menu(config, GEANY_BCS_PREF, NULL);
 }
 
-
 static void load_ui_prefs(GKeyFile *config)
 {
 	gint *geo;
@@ -1065,7 +1047,6 @@ static void load_ui_prefs(GKeyFile *config)
 	g_free(geo);
 }
 
-
 /*
  * Save current session in default configuration file
  */
@@ -1089,7 +1070,6 @@ void configuration_save_default_session(void)
 	g_free(configfile);
 }
 
-
 void configuration_clear_default_session(void)
 {
 	gchar *configfile = g_build_filename(app->configdir, "geany.conf", NULL);
@@ -1110,7 +1090,6 @@ void configuration_clear_default_session(void)
 	g_free(configfile);
 }
 
-
 /*
  * Only reload the session part of the default configuration
  */
@@ -1126,7 +1105,6 @@ void configuration_reload_default_session(void)
 
 	g_key_file_free(config);
 }
-
 
 gboolean configuration_load(void)
 {
@@ -1153,7 +1131,6 @@ gboolean configuration_load(void)
 	g_key_file_free(config);
 	return TRUE;
 }
-
 
 static gboolean open_session_file(gchar **tmp, guint len)
 {
@@ -1218,7 +1195,6 @@ static gboolean open_session_file(gchar **tmp, guint len)
 	return ret;
 }
 
-
 /* Open session files
  * Note: notebook page switch handler and adding to recent files list is always disabled
  * for all files opened within this function */
@@ -1280,7 +1256,6 @@ void configuration_open_files(void)
 	main_status.opening_session_files = FALSE;
 }
 
-
 /* set some settings which are already read from the config file, but need other things, like the
  * realisation of the main window */
 void configuration_apply_settings(void)
@@ -1316,14 +1291,12 @@ void configuration_apply_settings(void)
 	msgwin_show_hide_tabs();
 }
 
-
 void configuration_init(void)
 {
 	keyfile_groups = g_ptr_array_new();
 	pref_groups = g_ptr_array_new();
 	init_pref_groups();
 }
-
 
 void configuration_finalize(void)
 {

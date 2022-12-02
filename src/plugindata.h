@@ -28,7 +28,6 @@
 /* Note: Remember to increment GEANY_API_VERSION (and GEANY_ABI_VERSION if necessary)
  * when making changes (see 'Keeping the plugin ABI stable' in the HACKING file). */
 
-
 #ifndef GEANY_PLUGIN_DATA_H
 #define GEANY_PLUGIN_DATA_H 1
 
@@ -46,7 +45,6 @@ G_BEGIN_DECLS
  * First include geany.h, then plugindata.h, then other API headers. */
 #undef GEANY
 #define GEANY(symbol_name) geany->symbol_name
-
 
 /** The Application Programming Interface (API) version, incremented
  * whenever any plugin data types are modified or appended to.
@@ -75,7 +73,6 @@ G_BEGIN_DECLS
  * structs and not structs themselves are declared by plugins. */
 #define GEANY_ABI_VERSION (71 << GEANY_ABI_SHIFT)
 
-
 /** Defines a function to check the plugin is safe to load.
  * This performs runtime checks that try to ensure:
  * - Geany ABI data types are compatible with this plugin.
@@ -92,7 +89,6 @@ G_BEGIN_DECLS
 		return (api_required); \
 	}
 
-
 /** Basic information about a plugin available to Geany without loading the plugin.
  * The fields are set in plugin_set_info(), usually with the PLUGIN_SET_INFO() macro. */
 typedef struct PluginInfo
@@ -107,7 +103,6 @@ typedef struct PluginInfo
 	const gchar	*author;
 }
 PluginInfo;
-
 
 /** Sets the plugin name and some other basic information about a plugin.
  *
@@ -146,7 +141,6 @@ PluginInfo;
 		info->author = (p_author); \
 	}
 
-
 /** Callback array entry type used with the @ref plugin_callbacks symbol. */
 typedef struct PluginCallback
 {
@@ -163,7 +157,6 @@ typedef struct PluginCallback
 	gpointer	user_data;
 }
 PluginCallback;
-
 
 /** This contains pointers to global variables owned by Geany for plugins to use.
  * Core variable pointers can be appended when needed by plugin authors, if appropriate. */
@@ -381,7 +374,6 @@ typedef enum
 	GEANY_PROXY_RELATED = PROXY_MATCHED | PROXY_NOLOAD
 }
 GeanyProxyProbeResults;
-
 
 /** Hooks that need to be implemented by every proxy
  *

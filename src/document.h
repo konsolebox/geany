@@ -25,7 +25,6 @@
  **/
 /* Also Scintilla search actions - but these should probably be moved to search.c. */
 
-
 #ifndef GEANY_DOCUMENT_H
 #define GEANY_DOCUMENT_H 1
 
@@ -39,7 +38,6 @@
 #include "ScintillaWidget.h" /* For ScintillaObject */
 
 #include <glib.h>
-
 
 G_BEGIN_DECLS
 
@@ -69,7 +67,6 @@ typedef struct GeanyFilePrefs
 	gint			default_new_file_dir;
 }
 GeanyFilePrefs;
-
 
 #define GEANY_TYPE_DOCUMENT (document_get_type())
 GType document_get_type (void);
@@ -170,7 +167,6 @@ GeanyDocument;
 #define DOC_FILENAME(doc) \
 	(G_LIKELY((doc)->file_name != NULL) ? ((doc)->file_name) : GEANY_STRING_UNTITLED)
 
-
 GeanyDocument *document_new_file(const gchar *utf8_filename, GeanyFiletype *ft,
 		const gchar *text);
 
@@ -229,7 +225,6 @@ gint document_compare_by_tab_order_reverse(gconstpointer a, gconstpointer b);
 
 GeanyDocument *document_find_by_id(guint id);
 
-
 #ifdef GEANY_PRIVATE
 
 #if defined(G_OS_WIN32)
@@ -249,7 +244,6 @@ typedef enum DefaultNewFileDirectory
 	NEW_FILE_DIR_HOME,
 	NEW_FILE_DIR_ALL
 } DefaultNewFileDirectory;
-
 
 /* These functions will replace the older functions. For now they have a documents_ prefix. */
 

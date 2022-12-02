@@ -87,7 +87,6 @@ G_BEGIN_DECLS
 #define utils_filenamecmp(a, b)	strcmp((a), (b))
 #endif
 
-
 /** Iterates all the items in @a array using pointers.
  * @param item pointer to an item in @a array.
  * @param array C array to traverse.
@@ -160,7 +159,6 @@ G_BEGIN_DECLS
 #define foreach_range(i, size) \
 	for (i = 0; i < size; i++)
 
-
 gboolean utils_str_equal(const gchar *a, const gchar *b);
 
 guint utils_string_replace_all(GString *haystack, const gchar *needle, const gchar *replace);
@@ -211,7 +209,6 @@ gchar *utils_find_open_xml_tag(const gchar sel[], gint size);
 
 const gchar *utils_find_open_xml_tag_pos(const gchar sel[], gint size);
 
-
 #ifdef GEANY_PRIVATE
 
 typedef enum
@@ -225,7 +222,6 @@ typedef enum
 
 	RESOURCE_DIR_COUNT
 } GeanyResourceDirType;
-
 
 gint utils_get_line_endings(const gchar* buffer, gsize size);
 
@@ -307,7 +303,6 @@ gchar *utils_get_help_url(const gchar *suffix);
 gboolean utils_str_has_upper(const gchar *str);
 
 gint utils_is_file_writable(const gchar *locale_filename);
-
 
 gchar *utils_get_path_from_uri(const gchar *uri);
 

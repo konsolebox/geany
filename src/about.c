@@ -119,11 +119,9 @@ static const gchar *contributors =
 "Thomas Huth, Thomas Martitz, Tomás Vírseda, "
 "Tyler Mulligan, Walery Studennikov, Yura Siamashka";
 
-
 static void header_eventbox_style_set(GtkWidget *widget);
 static void header_label_style_set(GtkWidget *widget);
 static void homepage_clicked(GtkButton *button, gpointer data);
-
 
 #define ROW(text, row, col, x_align, y_padding, col_span) \
 	label = gtk_label_new((text)); \
@@ -131,7 +129,6 @@ static void homepage_clicked(GtkButton *button, gpointer data);
 			(GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, (y_padding)); \
 	gtk_label_set_use_markup(GTK_LABEL(label), TRUE); \
 	gtk_misc_set_alignment(GTK_MISC(label), (x_align), 0);
-
 
 static GtkWidget *create_dialog(void)
 {
@@ -363,7 +360,6 @@ static GtkWidget *create_dialog(void)
 		row++;
 	}
 
-
 	ROW("", row, 0, 0, 0, 0);
 	row++;
 
@@ -443,7 +439,6 @@ static GtkWidget *create_dialog(void)
 	return dialog;
 }
 
-
 void about_dialog_show(void)
 {
 	GtkWidget *dialog;
@@ -454,7 +449,6 @@ void about_dialog_show(void)
 	gtk_widget_destroy(dialog);
 }
 
-
 static void header_eventbox_style_set(GtkWidget *widget)
 {
 	GtkStyle *style = gtk_widget_get_style(widget);
@@ -462,14 +456,12 @@ static void header_eventbox_style_set(GtkWidget *widget)
 		gtk_widget_modify_bg(widget, GTK_STATE_NORMAL, &style->bg[GTK_STATE_SELECTED]);
 }
 
-
 static void header_label_style_set(GtkWidget *widget)
 {
 	GtkStyle *style = gtk_widget_get_style(widget);
 	if (! gdk_color_equal(&style->fg[GTK_STATE_NORMAL], &style->fg[GTK_STATE_SELECTED]))
 		gtk_widget_modify_fg(widget, GTK_STATE_NORMAL, &style->fg[GTK_STATE_SELECTED]);
 }
-
 
 static void homepage_clicked(GtkButton *button, gpointer data)
 {

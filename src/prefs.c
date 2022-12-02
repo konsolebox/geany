@@ -64,10 +64,8 @@
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
 
-
 GeanyPrefs prefs;
 GeanyToolPrefs tool_prefs;
-
 
 typedef struct
 {
@@ -97,14 +95,12 @@ static void on_prefs_print_radio_button_toggled(GtkToggleButton *togglebutton, g
 static void on_prefs_print_page_header_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 static void open_preferences_help(void);
 
-
 typedef enum PrefCallbackAction
 {
 	PREF_DISPLAY,
 	PREF_UPDATE
 }
 PrefCallbackAction;
-
 
 /* Synchronize Stash settings with widgets (see keyfile.c - init_pref_groups()). */
 static void prefs_action(PrefCallbackAction action)
@@ -136,7 +132,6 @@ static void prefs_action(PrefCallbackAction action)
 	}
 }
 
-
 enum
 {
 	KB_TREE_ACTION,
@@ -146,7 +141,6 @@ enum
 	KB_TREE_WEIGHT,
 	KB_TREE_COLUMNS
 };
-
 
 static void kb_tree_view_change_button_clicked_cb(GtkWidget *button, KbData *kbdata)
 {
@@ -212,7 +206,6 @@ static void kb_tree_view_change_button_clicked_cb(GtkWidget *button, KbData *kbd
 	}
 }
 
-
 static void kb_show_popup_menu(KbData *kbdata, GtkWidget *widget, GdkEventButton *event)
 {
 	static GtkWidget *menu = NULL;
@@ -252,13 +245,11 @@ static void kb_show_popup_menu(KbData *kbdata, GtkWidget *widget, GdkEventButton
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, button, event_time);
 }
 
-
 static gboolean kb_popup_menu_cb(GtkWidget *widget, KbData *kbdata)
 {
 	kb_show_popup_menu(kbdata, widget, NULL);
 	return TRUE;
 }
-
 
 static gboolean kb_tree_view_button_press_event_cb(GtkWidget *widget, GdkEventButton *event,
 												   KbData *kbdata)
@@ -275,7 +266,6 @@ static gboolean kb_tree_view_button_press_event_cb(GtkWidget *widget, GdkEventBu
 	}
 	return FALSE;
 }
-
 
 static void kb_init_tree(KbData *kbdata)
 {
@@ -313,7 +303,6 @@ static void kb_init_tree(KbData *kbdata)
 				G_CALLBACK(kb_tree_view_change_button_clicked_cb), kbdata);
 }
 
-
 static void kb_set_shortcut(GtkTreeStore *store, GtkTreeIter *iter,
 		guint key, GdkModifierType mods)
 {
@@ -334,7 +323,6 @@ static void kb_set_shortcut(GtkTreeStore *store, GtkTreeIter *iter,
 	gtk_tree_store_set(store, iter, KB_TREE_WEIGHT,
 		bold ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL, -1);
 }
-
 
 void prefs_kb_search_name(const gchar *search)
 {
@@ -362,7 +350,6 @@ void prefs_kb_search_name(const gchar *search)
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}
 }
-
 
 static void kb_init(KbData *kbdata)
 {
@@ -393,7 +380,6 @@ static void kb_init(KbData *kbdata)
 	}
 	gtk_tree_view_expand_all(GTK_TREE_VIEW(kbdata->tree));
 }
-
 
 /* note: new 'simple' prefs should use Stash code in keyfile.c */
 static void prefs_init_dialog(void)
@@ -445,7 +431,6 @@ static void prefs_init_dialog(void)
 	gtk_entry_set_text(GTK_ENTRY(widget), tool_prefs.context_action_cmd);
 
 	project_setup_prefs();	/* project files path */
-
 
 	/* Interface settings */
 	widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_sidebar_visible");
@@ -508,7 +493,6 @@ static void prefs_init_dialog(void)
 	widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_statusbar_visible");
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), interface_prefs.statusbar_visible);
 
-
 	/* Toolbar settings */
 	widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_toolbar_show");
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), toolbar_prefs.visible);
@@ -540,7 +524,6 @@ static void prefs_init_dialog(void)
 	/* disable elements if toolbar is hidden */
 	on_toolbar_show_toggled(GTK_TOGGLE_BUTTON(
 					ui_lookup_widget(ui_widgets.prefs_dialog, "check_toolbar_show")), NULL);
-
 
 	/* Files settings */
 	if (file_prefs.tab_order_ltr)
@@ -685,7 +668,6 @@ static void prefs_init_dialog(void)
 	if (tool_prefs.grep_cmd)
 		gtk_entry_set_text(GTK_ENTRY(ui_lookup_widget(ui_widgets.prefs_dialog, "entry_grep")), tool_prefs.grep_cmd);
 
-
 	/* Template settings */
 	widget = ui_lookup_widget(ui_widgets.prefs_dialog, "entry_template_developer");
 	gtk_entry_set_text(GTK_ENTRY(widget), template_prefs.developer);
@@ -710,7 +692,6 @@ static void prefs_init_dialog(void)
 
 	widget = ui_lookup_widget(ui_widgets.prefs_dialog, "entry_template_datetime");
 	gtk_entry_set_text(GTK_ENTRY(widget), template_prefs.datetime_format);
-
 
 	/* Keybindings */
 	kb_init(&global_kb_data);
@@ -749,7 +730,6 @@ static void prefs_init_dialog(void)
 		gtk_entry_set_text(
 			GTK_ENTRY(ui_lookup_widget(ui_widgets.prefs_dialog, "entry_print_dateformat")),
 			printing_prefs.page_header_datefmt);
-
 
 #ifndef HAVE_PLUGINS
 	gtk_widget_set_sensitive(ui_lookup_widget(ui_widgets.prefs_dialog, "check_plugins"), FALSE);
@@ -810,7 +790,6 @@ static void prefs_init_dialog(void)
 #endif
 }
 
-
 /* note: uses group index, not group id, unlike keybindings_lookup_item(). */
 static GeanyKeyBinding *kb_index(guint gidx, guint kid)
 {
@@ -819,7 +798,6 @@ static GeanyKeyBinding *kb_index(guint gidx, guint kid)
 	group = g_ptr_array_index(keybinding_groups, gidx);
 	return keybindings_get_item(group, kid);
 }
-
 
 /* read the treeview shortcut fields into keybindings */
 static void kb_update(KbData *kbdata)
@@ -863,7 +841,6 @@ static void kb_update(KbData *kbdata)
 		gid++;
 	}
 }
-
 
 /*
  * callbacks
@@ -933,7 +910,6 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 
 		project_apply_prefs();	/* project file path */
 
-
 		/* Interface settings */
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_sidebar_visible");
 		ui_prefs.sidebar_visible = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
@@ -977,7 +953,6 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_statusbar_visible");
 		interface_prefs.statusbar_visible = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-
 
 		/* Toolbar settings */
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_toolbar_show");
@@ -1053,7 +1028,6 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_replace_tabs");
 		file_prefs.replace_tabs = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-
 
 		/* Editor settings */
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "entry_toggle_mark");
@@ -1165,7 +1139,6 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 		g_free(tool_prefs.grep_cmd);
 		tool_prefs.grep_cmd = g_strdup(gtk_entry_get_text(GTK_ENTRY(widget)));
 
-
 		/* Template settings */
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "entry_template_developer");
 		g_free(template_prefs.developer);
@@ -1198,7 +1171,6 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "entry_template_datetime");
 		g_free(template_prefs.datetime_format);
 		template_prefs.datetime_format = g_strdup(gtk_entry_get_text(GTK_ENTRY(widget)));
-
 
 		/* Keybindings */
 		if (global_kb_data.edited)
@@ -1235,7 +1207,6 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "entry_print_dateformat");
 		g_free(printing_prefs.page_header_datefmt);
 		printing_prefs.page_header_datefmt = g_strdup(gtk_entry_get_text(GTK_ENTRY(widget)));
-
 
 #ifdef HAVE_VTE
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_vte");
@@ -1329,7 +1300,6 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 	}
 }
 
-
 static void on_color_button_choose_cb(GtkColorButton *widget, gpointer user_data)
 {
 	GdkColor color;
@@ -1337,7 +1307,6 @@ static void on_color_button_choose_cb(GtkColorButton *widget, gpointer user_data
 	gtk_color_button_get_color(widget, &color);
 	SETPTR(editor_prefs.long_line_color, utils_get_hex_from_color(&color));
 }
-
 
 static void on_prefs_font_choosed(GtkFontButton *widget, gpointer user_data)
 {
@@ -1384,7 +1353,6 @@ static void on_prefs_font_choosed(GtkFontButton *widget, gpointer user_data)
 	}
 }
 
-
 static void kb_change_iter_shortcut(KbData *kbdata, GtkTreeIter *iter, const gchar *new_text)
 {
 	guint lkey;
@@ -1402,7 +1370,6 @@ static void kb_change_iter_shortcut(KbData *kbdata, GtkTreeIter *iter, const gch
 	kbdata->edited = TRUE;
 }
 
-
 static void kb_cell_edited_cb(GtkCellRendererText *cellrenderertext,
 		gchar *path, gchar *new_text, KbData *kbdata)
 {
@@ -1417,7 +1384,6 @@ static void kb_cell_edited_cb(GtkCellRendererText *cellrenderertext,
 		kb_change_iter_shortcut(kbdata, &iter, new_text);
 	}
 }
-
 
 static gboolean kb_grab_key_dialog_key_press_cb(GtkWidget *dialog, GdkEventKey *event, GtkLabel *label)
 {
@@ -1438,7 +1404,6 @@ static gboolean kb_grab_key_dialog_key_press_cb(GtkWidget *dialog, GdkEventKey *
 
 	return TRUE;
 }
-
 
 /* test if the entered key combination is already used
  * returns true if cancelling duplicate */
@@ -1514,7 +1479,6 @@ static gboolean kb_find_duplicate(GtkTreeStore *store, GtkWidget *parent, GtkTre
 	return FALSE;
 }
 
-
 static void on_toolbar_show_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
 	gboolean sens = gtk_toggle_button_get_active(togglebutton);
@@ -1529,7 +1493,6 @@ static void on_toolbar_show_toggled(GtkToggleButton *togglebutton, gpointer user
 		ui_lookup_widget(ui_widgets.prefs_dialog, "check_toolbar_in_menu"), sens);
 }
 
-
 static void on_show_notebook_tabs_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
 	gboolean sens = gtk_toggle_button_get_active(togglebutton);
@@ -1539,14 +1502,12 @@ static void on_show_notebook_tabs_toggled(GtkToggleButton *togglebutton, gpointe
 	gtk_widget_set_sensitive(ui_lookup_widget(ui_widgets.prefs_dialog, "check_show_tab_cross"), sens);
 }
 
-
 static void on_use_folding_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
 	gboolean sens = gtk_toggle_button_get_active(togglebutton);
 
 	gtk_widget_set_sensitive(ui_lookup_widget(ui_widgets.prefs_dialog, "check_unfold_children"), sens);
 }
-
 
 static void on_enable_plugins_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
@@ -1556,7 +1517,6 @@ static void on_enable_plugins_toggled(GtkToggleButton *togglebutton, gpointer us
 	gtk_widget_set_sensitive(ui_lookup_widget(ui_widgets.prefs_dialog, "extra_plugin_path_button"), sens);
 }
 
-
 static void on_open_encoding_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
 	gboolean sens = gtk_toggle_button_get_active(togglebutton);
@@ -1565,14 +1525,12 @@ static void on_open_encoding_toggled(GtkToggleButton *togglebutton, gpointer use
 	gtk_widget_set_sensitive(ui_lookup_widget(ui_widgets.prefs_dialog, "label_open_encoding"), sens);
 }
 
-
 static void on_sidebar_visible_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
 	gboolean sens = gtk_toggle_button_get_active(togglebutton);
 
 	gtk_widget_set_sensitive(ui_lookup_widget(ui_widgets.prefs_dialog, "box_sidebar_visible_children"), sens);
 }
-
 
 static void on_sidebar_folders_use_real_path_toggled(GtkToggleButton *button, gpointer user_data)
 {
@@ -1590,7 +1548,6 @@ static void on_sidebar_folders_use_real_path_toggled(GtkToggleButton *button, gp
 	}
 }
 
-
 static void on_prefs_print_radio_button_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
 	gboolean sens = gtk_toggle_button_get_active(togglebutton);
@@ -1599,7 +1556,6 @@ static void on_prefs_print_radio_button_toggled(GtkToggleButton *togglebutton, g
 	gtk_widget_set_sensitive(ui_lookup_widget(ui_widgets.prefs_dialog, "hbox9"), ! sens);
 }
 
-
 static void on_prefs_print_page_header_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
 	gboolean sens = gtk_toggle_button_get_active(togglebutton);
@@ -1607,7 +1563,6 @@ static void on_prefs_print_page_header_toggled(GtkToggleButton *togglebutton, gp
 	gtk_widget_set_sensitive(ui_lookup_widget(ui_widgets.prefs_dialog, "check_print_basename"), sens);
 	gtk_widget_set_sensitive(ui_lookup_widget(ui_widgets.prefs_dialog, "entry_print_dateformat"), sens);
 }
-
 
 static void open_preferences_help(void)
 {
@@ -1652,7 +1607,6 @@ static void open_preferences_help(void)
 	g_free(uri);
 }
 
-
 static gboolean prefs_dialog_key_press_response_cb(GtkWidget *dialog, GdkEventKey *event,
 												   gpointer data)
 {
@@ -1666,7 +1620,6 @@ static gboolean prefs_dialog_key_press_response_cb(GtkWidget *dialog, GdkEventKe
 	return FALSE;
 }
 
-
 static void list_store_append_text(GtkListStore *list, const gchar *text)
 {
 	GtkTreeIter iter;
@@ -1674,7 +1627,6 @@ static void list_store_append_text(GtkListStore *list, const gchar *text)
 	gtk_list_store_append(list, &iter);
 	gtk_list_store_set(list, &iter, 0, text, -1);
 }
-
 
 void prefs_show_dialog(void)
 {
@@ -1715,7 +1667,6 @@ void prefs_show_dialog(void)
 		list_store_append_text(eol_list, utils_get_eol_name(SC_EOL_CRLF));
 		list_store_append_text(eol_list, utils_get_eol_name(SC_EOL_CR));
 		list_store_append_text(eol_list, utils_get_eol_name(SC_EOL_LF));
-
 
 		/* add manually GeanyWrapLabels because they can't be added with Glade */
 		/* page Tools */

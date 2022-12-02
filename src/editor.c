@@ -66,7 +66,6 @@
 
 #include <gdk/gdkkeysyms.h>
 
-
 /* Note: use sciwrappers.h instead where possible.
  * Do not use SSM in files unrelated to scintilla. */
 #define SSM(s, m, w, l) scintilla_send_message(s, m, w, l)
@@ -99,7 +98,6 @@ static struct
 
 static gchar indent[100];
 
-
 static void on_new_line_added(GeanyEditor *editor);
 static gboolean handle_xml(GeanyEditor *editor, gint pos, gchar ch);
 static void insert_indent_after_line(GeanyEditor *editor, gint line);
@@ -116,14 +114,12 @@ static gssize replace_cursor_markers(GeanyEditor *editor, GString *pattern);
 static GeanyFiletype *editor_get_filetype_at_line(GeanyEditor *editor, gint line);
 static gboolean sci_is_blank_line(ScintillaObject *sci, gint line);
 
-
 void editor_snippets_free(void)
 {
 	g_hash_table_destroy(snippet_hash);
 	g_queue_free(snippet_offsets);
 	gtk_window_remove_accel_group(GTK_WINDOW(main_widgets.window), snippet_accel_group);
 }
-
 
 static void snippets_load(GKeyFile *sysconfig, GKeyFile *userconfig)
 {
@@ -190,7 +186,6 @@ static void snippets_load(GKeyFile *sysconfig, GKeyFile *userconfig)
 	g_strfreev(groups_user);
 }
 
-
 static void on_snippet_keybinding_activate(gchar *key)
 {
 	GeanyDocument *doc = document_get_current();
@@ -216,7 +211,6 @@ static void on_snippet_keybinding_activate(gchar *key)
 	editor_insert_snippet(doc->editor, sci_get_current_position(doc->editor->sci), s);
 	sci_scroll_caret(doc->editor->sci);
 }
-
 
 static void add_kb(GKeyFile *keyfile, const gchar *group, gchar **keys)
 {
@@ -244,7 +238,6 @@ static void add_kb(GKeyFile *keyfile, const gchar *group, gchar **keys)
 	}
 }
 
-
 static void load_kb(GKeyFile *sysconfig, GKeyFile *userconfig)
 {
 	const gchar kb_group[] = "Keybindings";
@@ -262,7 +255,6 @@ static void load_kb(GKeyFile *sysconfig, GKeyFile *userconfig)
 	add_kb(sysconfig, kb_group, keys);
 	g_strfreev(keys);
 }
-
 
 void editor_snippets_init(void)
 {
@@ -295,7 +287,6 @@ void editor_snippets_init(void)
 	g_key_file_free(sysconfig);
 	g_key_file_free(userconfig);
 }
-
 
 static gboolean on_editor_button_press_event(GtkWidget *widget, GdkEventButton *event,
 											 gpointer data)
@@ -363,7 +354,6 @@ static gboolean on_editor_button_press_event(GtkWidget *widget, GdkEventButton *
 	return FALSE;
 }
 
-
 static gboolean is_style_php(gint style)
 {
 	if ((style >= SCE_HPHP_DEFAULT && style <= SCE_HPHP_OPERATOR) ||
@@ -374,7 +364,6 @@ static gboolean is_style_php(gint style)
 
 	return FALSE;
 }
-
 
 static gint editor_get_long_line_type(void)
 {
@@ -395,7 +384,6 @@ static gint editor_get_long_line_type(void)
 		return editor_prefs.long_line_type;
 }
 
-
 static gint editor_get_long_line_column(void)
 {
 	if (app->project && app->project->priv->long_line_behaviour != 1 /* use global settings */)
@@ -403,7 +391,6 @@ static gint editor_get_long_line_column(void)
 	else
 		return editor_prefs.long_line_column;
 }
-
 
 #define get_project_pref(id)\
 	(app->project ? app->project->priv->id : editor_prefs.id)
@@ -424,7 +411,6 @@ get_default_prefs(void)
 	eprefs.auto_continue_multiline = get_project_pref(auto_continue_multiline);
 	return &eprefs;
 }
-
 
 /* Gets the prefs for the editor.
  * Prefs can be different according to project or document.
@@ -447,7 +433,6 @@ const GeanyEditorPrefs *editor_get_prefs(GeanyEditor *editor)
 	/* add other editor & document overrides as needed */
 	return &eprefs;
 }
-
 
 void editor_toggle_fold(GeanyEditor *editor, gint line, gint modifiers)
 {
@@ -489,7 +474,6 @@ void editor_toggle_fold(GeanyEditor *editor, gint line, gint modifiers)
 	}
 }
 
-
 static void on_margin_click(GeanyEditor *editor, SCNotification *nt)
 {
 	/* left click to marker margin marks the line */
@@ -507,7 +491,6 @@ static void on_margin_click(GeanyEditor *editor, SCNotification *nt)
 		editor_toggle_fold(editor, line, nt->modifiers);
 	}
 }
-
 
 static void on_update_ui(GeanyEditor *editor, G_GNUC_UNUSED SCNotification *nt)
 {
@@ -542,7 +525,6 @@ static void on_update_ui(GeanyEditor *editor, G_GNUC_UNUSED SCNotification *nt)
 	}
 #endif
 }
-
 
 static void check_line_breaking(GeanyEditor *editor, gint pos)
 {
@@ -598,7 +580,6 @@ static void check_line_breaking(GeanyEditor *editor, gint pos)
 	}
 }
 
-
 static void show_autocomplete(ScintillaObject *sci, gsize rootlen, GString *words)
 {
 	/* hide autocompletion if only option is already typed */
@@ -612,7 +593,6 @@ static void show_autocomplete(ScintillaObject *sci, gsize rootlen, GString *word
 	calltip.set = (gboolean) SSM(sci, SCI_CALLTIPACTIVE, 0, 0);
 	SSM(sci, SCI_AUTOCSHOW, rootlen, (sptr_t) words->str);
 }
-
 
 static void show_tags_list(GeanyEditor *editor, const GPtrArray *tags, gsize rootlen)
 {
@@ -650,7 +630,6 @@ static void show_tags_list(GeanyEditor *editor, const GPtrArray *tags, gsize roo
 	}
 }
 
-
 /* do not use with long strings */
 static gboolean match_last_chars(ScintillaObject *sci, gint pos, const gchar *str)
 {
@@ -666,7 +645,6 @@ static gboolean match_last_chars(ScintillaObject *sci, gint pos, const gchar *st
 	sci_get_text_range(sci, pos - len, pos, buf);
 	return strcmp(str, buf) == 0;
 }
-
 
 static gboolean reshow_calltip(gpointer data)
 {
@@ -686,7 +664,6 @@ static gboolean reshow_calltip(gpointer data)
 	return FALSE;
 }
 
-
 static void request_reshowing_calltip(SCNotification *nt)
 {
 	if (calltip.set)
@@ -698,7 +675,6 @@ static void request_reshowing_calltip(SCNotification *nt)
 		g_idle_add_full(G_PRIORITY_LOW, reshow_calltip, NULL, NULL);
 	}
 }
-
 
 static gboolean autocomplete_scope(GeanyEditor *editor, const gchar *root, gsize rootlen)
 {
@@ -808,7 +784,6 @@ static gboolean autocomplete_scope(GeanyEditor *editor, const gchar *root, gsize
 	return ret;
 }
 
-
 static void on_char_added(GeanyEditor *editor, SCNotification *nt)
 {
 	ScintillaObject *sci = editor->sci;
@@ -884,7 +859,6 @@ static void on_char_added(GeanyEditor *editor, SCNotification *nt)
 	check_line_breaking(editor, pos);
 }
 
-
 /* expand() and fold_changed() are copied from SciTE (thanks) to fix #1923350. */
 static void expand(ScintillaObject *sci, gint *line, gboolean doExpand,
 		gboolean force, gint visLevels, gint level)
@@ -939,7 +913,6 @@ static void expand(ScintillaObject *sci, gint *line, gboolean doExpand,
 	}
 }
 
-
 static void fold_changed(ScintillaObject *sci, gint line, gint levelNow, gint levelPrev)
 {
 	if (levelNow & SC_FOLDLEVELHEADERFLAG)
@@ -981,7 +954,6 @@ static void fold_changed(ScintillaObject *sci, gint line, gint levelNow, gint le
 	}
 }
 
-
 static void ensure_range_visible(ScintillaObject *sci, gint posStart, gint posEnd,
 		gboolean enforcePolicy)
 {
@@ -994,7 +966,6 @@ static void ensure_range_visible(ScintillaObject *sci, gint posStart, gint posEn
 		SSM(sci, enforcePolicy ? SCI_ENSUREVISIBLEENFORCEPOLICY : SCI_ENSUREVISIBLE, line, 0);
 	}
 }
-
 
 static void auto_update_margin_width(GeanyEditor *editor)
 {
@@ -1012,7 +983,6 @@ static void auto_update_margin_width(GeanyEditor *editor)
 	}
 }
 
-
 static void partial_complete(ScintillaObject *sci, const gchar *text)
 {
 	gint pos = sci_get_current_position(sci);
@@ -1020,7 +990,6 @@ static void partial_complete(ScintillaObject *sci, const gchar *text)
 	sci_insert_text(sci, pos, text);
 	sci_set_current_position(sci, pos + strlen(text), TRUE);
 }
-
 
 /* Complete the next word part from @a entry */
 static gboolean check_partial_completion(GeanyEditor *editor, const gchar *entry)
@@ -1060,7 +1029,6 @@ static gboolean check_partial_completion(GeanyEditor *editor, const gchar *entry
 	return FALSE;
 }
 
-
 /* Callback for the "sci-notify" signal to emit a "editor-notify" signal.
  * Plugins can connect to the "editor-notify" signal. */
 void editor_sci_notify_cb(G_GNUC_UNUSED GtkWidget *widget, G_GNUC_UNUSED gint scn,
@@ -1073,7 +1041,6 @@ void editor_sci_notify_cb(G_GNUC_UNUSED GtkWidget *widget, G_GNUC_UNUSED gint sc
 
 	g_signal_emit_by_name(geany_object, "editor-notify", editor, scnt, &retval);
 }
-
 
 static gboolean on_editor_notify(G_GNUC_UNUSED GObject *object, GeanyEditor *editor,
 								 SCNotification *nt, G_GNUC_UNUSED gpointer data)
@@ -1203,7 +1170,6 @@ static gboolean on_editor_notify(G_GNUC_UNUSED GObject *object, GeanyEditor *edi
 	return FALSE;
 }
 
-
 /* Note: this is the same as sci_get_tab_width(), but is still useful when you don't have
  * a scintilla pointer. */
 static gint get_tab_width(const GeanyIndentPrefs *indent_prefs)
@@ -1213,7 +1179,6 @@ static gint get_tab_width(const GeanyIndentPrefs *indent_prefs)
 
 	return indent_prefs->width;	/* tab width = indent width */
 }
-
 
 /* Returns a string containing width chars of whitespace, filled with simple space
  * characters or with the right number of tab characters, according to the indent prefs.
@@ -1248,7 +1213,6 @@ get_whitespace(const GeanyIndentPrefs *iprefs, gint width)
  	}
 }
 
-
 static const GeanyIndentPrefs *
 get_default_indent_prefs(void)
 {
@@ -1257,7 +1221,6 @@ get_default_indent_prefs(void)
 	iprefs = app->project ? *app->project->priv->indentation : *editor_prefs.indentation;
 	return &iprefs;
 }
-
 
 /** Gets the indentation prefs for the editor.
  * Prefs can be different according to project or document.
@@ -1292,7 +1255,6 @@ editor_get_indent_prefs(GeanyEditor *editor)
 	return &iprefs;
 }
 
-
 static void on_new_line_added(GeanyEditor *editor)
 {
 	ScintillaObject *sci = editor->sci;
@@ -1315,7 +1277,6 @@ static void on_new_line_added(GeanyEditor *editor)
 	}
 }
 
-
 static gboolean lexer_has_braces(ScintillaObject *sci)
 {
 	gint lexer = sci_get_lexer(sci);
@@ -1337,7 +1298,6 @@ static gboolean lexer_has_braces(ScintillaObject *sci)
 			return FALSE;
 	}
 }
-
 
 /* Read indent chars for the line that pos is on into indent global variable.
  * Note: Use sci_get_line_indentation() and get_whitespace()/editor_insert_text_block()
@@ -1365,7 +1325,6 @@ static void read_indent(GeanyEditor *editor, gint pos)
 	g_free(linebuf);
 }
 
-
 static gint get_brace_indent(ScintillaObject *sci, gint line)
 {
 	gint start = sci_get_position_from_line(sci, line);
@@ -1390,7 +1349,6 @@ static gint get_brace_indent(ScintillaObject *sci, gint line)
 	return count > 0 ? 1 : 0;
 }
 
-
 /* gets the last code position on a line
  * warning: if there is no code position on the line, returns the start position */
 static gint get_sci_line_code_end_position(ScintillaObject *sci, gint line)
@@ -1410,7 +1368,6 @@ static gint get_sci_line_code_end_position(ScintillaObject *sci, gint line)
 	return pos;
 }
 
-
 static gint get_python_indent(ScintillaObject *sci, gint line)
 {
 	gint last_char = get_sci_line_code_end_position(sci, line);
@@ -1423,7 +1380,6 @@ static gint get_python_indent(ScintillaObject *sci, gint line)
 	}
 	return 0;
 }
-
 
 static gint get_xml_indent(ScintillaObject *sci, gint line)
 {
@@ -1462,7 +1418,6 @@ static gint get_xml_indent(ScintillaObject *sci, gint line)
 	return need_close ? 1 : 0;
 }
 
-
 static gint get_indent_size_after_line(GeanyEditor *editor, gint line)
 {
 	ScintillaObject *sci = editor->sci;
@@ -1498,7 +1453,6 @@ static gint get_indent_size_after_line(GeanyEditor *editor, gint line)
 	return size;
 }
 
-
 static void insert_indent_after_line(GeanyEditor *editor, gint line)
 {
 	ScintillaObject *sci = editor->sci;
@@ -1525,7 +1479,6 @@ static void insert_indent_after_line(GeanyEditor *editor, gint line)
 	sci_add_text(sci, text);
 	g_free(text);
 }
-
 
 static void auto_close_chars(ScintillaObject *sci, gint pos, gchar c)
 {
@@ -1565,7 +1518,6 @@ static void auto_close_chars(ScintillaObject *sci, gint pos, gchar c)
 		sci_set_current_position(sci, pos, TRUE);
 	}
 }
-
 
 /* Finds a corresponding matching brace to the given pos
  * (this is taken from Scintilla Editor.cxx,
@@ -1608,7 +1560,6 @@ static gint brace_match(ScintillaObject *sci, gint pos)
 	}
 	return -1;
 }
-
 
 /* Called after typing '}'. */
 static void close_block(GeanyEditor *editor, gint pos)
@@ -1679,10 +1630,8 @@ static void close_block(GeanyEditor *editor, gint pos)
 	sci_set_line_indentation(sci, line, line_indent);
 }
 
-
 /* checks whether @p c is an ASCII character (e.g. < 0x80) */
 #define IS_ASCII(c) (((unsigned char)(c)) < 0x80)
-
 
 /* Reads the word at given cursor position and writes it into the given buffer. The buffer will be
  * NULL terminated in any case, even when the word is truncated because wordlen is too small.
@@ -1735,7 +1684,6 @@ static void read_current_word(GeanyEditor *editor, gint pos, gchar *word, gsize 
 	g_free(chunk);
 }
 
-
 /* Reads the word at given cursor position and writes it into the given buffer. The buffer will be
  * NULL terminated in any case, even when the word is truncated because wordlen is too small.
  * position can be -1, then the current position is used.
@@ -1745,7 +1693,6 @@ void editor_find_current_word(GeanyEditor *editor, gint pos, gchar *word, gsize 
 {
 	read_current_word(editor, pos, word, wordlen, wc, FALSE);
 }
-
 
 /* Same as editor_find_current_word() but uses editor's word boundaries to decide what the word
  * is.  This should be used e.g. to get the word to search for */
@@ -1771,7 +1718,6 @@ void editor_find_current_word_sciwc(GeanyEditor *editor, gint pos, gchar *word, 
 		sci_get_text_range(editor->sci, start, end, word);
 	}
 }
-
 
 /**
  *  Finds the word at the position specified by @a pos. If any word is found, it is returned.
@@ -1802,7 +1748,6 @@ gchar *editor_get_word_at_pos(GeanyEditor *editor, gint pos, const gchar *wordch
 	return (*cword == '\0') ? NULL : g_strdup(cword);
 }
 
-
 /* Read the word up to position @a pos. */
 static const gchar *
 editor_read_word_stem(GeanyEditor *editor, gint pos, const gchar *wordchars)
@@ -1813,7 +1758,6 @@ editor_read_word_stem(GeanyEditor *editor, gint pos, const gchar *wordchars)
 
 	return (*word) ? word : NULL;
 }
-
 
 static gint find_previous_brace(ScintillaObject *sci, gint pos)
 {
@@ -1828,7 +1772,6 @@ static gint find_previous_brace(ScintillaObject *sci, gint pos)
 	}
 	return -1;
 }
-
 
 static gint find_start_bracket(ScintillaObject *sci, gint pos)
 {
@@ -1846,7 +1789,6 @@ static gint find_start_bracket(ScintillaObject *sci, gint pos)
 	}
 	return -1;
 }
-
 
 static gboolean append_calltip(GString *str, const TMTag *tag, GeanyFiletypeID ft_id)
 {
@@ -1893,7 +1835,6 @@ static gboolean append_calltip(GString *str, const TMTag *tag, GeanyFiletypeID f
 
 	return TRUE;
 }
-
 
 static gchar *find_calltip(const gchar *word, GeanyFiletype *ft)
 {
@@ -1992,7 +1933,6 @@ static gchar *find_calltip(const gchar *word, GeanyFiletype *ft)
 	return NULL;
 }
 
-
 /* use pos = -1 to search for the previous unmatched open bracket. */
 gboolean editor_show_calltip(GeanyEditor *editor, gint pos)
 {
@@ -2061,7 +2001,6 @@ gboolean editor_show_calltip(GeanyEditor *editor, gint pos)
 	return FALSE;
 }
 
-
 gchar *editor_get_calltip_text(GeanyEditor *editor, const TMTag *tag)
 {
 	GString *str;
@@ -2074,7 +2013,6 @@ gchar *editor_get_calltip_text(GeanyEditor *editor, const TMTag *tag)
 	else
 		return g_string_free(str, TRUE);
 }
-
 
 /* Current document & global tags autocompletion */
 static gboolean
@@ -2093,7 +2031,6 @@ autocomplete_tags(GeanyEditor *editor, GeanyFiletype *ft, const gchar *root, gsi
 
 	return found;
 }
-
 
 static gboolean autocomplete_check_html(GeanyEditor *editor, gint style, gint pos)
 {
@@ -2129,7 +2066,6 @@ static gboolean autocomplete_check_html(GeanyEditor *editor, gint style, gint po
 	}
 	return FALSE;
 }
-
 
 /* Algorithm based on based on Scite's StartAutoCompleteWord()
  * @returns a sorted list of words matching @p root */
@@ -2186,7 +2122,6 @@ static GSList *get_doc_words(ScintillaObject *sci, gchar *root, gsize rootlen)
 	return g_slist_sort(words, (GCompareFunc)utils_str_casecmp);
 }
 
-
 static gboolean autocomplete_doc_word(GeanyEditor *editor, gchar *root, gsize rootlen)
 {
 	ScintillaObject *sci = editor->sci;
@@ -2219,7 +2154,6 @@ static gboolean autocomplete_doc_word(GeanyEditor *editor, gchar *root, gsize ro
 	g_string_free(str, TRUE);
 	return TRUE;
 }
-
 
 gboolean editor_start_auto_complete(GeanyEditor *editor, gint pos, gboolean force)
 {
@@ -2312,7 +2246,6 @@ gboolean editor_start_auto_complete(GeanyEditor *editor, gint pos, gboolean forc
 	return ret;
 }
 
-
 static const gchar *snippets_find_completion_by_name(const gchar *type, const gchar *name)
 {
 	gchar *result = NULL;
@@ -2341,7 +2274,6 @@ static const gchar *snippets_find_completion_by_name(const gchar *type, const gc
 	return result;
 }
 
-
 static void snippets_replace_specials(gpointer key, gpointer value, gpointer user_data)
 {
 	gchar *needle;
@@ -2355,7 +2287,6 @@ static void snippets_replace_specials(gpointer key, gpointer value, gpointer use
 	utils_string_replace_all(pattern, needle, (gchar*) value);
 	g_free(needle);
 }
-
 
 static void fix_indentation(GeanyEditor *editor, GString *buf)
 {
@@ -2390,7 +2321,6 @@ static void fix_indentation(GeanyEditor *editor, GString *buf)
 	}
 	g_free(whitespace);
 }
-
 
 /** Inserts text, replacing \\t tab chars (@c 0x9) and \\n newline chars (@c 0xA)
  * accordingly for the document.
@@ -2473,7 +2403,6 @@ void editor_insert_text_block(GeanyEditor *editor, const gchar *text, gint inser
 	g_string_free(buf, TRUE);
 }
 
-
 /* Move the cursor to the next specified cursor position in an inserted snippet.
  * Can, and should, be optimized to give better results */
 void editor_goto_next_snippet_cursor(GeanyEditor *editor)
@@ -2499,7 +2428,6 @@ void editor_goto_next_snippet_cursor(GeanyEditor *editor)
 	}
 }
 
-
 static void snippets_make_replacements(GeanyEditor *editor, GString *pattern)
 {
 	GHashTable *specials;
@@ -2524,7 +2452,6 @@ static void snippets_make_replacements(GeanyEditor *editor, GString *pattern)
 	/* replace any template {foo} wildcards */
 	templates_replace_common(pattern, editor->document->file_name, editor->document->file_type, NULL);
 }
-
 
 static gssize replace_cursor_markers(GeanyEditor *editor, GString *pattern)
 {
@@ -2579,7 +2506,6 @@ static gssize replace_cursor_markers(GeanyEditor *editor, GString *pattern)
 	return cur_index;
 }
 
-
 static gboolean snippets_complete_constructs(GeanyEditor *editor, gint pos, const gchar *word)
 {
 	ScintillaObject *sci = editor->sci;
@@ -2614,7 +2540,6 @@ static gboolean snippets_complete_constructs(GeanyEditor *editor, gint pos, cons
  	return TRUE;
 }
 
-
 static gboolean at_eol(ScintillaObject *sci, gint pos)
 {
 	gint line = sci_get_line_from_position(sci, pos);
@@ -2632,7 +2557,6 @@ static gboolean at_eol(ScintillaObject *sci, gint pos)
 
 	return (pos == sci_get_line_end_position(sci, line));
 }
-
 
 gboolean editor_complete_snippet(GeanyEditor *editor, gint pos)
 {
@@ -2668,7 +2592,6 @@ gboolean editor_complete_snippet(GeanyEditor *editor, gint pos)
 	return result;
 }
 
-
 static void insert_closing_tag(GeanyEditor *editor, gint pos, gchar ch, const gchar *tag_name)
 {
 	ScintillaObject *sci = editor->sci;
@@ -2693,7 +2616,6 @@ static void insert_closing_tag(GeanyEditor *editor, gint pos, gchar ch, const gc
 	sci_end_undo_action(sci);
 	g_free(to_insert);
 }
-
 
 /*
  * (stolen from anjuta and heavily modified)
@@ -2755,7 +2677,6 @@ static gboolean handle_xml(GeanyEditor *editor, gint pos, gchar ch)
 	return result;
 }
 
-
 /* like sci_get_line_indentation(), but for a string. */
 static gsize count_indent_size(GeanyEditor *editor, const gchar *base_indent)
 {
@@ -2781,7 +2702,6 @@ static gsize count_indent_size(GeanyEditor *editor, const gchar *base_indent)
 	}
 	return count;
 }
-
 
 /* Handles special cases where HTML is embedded in another language or
  * another language is embedded in HTML */
@@ -2836,7 +2756,6 @@ static GeanyFiletype *editor_get_filetype_at_line(GeanyEditor *editor, gint line
 	return current_ft;
 }
 
-
 static void real_comment_multiline(GeanyEditor *editor, gint line_start, gint last_line)
 {
 	const gchar *eol;
@@ -2864,7 +2783,6 @@ static void real_comment_multiline(GeanyEditor *editor, gint line_start, gint la
 	g_free(str_end);
 }
 
-
 /* find @p text inside the range of the current style */
 static gint find_in_current_style(ScintillaObject *sci, const gchar *text, gboolean backwards)
 {
@@ -2885,14 +2803,12 @@ static gint find_in_current_style(ScintillaObject *sci, const gchar *text, gbool
 	return sci_find_text(sci, 0, &ttf);
 }
 
-
 static void sci_delete_line(ScintillaObject *sci, gint line)
 {
 	gint start = sci_get_position_from_line(sci, line);
 	gint len = sci_get_line_length(sci, line);
 	SSM(sci, SCI_DELETERANGE, start, len);
 }
-
 
 static gboolean real_uncomment_multiline(GeanyEditor *editor)
 {
@@ -2929,7 +2845,6 @@ static gboolean real_uncomment_multiline(GeanyEditor *editor)
 	return TRUE;
 }
 
-
 static gint get_multiline_comment_style(GeanyEditor *editor, gint line_start)
 {
 	gint lexer = sci_get_lexer(editor->sci);
@@ -2963,7 +2878,6 @@ static gint get_multiline_comment_style(GeanyEditor *editor, gint line_start)
 
 	return style_comment;
 }
-
 
 /* set toggle to TRUE if the caller is the toggle function, FALSE otherwise
  * returns the amount of uncommented single comment lines, in case of multi line uncomment
@@ -3092,7 +3006,6 @@ gint editor_do_uncomment(GeanyEditor *editor, gint line, gboolean toggle)
 
 	return count;
 }
-
 
 void editor_do_comment_toggle(GeanyEditor *editor)
 {
@@ -3262,7 +3175,6 @@ void editor_do_comment_toggle(GeanyEditor *editor)
 	}
 }
 
-
 /* set toggle to TRUE if the caller is the toggle function, FALSE otherwise */
 gint editor_do_comment(GeanyEditor *editor, gint line, gboolean allow_empty_lines, gboolean toggle,
 		gboolean single_comment)
@@ -3384,7 +3296,6 @@ gint editor_do_comment(GeanyEditor *editor, gint line, gboolean allow_empty_line
 	return count;
 }
 
-
 static gboolean brace_timeout_active = FALSE;
 
 static gboolean delay_match_brace(G_GNUC_UNUSED gpointer user_data)
@@ -3434,7 +3345,6 @@ static gboolean delay_match_brace(G_GNUC_UNUSED gpointer user_data)
 	return FALSE;
 }
 
-
 static void editor_highlight_braces(GeanyEditor *editor, gint cur_pos)
 {
 	gint brace_pos = cur_pos - 1;
@@ -3457,7 +3367,6 @@ static void editor_highlight_braces(GeanyEditor *editor, gint cur_pos)
 		g_timeout_add(100, delay_match_brace, GINT_TO_POINTER(brace_pos));
 	}
 }
-
 
 static gboolean in_block_comment(gint lexer, gint style)
 {
@@ -3493,7 +3402,6 @@ static gboolean in_block_comment(gint lexer, gint style)
 	}
 }
 
-
 static gboolean is_comment_char(gchar c, gint lexer)
 {
 	if ((c == '*' || c == '+') && lexer == SCLEX_D)
@@ -3504,7 +3412,6 @@ static gboolean is_comment_char(gchar c, gint lexer)
 
 	return FALSE;
 }
-
 
 static void auto_multiline(GeanyEditor *editor, gint cur_line)
 {
@@ -3569,7 +3476,6 @@ static void auto_multiline(GeanyEditor *editor, gint cur_line)
 	}
 }
 
-
 #if 0
 static gboolean editor_lexer_is_c_like(gint lexer)
 {
@@ -3584,7 +3490,6 @@ static gboolean editor_lexer_is_c_like(gint lexer)
 	}
 }
 #endif
-
 
 /* inserts a three-line comment at one line above current cursor position */
 void editor_insert_multiline_comment(GeanyEditor *editor)
@@ -3651,7 +3556,6 @@ void editor_insert_multiline_comment(GeanyEditor *editor)
 	sci_end_undo_action(editor->sci);
 }
 
-
 /* Note: If the editor is pending a redraw, set document::scroll_percent instead.
  * Scroll the view to make line appear at percent_of_view.
  * line can be -1 to use the current position. */
@@ -3680,7 +3584,6 @@ void editor_scroll_to_line(GeanyEditor *editor, gint line, gfloat percent_of_vie
 	sci_scroll_caret(editor->sci); /* needed for horizontal scrolling */
 }
 
-
 /* creates and inserts one tab or whitespace of the amount of the tab width */
 void editor_insert_alternative_whitespace(GeanyEditor *editor)
 {
@@ -3703,7 +3606,6 @@ void editor_insert_alternative_whitespace(GeanyEditor *editor)
 	sci_add_text(editor->sci, text);
 	g_free(text);
 }
-
 
 void editor_select_word(GeanyEditor *editor)
 {
@@ -3729,7 +3631,6 @@ void editor_select_word(GeanyEditor *editor)
 
 	sci_set_selection(editor->sci, start, end);
 }
-
 
 /* extra_line is for selecting the cursor line (or anchor line) at the bottom of a selection,
  * when those lines have no selection (cursor at start of line). */
@@ -3757,13 +3658,11 @@ void editor_select_lines(GeanyEditor *editor, gboolean extra_line)
 	sci_set_selection(editor->sci, start, end);
 }
 
-
 static gboolean sci_is_blank_line(ScintillaObject *sci, gint line)
 {
 	return sci_get_line_indent_position(sci, line) ==
 		sci_get_line_end_position(sci, line);
 }
-
 
 /* Returns first line of paragraph for GTK_DIR_UP, line after paragraph
  * ends for GTK_DIR_DOWN or -1 if called on an empty line. */
@@ -3804,7 +3703,6 @@ static gint find_paragraph_stop(GeanyEditor *editor, gint line, gint direction)
 	return line;
 }
 
-
 void editor_select_paragraph(GeanyEditor *editor)
 {
 	gint pos_start, pos_end, line_start, line_found;
@@ -3824,7 +3722,6 @@ void editor_select_paragraph(GeanyEditor *editor)
 
 	sci_set_selection(editor->sci, pos_start, pos_end);
 }
-
 
 /* Returns first line of block for GTK_DIR_UP, line after block
  * ends for GTK_DIR_DOWN or -1 if called on an empty line. */
@@ -3867,7 +3764,6 @@ static gint find_block_stop(GeanyEditor *editor, gint line, gint direction)
 	return line;
 }
 
-
 void editor_select_indent_block(GeanyEditor *editor)
 {
 	gint pos_start, pos_end, line_start, line_found;
@@ -3887,7 +3783,6 @@ void editor_select_indent_block(GeanyEditor *editor)
 
 	sci_set_selection(editor->sci, pos_start, pos_end);
 }
-
 
 /* simple indentation to indent the current line with the same indent as the previous one */
 static void smart_line_indentation(GeanyEditor *editor, gint first_line, gint last_line)
@@ -3916,7 +3811,6 @@ static void smart_line_indentation(GeanyEditor *editor, gint first_line, gint la
 		sci_insert_text(editor->sci, sel_start, indent);
 	}
 }
-
 
 /* simple indentation to indent the current line with the same indent as the previous one */
 void editor_smart_line_indentation(GeanyEditor *editor, gint pos)
@@ -3961,7 +3855,6 @@ void editor_smart_line_indentation(GeanyEditor *editor, gint pos)
 
 	sci_end_undo_action(sci);
 }
-
 
 /* increase / decrease current line or selection by one space */
 void editor_indentation_by_one_space(GeanyEditor *editor, gint pos, gboolean decrease)
@@ -4029,12 +3922,10 @@ void editor_indentation_by_one_space(GeanyEditor *editor, gint pos, gboolean dec
 	sci_end_undo_action(editor->sci);
 }
 
-
 void editor_finalize(void)
 {
 	scintilla_release_resources();
 }
-
 
 /* wordchars: NULL or a string containing characters to match a word.
  * Returns: the current selection or the current word.
@@ -4065,7 +3956,6 @@ gchar *editor_get_default_selection(GeanyEditor *editor, gboolean use_current_wo
 	return s;
 }
 
-
 /* Note: Usually the line should be made visible (not folded) before calling this.
  * Returns: TRUE if line is/will be displayed to the user, or FALSE if it is
  * outside the *vertical* view.
@@ -4089,7 +3979,6 @@ gboolean editor_line_in_view(GeanyEditor *editor, gint line)
 	return (line >= vis1 && line < vis1 + los);
 }
 
-
 /* If the current line is outside the current view window, scroll the line
  * so it appears at percent_of_view. */
 void editor_display_current_line(GeanyEditor *editor, gfloat percent_of_view)
@@ -4110,7 +3999,6 @@ void editor_display_current_line(GeanyEditor *editor, gfloat percent_of_view)
 		sci_scroll_caret(editor->sci); /* may need horizontal scrolling */
 }
 
-
  /*
  *  Deletes all currently set indicators in the @a editor window.
  *  Error indicators (red squiggly underlines) and usual line markers are removed.
@@ -4122,7 +4010,6 @@ void editor_indicator_clear_errors(GeanyEditor *editor)
 	editor_indicator_clear(editor, GEANY_INDICATOR_ERROR);
 	sci_marker_delete_all(editor->sci, 0);	/* remove the yellow error line marker */
 }
-
 
 /**
  *  Deletes all currently set indicators matching @a indic in the @a editor window.
@@ -4146,7 +4033,6 @@ void editor_indicator_clear(GeanyEditor *editor, gint indic)
 		sci_indicator_clear(editor->sci, 0, last_pos);
 	}
 }
-
 
 /**
  *  Sets an indicator @a indic on @a line.
@@ -4195,7 +4081,6 @@ void editor_indicator_set_on_line(GeanyEditor *editor, gint indic, gint line)
 	editor_indicator_set_on_range(editor, indic, start + i, end);
 }
 
-
 /**
  *  Sets an indicator on the range specified by @a start and @a end.
  *  No error checking or whitespace removal is performed, this should be done by the calling
@@ -4218,7 +4103,6 @@ void editor_indicator_set_on_range(GeanyEditor *editor, gint indic, gint start, 
 	sci_indicator_set(editor->sci, indic);
 	sci_indicator_fill(editor->sci, start, end - start);
 }
-
 
 /* Inserts the given colour (format should be #...), if there is a selection starting with 0x...
  * the replacement will also start with 0x... */
@@ -4252,7 +4136,6 @@ void editor_insert_color(GeanyEditor *editor, const gchar *colour)
 		sci_add_text(editor->sci, colour);
 }
 
-
 /**
  *  Retrieves the end of line characters mode (LF, CR/LF, CR) in the given editor.
  *  If @a editor is @c NULL, the default end of line characters are used.
@@ -4272,7 +4155,6 @@ gint editor_get_eol_char_mode(GeanyEditor *editor)
 
 	return mode;
 }
-
 
 /**
  *  Retrieves the localized name (for displaying) of the used end of line characters
@@ -4294,7 +4176,6 @@ const gchar *editor_get_eol_char_name(GeanyEditor *editor)
 
 	return utils_get_eol_name(mode);
 }
-
 
 /**
  *  Retrieves the length of the used end of line characters (LF, CR/LF, CR) in the given editor.
@@ -4321,7 +4202,6 @@ gint editor_get_eol_char_len(GeanyEditor *editor)
 	}
 }
 
-
 /**
  *  Retrieves the used end of line characters (LF, CR/LF, CR) in the given editor.
  *  If @a editor is @c NULL, the default end of line characters are used.
@@ -4342,7 +4222,6 @@ const gchar *editor_get_eol_char(GeanyEditor *editor)
 
 	return utils_get_eol_char(mode);
 }
-
 
 static void fold_all(GeanyEditor *editor, gboolean want_fold)
 {
@@ -4367,18 +4246,15 @@ static void fold_all(GeanyEditor *editor, gboolean want_fold)
 	editor_scroll_to_line(editor, first, 0.0F);
 }
 
-
 void editor_unfold_all(GeanyEditor *editor)
 {
 	fold_all(editor, FALSE);
 }
 
-
 void editor_fold_all(GeanyEditor *editor)
 {
 	fold_all(editor, TRUE);
 }
-
 
 void editor_replace_tabs(GeanyEditor *editor, gboolean ignore_selection)
 {
@@ -4433,7 +4309,6 @@ void editor_replace_tabs(GeanyEditor *editor, gboolean ignore_selection)
 	sci_set_selection(editor->sci, anchor_pos, caret_pos);
 	sci_end_undo_action(editor->sci);
 }
-
 
 /* Replaces all occurrences all spaces of the length of a given tab_width,
  * optionally restricting the search to the current selection. */
@@ -4505,7 +4380,6 @@ void editor_replace_spaces(GeanyEditor *editor, gboolean ignore_selection)
 	g_free(text);
 }
 
-
 void editor_strip_line_trailing_spaces(GeanyEditor *editor, gint line)
 {
 	gint line_start = sci_get_position_from_line(editor->sci, line);
@@ -4529,7 +4403,6 @@ void editor_strip_line_trailing_spaces(GeanyEditor *editor, gint line)
 		sci_replace_target(editor->sci, "", FALSE);
 	}
 }
-
 
 void editor_strip_trailing_spaces(GeanyEditor *editor, gboolean ignore_selection)
 {
@@ -4563,7 +4436,6 @@ void editor_strip_trailing_spaces(GeanyEditor *editor, gboolean ignore_selection
 	sci_end_undo_action(editor->sci);
 }
 
-
 void editor_ensure_final_newline(GeanyEditor *editor)
 {
 	gint max_lines = sci_get_line_count(editor->sci);
@@ -4581,7 +4453,6 @@ void editor_ensure_final_newline(GeanyEditor *editor)
 		sci_insert_text(editor->sci, end_document, eol);
 	}
 }
-
 
 void editor_set_font(GeanyEditor *editor, const gchar *font)
 {
@@ -4605,7 +4476,6 @@ void editor_set_font(GeanyEditor *editor, const gchar *font)
 	sci_zoom_off(editor->sci);
 }
 
-
 void editor_set_line_wrapping(GeanyEditor *editor, gboolean wrap)
 {
 	g_return_if_fail(editor != NULL);
@@ -4613,7 +4483,6 @@ void editor_set_line_wrapping(GeanyEditor *editor, gboolean wrap)
 	editor->line_wrapping = wrap;
 	sci_set_lines_wrapped(editor->sci, wrap);
 }
-
 
 /** Sets the indent type for @a editor.
  * @param editor Editor.
@@ -4627,7 +4496,6 @@ void editor_set_indent_type(GeanyEditor *editor, GeanyIndentType type)
 	editor_set_indent(editor, type, editor->indent_width);
 }
 
-
 /** Sets the indent width for @a editor.
  * @param editor Editor.
  * @param width New indent width.
@@ -4639,7 +4507,6 @@ void editor_set_indent_width(GeanyEditor *editor, gint width)
 {
 	editor_set_indent(editor, editor->indent_type, width);
 }
-
 
 void editor_set_indent(GeanyEditor *editor, GeanyIndentType type, gint width)
 {
@@ -4672,7 +4539,6 @@ void editor_set_indent(GeanyEditor *editor, GeanyIndentType type, gint width)
 	SSM(sci, SCI_SETBACKSPACEUNINDENTS, type != GEANY_INDENT_TYPE_TABS, 0);
 }
 
-
 /* Convenience function for editor_goto_pos() to pass in a line number. */
 gboolean editor_goto_line(GeanyEditor *editor, gint line_no, gint offset)
 {
@@ -4692,7 +4558,6 @@ gboolean editor_goto_line(GeanyEditor *editor, gint line_no, gint offset)
 	pos = sci_get_position_from_line(editor->sci, line_no);
 	return editor_goto_pos(editor, pos, TRUE);
 }
-
 
 /** Moves to position @a pos, switching to the document if necessary,
  *  setting a marker if @a mark is set.
@@ -4728,7 +4593,6 @@ gboolean editor_goto_pos(GeanyEditor *editor, gint pos, gboolean mark)
 	return TRUE;
 }
 
-
 static gboolean
 on_editor_scroll_event(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
 {
@@ -4752,7 +4616,6 @@ on_editor_scroll_event(GtkWidget *widget, GdkEventScroll *event, gpointer user_d
 	return FALSE; /* let Scintilla handle all other cases */
 }
 
-
 static gboolean editor_check_colourise(GeanyEditor *editor)
 {
 	GeanyDocument *doc = editor->document;
@@ -4770,7 +4633,6 @@ static gboolean editor_check_colourise(GeanyEditor *editor)
 
 	return TRUE;
 }
-
 
 static gboolean on_editor_focus_in(GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
 {
@@ -4791,7 +4653,6 @@ static gboolean on_editor_focus_in(GtkWidget *widget, GdkEventFocus *event, gpoi
 	return FALSE;
 }
 
-
 static gboolean on_editor_expose_event(GtkWidget *widget, GdkEventExpose *event,
 		gpointer user_data)
 {
@@ -4803,14 +4664,12 @@ static gboolean on_editor_expose_event(GtkWidget *widget, GdkEventExpose *event,
 	return FALSE;
 }
 
-
 #if GTK_CHECK_VERSION(3, 0, 0)
 static gboolean on_editor_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
 	return on_editor_expose_event(widget, NULL, user_data);
 }
 #endif
-
 
 static void setup_sci_keys(ScintillaObject *sci)
 {
@@ -4847,7 +4706,6 @@ static void setup_sci_keys(ScintillaObject *sci)
 
 	sci_clear_cmdkey(sci, SCK_BACK | (SCMOD_ALT << 16)); /* clear Alt-Backspace (Undo) */
 }
-
 
 /* registers a Scintilla image from a named icon from the theme */
 static gboolean register_named_icon(ScintillaObject *sci, guint id, const gchar *name)
@@ -4888,7 +4746,6 @@ static gboolean register_named_icon(ScintillaObject *sci, guint id, const gchar 
 	g_object_unref(pixbuf);
 	return TRUE;
 }
-
 
 /* Create new editor widget (scintilla).
  * @note The @c "sci-notify" signal is connected separately. */
@@ -4953,7 +4810,6 @@ static ScintillaObject *create_new_sci(GeanyEditor *editor)
 	return sci;
 }
 
-
 /** Creates a new Scintilla @c GtkWidget based on the settings for @a editor.
  * @param editor Editor settings.
  * @return @transfer{floating} The new widget.
@@ -4987,7 +4843,6 @@ ScintillaObject *editor_create_widget(GeanyEditor *editor)
 	return sci;
 }
 
-
 GeanyEditor *editor_create(GeanyDocument *doc)
 {
 	const GeanyIndentPrefs *iprefs = get_default_indent_prefs();
@@ -5005,13 +4860,11 @@ GeanyEditor *editor_create(GeanyDocument *doc)
 	return editor;
 }
 
-
 /* in case we need to free some fields in future */
 void editor_destroy(GeanyEditor *editor)
 {
 	g_free(editor);
 }
-
 
 static void on_document_save(GObject *obj, GeanyDocument *doc)
 {
@@ -5025,7 +4878,6 @@ static void on_document_save(GObject *obj, GeanyDocument *doc)
 	}
 	g_free(f);
 }
-
 
 gboolean editor_complete_word_part(GeanyEditor *editor)
 {
@@ -5046,7 +4898,6 @@ gboolean editor_complete_word_part(GeanyEditor *editor)
 	return TRUE;
 }
 
-
 void editor_init(void)
 {
 	static GeanyIndentPrefs indent_prefs;
@@ -5065,7 +4916,6 @@ void editor_init(void)
 	g_free(f);
 	g_signal_connect(geany_object, "document-save", G_CALLBACK(on_document_save), NULL);
 }
-
 
 /* TODO: Should these be user-defined instead of hard-coded? */
 void editor_set_indentation_guides(GeanyEditor *editor)
@@ -5136,7 +4986,6 @@ void editor_set_indentation_guides(GeanyEditor *editor)
 	sci_set_indentation_guides(editor->sci, mode);
 }
 
-
 /* Apply non-document prefs that can change in the Preferences dialog */
 void editor_apply_update_prefs(GeanyEditor *editor)
 {
@@ -5189,7 +5038,6 @@ void editor_apply_update_prefs(GeanyEditor *editor)
 	sci_set_scrollbar_mode(sci, editor_prefs.show_scrollbars);
 }
 
-
 /* This is for tab-indents, space aligns formatted code. Spaces should be preserved. */
 static void change_tab_indentation(GeanyEditor *editor, gint line, gboolean increase)
 {
@@ -5217,7 +5065,6 @@ static void change_tab_indentation(GeanyEditor *editor, gint line, gboolean incr
 	}
 }
 
-
 static void editor_change_line_indent(GeanyEditor *editor, gint line, gboolean increase)
 {
 	const GeanyIndentPrefs *iprefs = editor_get_indent_prefs(editor);
@@ -5233,7 +5080,6 @@ static void editor_change_line_indent(GeanyEditor *editor, gint line, gboolean i
 		sci_set_line_indentation(sci, line, width);
 	}
 }
-
 
 void editor_indent(GeanyEditor *editor, gboolean increase)
 {
@@ -5288,7 +5134,6 @@ void editor_indent(GeanyEditor *editor, gboolean increase)
 	SSM(sci, SCI_SETANCHOR, sci_get_position_from_line(sci, anchor_line) + anchor_offset, 0);
 }
 
-
 /** Gets snippet by name.
  *
  * If @a editor is passed, returns a snippet specific to the document filetype.
@@ -5306,7 +5151,6 @@ const gchar *editor_find_snippet(GeanyEditor *editor, const gchar *snippet_name)
 
 	return subhash ? g_hash_table_lookup(subhash, snippet_name) : NULL;
 }
-
 
 /** Replaces all special sequences in @a snippet and inserts it at @a pos.
  * If you insert at the current position, consider calling @c sci_scroll_caret()

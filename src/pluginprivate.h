@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_PLUGIN_PRIVATE_H
 #define GEANY_PLUGIN_PRIVATE_H 1
 
@@ -28,7 +27,6 @@
 #include "keybindings.h"	/* GeanyKeyGroup */
 
 #include "gtkcompat.h"
-
 
 G_BEGIN_DECLS
 

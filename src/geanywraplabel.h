@@ -26,7 +26,6 @@
 
 G_BEGIN_DECLS
 
-
 #define GEANY_WRAP_LABEL_TYPE				(geany_wrap_label_get_type())
 #define GEANY_WRAP_LABEL(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), \
 	GEANY_WRAP_LABEL_TYPE, GeanyWrapLabel))
@@ -37,13 +36,11 @@ G_BEGIN_DECLS
 #define IS_GEANY_WRAP_LABEL_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), \
 	GEANY_WRAP_LABEL_TYPE))
 
-
 typedef struct _GeanyWrapLabel       GeanyWrapLabel;
 typedef struct _GeanyWrapLabelClass  GeanyWrapLabelClass;
 
 GType			geany_wrap_label_get_type			(void);
 GtkWidget*		geany_wrap_label_new				(const gchar *text);
-
 
 G_END_DECLS
 

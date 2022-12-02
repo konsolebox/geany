@@ -18,7 +18,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_SPAWN_H
 #define GEANY_SPAWN_H 1
 
@@ -85,7 +84,7 @@ gboolean spawn_with_callbacks(const gchar *working_directory, const gchar *comma
 	SpawnReadFunc stderr_cb, gpointer stderr_data, gsize stderr_max_length,
 	GChildWatchFunc exit_cb, gpointer exit_data, GPid *child_pid, GError **error);
 
-/** 
+/**
  *  A simple structure used by @c spawn_write_data() to write data to a channel.
  *  See @c spawn_write_data() for more information.
  */

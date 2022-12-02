@@ -20,7 +20,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 /*
  * GTK printing support
  * (basic code layout were adopted from Sylpheed's printing implementation, thanks)
@@ -48,9 +47,7 @@
 #include <time.h>
 #include <string.h>
 
-
 PrintingPrefs printing_prefs;
-
 
 /* document-related variables */
 typedef struct
@@ -80,11 +77,8 @@ typedef struct
 	GtkWidget *entry_print_dateformat;
 } PrintWidgets;
 
-
 static GtkPrintSettings *settings = NULL;
 static GtkPageSetup *page_setup = NULL;
-
-
 
 /* creates a commonly used layout object from the given context for use in get_page_count and
  * draw_page */
@@ -100,7 +94,6 @@ static PangoLayout *setup_pango_layout(GtkPrintContext *context, PangoFontDescri
 
 	return layout;
 }
-
 
 static void get_text_dimensions(PangoLayout *layout, const gchar *text, gdouble *width, gdouble *height)
 {
@@ -130,7 +123,6 @@ static void get_text_dimensions(PangoLayout *layout, const gchar *text, gdouble 
 	if (height)
 		*height = (gdouble)layout_h / PANGO_SCALE;
 }
-
 
 static void add_page_header(DocInfo *dinfo, cairo_t *cr, gint width, gint page_nr)
 {
@@ -188,7 +180,6 @@ static void add_page_header(DocInfo *dinfo, cairo_t *cr, gint width, gint page_n
 	cairo_move_to(cr, 0, dinfo->line_height * 3);
 }
 
-
 static void custom_widget_apply(GtkPrintOperation *operation, GtkWidget *widget, gpointer user_data)
 {
 	PrintWidgets *w = user_data;
@@ -210,7 +201,6 @@ static void custom_widget_apply(GtkPrintOperation *operation, GtkWidget *widget,
 		g_strdup(gtk_entry_get_text(GTK_ENTRY(w->entry_print_dateformat)));
 }
 
-
 static void on_page_header_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
 	gboolean sens = gtk_toggle_button_get_active(togglebutton);
@@ -219,7 +209,6 @@ static void on_page_header_toggled(GtkToggleButton *togglebutton, gpointer user_
 	gtk_widget_set_sensitive(w->check_print_basename, sens);
 	gtk_widget_set_sensitive(w->entry_print_dateformat, sens);
 }
-
 
 static GtkWidget *create_custom_widget(GtkPrintOperation *operation, gpointer user_data)
 {	/* copied from interface.c */
@@ -286,7 +275,6 @@ static GtkWidget *create_custom_widget(GtkPrintOperation *operation, gpointer us
 	return page;
 }
 
-
 static void end_print(GtkPrintOperation *operation, GtkPrintContext *context, gpointer user_data)
 {
 	DocInfo *dinfo = user_data;
@@ -299,7 +287,6 @@ static void end_print(GtkPrintOperation *operation, GtkPrintContext *context, gp
 	g_object_unref(dinfo->layout);
 	g_array_free(dinfo->pages, TRUE);
 }
-
 
 static void setup_range(DocInfo *dinfo, GtkPrintContext *ctx)
 {
@@ -332,7 +319,6 @@ static void setup_range(DocInfo *dinfo, GtkPrintContext *ctx)
 	dinfo->fr.chrg.cpMin = 0;
 	dinfo->fr.chrg.cpMax = sci_get_length(dinfo->sci);
 }
-
 
 static void begin_print(GtkPrintOperation *operation, GtkPrintContext *context, gpointer user_data)
 {
@@ -394,7 +380,6 @@ static void begin_print(GtkPrintOperation *operation, GtkPrintContext *context, 
 	setup_range(dinfo, context);
 }
 
-
 static gint format_range(DocInfo *dinfo, gboolean draw)
 {
 	gint pos;
@@ -406,7 +391,6 @@ static gint format_range(DocInfo *dinfo, gboolean draw)
 
 	return pos;
 }
-
 
 static gboolean paginate(GtkPrintOperation *operation, GtkPrintContext *context, gpointer user_data)
 {
@@ -427,7 +411,6 @@ static gboolean paginate(GtkPrintOperation *operation, GtkPrintContext *context,
 
 	return dinfo->fr.chrg.cpMin >= dinfo->fr.chrg.cpMax;
 }
-
 
 static void draw_page(GtkPrintOperation *operation, GtkPrintContext *context,
 					  gint page_nr, gpointer user_data)
@@ -493,7 +476,6 @@ static void draw_page(GtkPrintOperation *operation, GtkPrintContext *context,
 	}
 }
 
-
 static void status_changed(GtkPrintOperation *op, gpointer data)
 {
 	gchar *filename = (data != NULL) ? data : GEANY_STRING_UNTITLED;
@@ -502,7 +484,6 @@ static void status_changed(GtkPrintOperation *op, gpointer data)
 	else if (gtk_print_operation_get_status(op) == GTK_PRINT_STATUS_FINISHED)
 		msgwin_status_add(_("Document %s was sent to the printing subsystem."), filename);
 }
-
 
 static void printing_print_gtk(GeanyDocument *doc)
 {
@@ -560,7 +541,6 @@ static void printing_print_gtk(GeanyDocument *doc)
 	g_free(widgets);
 }
 
-
 void printing_page_setup_gtk(void)
 {
 	GtkPageSetup *new_page_setup;
@@ -576,7 +556,6 @@ void printing_page_setup_gtk(void)
 
 	page_setup = new_page_setup;
 }
-
 
 /* simple file print using an external tool */
 static void print_external(GeanyDocument *doc)
@@ -624,7 +603,6 @@ static void print_external(GeanyDocument *doc)
 	}
 	g_free(cmdline);
 }
-
 
 void printing_print_doc(GeanyDocument *doc)
 {

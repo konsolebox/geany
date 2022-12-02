@@ -20,7 +20,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_HIGHLIGHTING_MAPPINGS_H
 #define GEANY_HIGHLIGHTING_MAPPINGS_H 1
 
@@ -28,7 +27,6 @@
 #include "SciLexer.h"
 
 #include <glib.h>
-
 
 G_BEGIN_DECLS
 
@@ -44,7 +42,6 @@ G_BEGIN_DECLS
  * and let [init_]styleset_case() macros (in highlighting.c) prepare the correct
  * calls.
  */
-
 
 typedef struct
 {
@@ -66,13 +63,11 @@ typedef struct
 	const gchar *value;
 } HLProperty;
 
-
 #define EMPTY_KEYWORDS		((HLKeyword *) NULL)
 #define EMPTY_PROPERTIES	((HLProperty *) NULL)
 
 /* like G_N_ELEMENTS() but supports @array being NULL (for empty entries) */
 #define HL_N_ENTRIES(array) ((array != NULL) ? G_N_ELEMENTS(array) : 0)
-
 
 /* Abaqus */
 #define highlighting_lexer_ABAQUS			SCLEX_ABAQUS
@@ -98,7 +93,6 @@ static const HLKeyword highlighting_keywords_ABAQUS[] =
 };
 #define highlighting_properties_ABAQUS		EMPTY_PROPERTIES
 
-
 /* Ada */
 #define highlighting_lexer_ADA			SCLEX_ADA
 static const HLStyle highlighting_styles_ADA[] =
@@ -122,7 +116,6 @@ static const HLKeyword highlighting_keywords_ADA[] =
 };
 #define highlighting_properties_ADA		EMPTY_PROPERTIES
 
-
 /* ActionScript */
 #define highlighting_lexer_AS		SCLEX_CPP
 #define highlighting_styles_AS		highlighting_styles_C
@@ -133,7 +126,6 @@ static const HLKeyword highlighting_keywords_AS[] =
 	{ 3, "classes",		FALSE }
 };
 #define highlighting_properties_AS	highlighting_properties_C
-
 
 /* ASM */
 #define highlighting_lexer_ASM			SCLEX_ASM
@@ -165,7 +157,6 @@ static const HLKeyword highlighting_keywords_ASM[] =
 	/*{ 5, "instructions",	FALSE }*/
 };
 #define highlighting_properties_ASM		EMPTY_PROPERTIES
-
 
 /* BASIC */
 #define highlighting_lexer_BASIC		SCLEX_FREEBASIC
@@ -204,7 +195,6 @@ static const HLKeyword highlighting_keywords_BASIC[] =
 };
 #define highlighting_properties_BASIC	EMPTY_PROPERTIES
 
-
 /* BATCH */
 #define highlighting_lexer_BATCH		SCLEX_BATCH
 static const HLStyle highlighting_styles_BATCH[] =
@@ -224,7 +214,6 @@ static const HLKeyword highlighting_keywords_BATCH[] =
 	{ 1, "keywords_optional",	FALSE }
 };
 #define highlighting_properties_BATCH	EMPTY_PROPERTIES
-
 
 /* C */
 /* Also used by some other SCLEX_CPP-based filetypes */
@@ -275,7 +264,6 @@ static const HLProperty highlighting_properties_C[] =
 	{ "fold.cpp.comment.explicit", "0" }
 };
 
-
 /* Caml */
 #define highlighting_lexer_CAML			SCLEX_CAML
 static const HLStyle highlighting_styles_CAML[] =
@@ -303,7 +291,6 @@ static const HLKeyword highlighting_keywords_CAML[] =
 	{ 1, "keywords_optional",	FALSE }
 };
 #define highlighting_properties_CAML	EMPTY_PROPERTIES
-
 
 /* CMake */
 #define highlighting_lexer_CMAKE		SCLEX_CMAKE
@@ -362,7 +349,6 @@ static const HLKeyword highlighting_keywords_COFFEESCRIPT[] =
 };
 #define highlighting_properties_COFFEESCRIPT	EMPTY_PROPERTIES
 
-
 /* CSS */
 #define highlighting_lexer_CSS			SCLEX_CSS
 static const HLStyle highlighting_styles_CSS[] =
@@ -405,7 +391,6 @@ static const HLKeyword highlighting_keywords_CSS[] =
 };
 #define highlighting_properties_CSS		EMPTY_PROPERTIES
 
-
 /* Cobol */
 #define highlighting_lexer_COBOL		SCLEX_COBOL
 #define highlighting_styles_COBOL		highlighting_styles_C
@@ -416,7 +401,6 @@ static const HLKeyword highlighting_keywords_COBOL[] =
 	{ 2, "extended_keywords",	FALSE }
 };
 #define highlighting_properties_COBOL	highlighting_properties_C
-
 
 /* Conf */
 #define highlighting_lexer_CONF			SCLEX_PROPERTIES
@@ -431,7 +415,6 @@ static const HLStyle highlighting_styles_CONF[] =
 };
 #define highlighting_keywords_CONF		EMPTY_KEYWORDS
 #define highlighting_properties_CONF	EMPTY_PROPERTIES
-
 
 /* D */
 #define highlighting_lexer_D		SCLEX_D
@@ -473,7 +456,6 @@ static const HLKeyword highlighting_keywords_D[] =
 };
 #define highlighting_properties_D		EMPTY_PROPERTIES
 
-
 /* Diff */
 #define highlighting_lexer_DIFF			SCLEX_DIFF
 static const HLStyle highlighting_styles_DIFF[] =
@@ -489,7 +471,6 @@ static const HLStyle highlighting_styles_DIFF[] =
 };
 #define highlighting_keywords_DIFF		EMPTY_KEYWORDS
 #define highlighting_properties_DIFF	EMPTY_PROPERTIES
-
 
 #define highlighting_lexer_DOCBOOK			SCLEX_XML
 static const HLStyle highlighting_styles_DOCBOOK[] =
@@ -530,7 +511,6 @@ static const HLKeyword highlighting_keywords_DOCBOOK[] =
 	{ 5, "dtd",			FALSE }
 };
 #define highlighting_properties_DOCBOOK		EMPTY_PROPERTIES
-
 
 /* Erlang */
 #define highlighting_lexer_ERLANG		SCLEX_ERLANG
@@ -574,7 +554,6 @@ static const HLKeyword highlighting_keywords_ERLANG[] =
 };
 #define highlighting_properties_ERLANG	EMPTY_PROPERTIES
 
-
 /* F77 */
 #define highlighting_lexer_F77			SCLEX_F77
 static const HLStyle highlighting_styles_F77[] =
@@ -603,7 +582,6 @@ static const HLKeyword highlighting_keywords_F77[] =
 };
 #define highlighting_properties_F77		EMPTY_PROPERTIES
 
-
 /* Ferite */
 #define highlighting_lexer_FERITE		SCLEX_CPP
 #define highlighting_styles_FERITE		highlighting_styles_C
@@ -614,7 +592,6 @@ static const HLKeyword highlighting_keywords_FERITE[] =
 	{ 2, "docComment",	FALSE }
 };
 #define highlighting_properties_FERITE	highlighting_properties_C
-
 
 /* Forth */
 #define highlighting_lexer_FORTH		SCLEX_FORTH
@@ -644,7 +621,6 @@ static const HLKeyword highlighting_keywords_FORTH[] =
 };
 #define highlighting_properties_FORTH	EMPTY_PROPERTIES
 
-
 /* Fortran */
 /* F77 and Fortran (F9x) uses different lexers but shares styles and keywords */
 #define highlighting_lexer_FORTRAN			SCLEX_FORTRAN
@@ -652,13 +628,11 @@ static const HLKeyword highlighting_keywords_FORTH[] =
 #define highlighting_keywords_FORTRAN		highlighting_keywords_F77
 #define highlighting_properties_FORTRAN		highlighting_properties_F77
 
-
 /* Go */
 #define highlighting_lexer_GO		SCLEX_CPP
 #define highlighting_styles_GO		highlighting_styles_C
 #define highlighting_keywords_GO	highlighting_keywords_C
 #define highlighting_properties_GO	highlighting_properties_C
-
 
 /* Haskell */
 #define highlighting_lexer_HASKELL			SCLEX_HASKELL
@@ -696,7 +670,6 @@ static const HLKeyword highlighting_keywords_HASKELL[] =
 };
 #define highlighting_properties_HASKELL		EMPTY_PROPERTIES
 
-
 /* HAXE */
 #define highlighting_lexer_HAXE			SCLEX_CPP
 #define highlighting_styles_HAXE		highlighting_styles_C
@@ -707,7 +680,6 @@ static const HLKeyword highlighting_keywords_HAXE[] =
 	{ 3, "classes",		FALSE }
 };
 #define highlighting_properties_HAXE	highlighting_properties_C
-
 
 /* HTML */
 #define highlighting_lexer_HTML		SCLEX_HTML
@@ -855,7 +827,6 @@ static const HLProperty highlighting_properties_HTML[] =
 	{ "fold.html.preprocessor",	"0" }
 };
 
-
 /* Java */
 #define highlighting_lexer_JAVA			SCLEX_CPP
 #define highlighting_styles_JAVA		highlighting_styles_C
@@ -870,7 +841,6 @@ static const HLKeyword highlighting_keywords_JAVA[] =
 };
 #define highlighting_properties_JAVA	highlighting_properties_C
 
-
 /* JavaScript */
 #define highlighting_lexer_JS		SCLEX_CPP
 #define highlighting_styles_JS		highlighting_styles_C
@@ -880,7 +850,6 @@ static const HLKeyword highlighting_keywords_JS[] =
 	{ 1, "secondary",	FALSE }
 };
 #define highlighting_properties_JS	highlighting_properties_C
-
 
 /* LaTeX */
 #define highlighting_lexer_LATEX		SCLEX_LATEX
@@ -906,7 +875,6 @@ static const HLKeyword highlighting_keywords_LATEX[] =
 };
 #define highlighting_properties_LATEX	EMPTY_PROPERTIES
 
-
 /* Lisp */
 #define highlighting_lexer_LISP			SCLEX_LISP
 static const HLStyle highlighting_styles_LISP[] =
@@ -930,7 +898,6 @@ static const HLKeyword highlighting_keywords_LISP[] =
 	{ 1, "special_keywords",	FALSE }
 };
 #define highlighting_properties_LISP	EMPTY_PROPERTIES
-
 
 /* Lua */
 #define highlighting_lexer_LUA			SCLEX_LUA
@@ -971,7 +938,6 @@ static const HLKeyword highlighting_keywords_LUA[] =
 };
 #define highlighting_properties_LUA		EMPTY_PROPERTIES
 
-
 /* Makefile */
 #define highlighting_lexer_MAKE			SCLEX_MAKEFILE
 static const HLStyle highlighting_styles_MAKE[] =
@@ -986,7 +952,6 @@ static const HLStyle highlighting_styles_MAKE[] =
 };
 #define highlighting_keywords_MAKE		EMPTY_KEYWORDS
 #define highlighting_properties_MAKE	EMPTY_PROPERTIES
-
 
 /* Markdown */
 #define highlighting_lexer_MARKDOWN			SCLEX_MARKDOWN
@@ -1018,7 +983,6 @@ static const HLStyle highlighting_styles_MARKDOWN[] =
 #define highlighting_keywords_MARKDOWN		EMPTY_KEYWORDS
 #define highlighting_properties_MARKDOWN	EMPTY_PROPERTIES
 
-
 /* Matlab */
 #define highlighting_lexer_MATLAB		SCLEX_OCTAVE /* not MATLAB to support Octave's # comments */
 static const HLStyle highlighting_styles_MATLAB[] =
@@ -1038,7 +1002,6 @@ static const HLKeyword highlighting_keywords_MATLAB[] =
 	{ 0, "primary",	FALSE }
 };
 #define highlighting_properties_MATLAB	EMPTY_PROPERTIES
-
 
 /* NSIS */
 #define highlighting_lexer_NSIS			SCLEX_NSIS
@@ -1073,7 +1036,6 @@ static const HLKeyword highlighting_keywords_NSIS[] =
 };
 #define highlighting_properties_NSIS	EMPTY_PROPERTIES
 
-
 /* Objective-C */
 #define highlighting_lexer_OBJECTIVEC		highlighting_lexer_C
 #define highlighting_styles_OBJECTIVEC		highlighting_styles_C
@@ -1086,7 +1048,6 @@ static const HLKeyword highlighting_keywords_OBJECTIVEC[] =
 	/* SCI_SETKEYWORDS = 3 is for current session types - see document_highlight_tags() */
 };
 #define highlighting_properties_OBJECTIVEC	highlighting_properties_C
-
 
 /* Pascal */
 #define highlighting_lexer_PASCAL		SCLEX_PASCAL
@@ -1113,7 +1074,6 @@ static const HLKeyword highlighting_keywords_PASCAL[] =
 	{ 0, "primary",	FALSE }
 };
 #define highlighting_properties_PASCAL	EMPTY_PROPERTIES
-
 
 /* Perl */
 #define highlighting_lexer_PERL			SCLEX_PERL
@@ -1171,13 +1131,11 @@ static const HLKeyword highlighting_keywords_PERL[] =
 };
 #define highlighting_properties_PERL	EMPTY_PROPERTIES
 
-
 /* PHP */
 #define highlighting_lexer_PHP			SCLEX_HTML
 #define highlighting_styles_PHP			highlighting_styles_HTML
 #define highlighting_keywords_PHP		highlighting_keywords_HTML
 #define highlighting_properties_PHP		highlighting_properties_HTML
-
 
 /* PO (gettext) */
 #define highlighting_lexer_PO		SCLEX_PO
@@ -1202,7 +1160,6 @@ static const HLStyle highlighting_styles_PO[] =
 };
 #define highlighting_keywords_PO	EMPTY_KEYWORDS
 #define highlighting_properties_PO	EMPTY_PROPERTIES
-
 
 /* PowerShell */
 #define highlighting_lexer_POWERSHELL		SCLEX_POWERSHELL
@@ -1237,7 +1194,6 @@ static const HLKeyword highlighting_keywords_POWERSHELL[] =
 };
 #define highlighting_properties_POWERSHELL	EMPTY_PROPERTIES
 
-
 /* Python */
 #define highlighting_lexer_PYTHON		SCLEX_PYTHON
 static const HLStyle highlighting_styles_PYTHON[] =
@@ -1266,7 +1222,6 @@ static const HLKeyword highlighting_keywords_PYTHON[] =
 };
 #define highlighting_properties_PYTHON	EMPTY_PROPERTIES
 
-
 /* R */
 #define highlighting_lexer_R		SCLEX_R
 static const HLStyle highlighting_styles_R[] =
@@ -1291,7 +1246,6 @@ static const HLKeyword highlighting_keywords_R[] =
 	{ 2, "package_other",	FALSE }
 };
 #define highlighting_properties_R	EMPTY_PROPERTIES
-
 
 /* Ruby */
 #define highlighting_lexer_RUBY			SCLEX_RUBY
@@ -1402,7 +1356,6 @@ static const HLKeyword highlighting_keywords_SH[] =
 };
 #define highlighting_properties_SH	EMPTY_PROPERTIES
 
-
 /* SQL */
 #define highlighting_lexer_SQL			SCLEX_SQL
 static const HLStyle highlighting_styles_SQL[] =
@@ -1437,7 +1390,6 @@ static const HLKeyword highlighting_keywords_SQL[] =
 	{ 0, "keywords",	FALSE }
 };
 #define highlighting_properties_SQL		EMPTY_PROPERTIES
-
 
 /* TCL */
 #define highlighting_lexer_TCL			SCLEX_TCL
@@ -1477,7 +1429,6 @@ static const HLKeyword highlighting_keywords_TCL[] =
 };
 #define highlighting_properties_TCL		EMPTY_PROPERTIES
 
-
 /* Txt2Tags */
 #define highlighting_lexer_TXT2TAGS			SCLEX_TXT2TAGS
 static const HLStyle highlighting_styles_TXT2TAGS[] =
@@ -1512,7 +1463,6 @@ static const HLStyle highlighting_styles_TXT2TAGS[] =
 #define highlighting_keywords_TXT2TAGS		EMPTY_KEYWORDS
 #define highlighting_properties_TXT2TAGS	EMPTY_PROPERTIES
 
-
 /* VHDL */
 #define highlighting_lexer_VHDL			SCLEX_VHDL
 static const HLStyle highlighting_styles_VHDL[] =
@@ -1545,7 +1495,6 @@ static const HLKeyword highlighting_keywords_VHDL[] =
 	{ 6, "userwords",		FALSE },
 };
 #define highlighting_properties_VHDL	EMPTY_PROPERTIES
-
 
 /* Verilog */
 #define highlighting_lexer_VERILOG			SCLEX_VERILOG
@@ -1580,7 +1529,6 @@ static const HLKeyword highlighting_keywords_VERILOG[] =
 };
 #define highlighting_properties_VERILOG		EMPTY_PROPERTIES
 
-
 /* XML */
 #define highlighting_lexer_XML			SCLEX_XML
 #define highlighting_styles_XML			highlighting_styles_HTML
@@ -1589,7 +1537,6 @@ static const HLKeyword highlighting_keywords_XML[] =
 	{ 5, "sgml",	FALSE }
 };
 #define highlighting_properties_XML		highlighting_properties_HTML
-
 
 /* YAML */
 #define highlighting_lexer_YAML			SCLEX_YAML
@@ -1611,7 +1558,6 @@ static const HLKeyword highlighting_keywords_YAML[] =
 	{ 0, "keywords",	FALSE }
 };
 #define highlighting_properties_YAML	EMPTY_PROPERTIES
-
 
 /* Zephir */
 #define highlighting_lexer_ZEPHIR		SCLEX_PHPSCRIPT

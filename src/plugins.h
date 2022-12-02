@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_PLUGINS_H
 #define GEANY_PLUGINS_H 1
 
@@ -30,7 +29,6 @@
 G_BEGIN_DECLS
 
 extern GList *active_plugin_list;
-
 
 void plugins_init(void);
 

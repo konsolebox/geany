@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_FILETYPES_H
 #define GEANY_FILETYPES_H 1
 
@@ -31,7 +30,6 @@
 #include "ScintillaWidget.h" /* for ScintillaObject */
 
 #include <glib.h>
-
 
 G_BEGIN_DECLS
 
@@ -131,7 +129,6 @@ typedef enum
 }
 GeanyFiletypeGroupID;
 
-
 /* Safe wrapper to get the id field of a possibly NULL filetype pointer.
  * This shouldn't be necessary since GeanyDocument::file_type is always non-NULL. */
 #define FILETYPE_ID(filetype_ptr) \
@@ -175,7 +172,6 @@ GeanyFiletype;
  * @see filetypes_index(). */
 #define filetypes	((GeanyFiletype **)GEANY(filetypes_array)->pdata)
 
-
 GeanyFiletype *filetypes_detect_from_file(const gchar *utf8_filename);
 
 GeanyFiletype *filetypes_lookup_by_name(const gchar *name);
@@ -196,9 +192,7 @@ extern GPtrArray *filetypes_array;
 
 extern GSList *filetypes_by_title;
 
-
 GeanyFiletype *filetypes_find(GCompareFunc predicate, gpointer user_data);
-
 
 void filetypes_init(void);
 
@@ -207,7 +201,6 @@ void filetypes_init_types(void);
 void filetypes_reload_extensions(void);
 
 void filetypes_reload(void);
-
 
 GeanyFiletype *filetypes_detect_from_document(struct GeanyDocument *doc);
 

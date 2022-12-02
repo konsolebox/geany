@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 /**
  *  @file encodings.h
  *  Encoding conversion and Byte Order Mark (BOM) handling.

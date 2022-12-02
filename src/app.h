@@ -53,7 +53,6 @@ typedef struct GeanyApp
 }
 GeanyApp;
 
-
 #ifdef GEANY_PRIVATE
 
 extern GeanyApp *app;

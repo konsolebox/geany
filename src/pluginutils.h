@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_PLUGIN_UTILS_H
 #define GEANY_PLUGIN_UTILS_H 1
 
@@ -34,7 +33,6 @@ G_BEGIN_DECLS
 /* avoid including plugindata.h otherwise this redefines the GEANY() macro */
 struct GeanyPlugin;
 struct GeanyDocument;
-
 
 void plugin_add_toolbar_item(struct GeanyPlugin *plugin, GtkToolItem *item);
 

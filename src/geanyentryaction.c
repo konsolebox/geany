@@ -33,11 +33,9 @@
 
 #include <ctype.h>
 
-
 typedef struct _GeanyEntryActionPrivate		GeanyEntryActionPrivate;
 
 #define GEANY_ENTRY_ACTION_GET_PRIVATE(obj)	(GEANY_ENTRY_ACTION(obj)->priv)
-
 
 struct _GeanyEntryActionPrivate
 {
@@ -56,9 +54,7 @@ enum
 };
 static guint signals[LAST_SIGNAL];
 
-
 G_DEFINE_TYPE(GeanyEntryAction, geany_entry_action, GTK_TYPE_ACTION)
-
 
 static GtkWidget *geany_entry_action_create_tool_item(GtkAction *action)
 {
@@ -80,7 +76,6 @@ static GtkWidget *geany_entry_action_create_tool_item(GtkAction *action)
 	return toolitem;
 }
 
-
 static void delegate_entry_activate_cb(GtkEntry *entry, GeanyEntryAction *action)
 {
 	GeanyEntryActionPrivate *priv = GEANY_ENTRY_ACTION_GET_PRIVATE(action);
@@ -88,7 +83,6 @@ static void delegate_entry_activate_cb(GtkEntry *entry, GeanyEntryAction *action
 
 	g_signal_emit(action, signals[ENTRY_ACTIVATE], 0, text);
 }
-
 
 static void delegate_entry_activate_backward_cb(GtkEntry *entry, GeanyEntryAction *action)
 {
@@ -98,7 +92,6 @@ static void delegate_entry_activate_backward_cb(GtkEntry *entry, GeanyEntryActio
 	g_signal_emit(action, signals[ENTRY_ACTIVATE_BACKWARD], 0, text);
 }
 
-
 static void delegate_entry_changed_cb(GtkEditable *editable, GeanyEntryAction *action)
 {
 	GeanyEntryActionPrivate *priv = GEANY_ENTRY_ACTION_GET_PRIVATE(action);
@@ -106,7 +99,6 @@ static void delegate_entry_changed_cb(GtkEditable *editable, GeanyEntryAction *a
 
 	g_signal_emit(action, signals[ENTRY_CHANGED], 0, text);
 }
-
 
 static void geany_entry_action_connect_proxy(GtkAction *action, GtkWidget *widget)
 {
@@ -128,7 +120,6 @@ static void geany_entry_action_connect_proxy(GtkAction *action, GtkWidget *widge
 
 	GTK_ACTION_CLASS(geany_entry_action_parent_class)->connect_proxy(action, widget);
 }
-
 
 static void geany_entry_action_class_init(GeanyEntryActionClass *klass)
 {
@@ -166,7 +157,6 @@ static void geany_entry_action_class_init(GeanyEntryActionClass *klass)
 									G_TYPE_NONE, 1, G_TYPE_STRING);
 }
 
-
 static void geany_entry_action_init(GeanyEntryAction *action)
 {
 	GeanyEntryActionPrivate *priv;
@@ -179,7 +169,6 @@ static void geany_entry_action_init(GeanyEntryAction *action)
 	priv->numeric = FALSE;
 	priv->connected = FALSE;
 }
-
 
 GtkAction *geany_entry_action_new(const gchar *name, const gchar *label,
 								  const gchar *tooltip, gboolean numeric)

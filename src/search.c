@@ -67,7 +67,6 @@ enum
 	GEANY_RESPONSE_REPLACE_IN_SEL
 };
 
-
 enum
 {
 	FILES_MODE_ALL,
@@ -75,10 +74,8 @@ enum
 	FILES_MODE_CUSTOM
 };
 
-
 GeanySearchData search_data;
 GeanySearchPrefs search_prefs;
-
 
 static struct
 {
@@ -113,7 +110,6 @@ static StashGroup *fif_prefs = NULL;
 static StashGroup *find_prefs = NULL;
 static StashGroup *replace_prefs = NULL;
 
-
 static struct
 {
 	GtkWidget	*dialog;
@@ -145,7 +141,6 @@ static struct
 }
 fif_dlg = {NULL, NULL, NULL, NULL, NULL, NULL, {0, 0}};
 
-
 static void search_read_io(GString *string, GIOCondition condition, gpointer data);
 static void search_read_io_stderr(GString *string, GIOCondition condition, gpointer data);
 
@@ -154,7 +149,6 @@ static void search_finished(GPid child_pid, gint status, gpointer user_data);
 static gchar **search_get_argv(const gchar **argv_prefix, const gchar *dir);
 
 static GRegex *compile_regex(const gchar *str, GeanyFindFlags sflags);
-
 
 static void
 on_find_replace_checkbutton_toggled(GtkToggleButton *togglebutton, gpointer user_data);
@@ -183,7 +177,6 @@ on_find_in_files_dialog_response(GtkDialog *dialog, gint response, gpointer user
 static gboolean
 search_find_in_files(const gchar *utf8_search_text, const gchar *dir, const gchar *opts,
 	const gchar *enc);
-
 
 static void init_prefs(void)
 {
@@ -270,14 +263,12 @@ static void init_prefs(void)
 		"replace_close_dialog", TRUE, "check_close");
 }
 
-
 void search_init(void)
 {
 	search_data.text = NULL;
 	search_data.original_text = NULL;
 	init_prefs();
 }
-
 
 #define FREE_WIDGET(wid) \
 	if (wid && GTK_IS_WIDGET(wid)) gtk_widget_destroy(wid);
@@ -291,14 +282,12 @@ void search_finalize(void)
 	g_free(search_data.original_text);
 }
 
-
 static void on_widget_toggled_set_insensitive(
 	GtkToggleButton *togglebutton, gpointer user_data)
 {
 	gtk_widget_set_sensitive(GTK_WIDGET(user_data),
 		!gtk_toggle_button_get_active(togglebutton));
 }
-
 
 static GtkWidget *add_find_checkboxes(GtkDialog *dialog)
 {
@@ -372,12 +361,10 @@ static GtkWidget *add_find_checkboxes(GtkDialog *dialog)
 	return hbox;
 }
 
-
 static void send_find_dialog_response(GtkButton *button, gpointer user_data)
 {
 	gtk_dialog_response(GTK_DIALOG(find_dlg.dialog), GPOINTER_TO_INT(user_data));
 }
-
 
 /* store text, clear search flags so we can use Search->Find Next/Previous */
 static void setup_find_next(const gchar *text)
@@ -390,7 +377,6 @@ static void setup_find_next(const gchar *text)
 	search_data.backwards = FALSE;
 	search_data.search_bar = FALSE;
 }
-
 
 /* Search for next match of the current "selection".
  * Optionally for X11 based systems, this will try to use the system-wide
@@ -447,14 +433,12 @@ void search_find_selection(GeanyDocument *doc, gboolean search_backwards)
 	}
 }
 
-
 static void on_expander_activated(GtkExpander *exp, gpointer data)
 {
 	gboolean *setting = data;
 
 	*setting = gtk_expander_get_expanded(exp);
 }
-
 
 static void create_find_dialog(void)
 {
@@ -545,13 +529,11 @@ static void create_find_dialog(void)
 	gtk_container_add(GTK_CONTAINER(vbox), exp);
 }
 
-
 static void set_dialog_position(GtkWidget *dialog, gint *position)
 {
 	if (position[0] >= 0)
 		gtk_window_move(GTK_WINDOW(dialog), position[0], position[1]);
 }
-
 
 void search_show_find_dialog(void)
 {
@@ -589,12 +571,10 @@ void search_show_find_dialog(void)
 	g_free(sel);
 }
 
-
 static void send_replace_dialog_response(GtkButton *button, gpointer user_data)
 {
 	gtk_dialog_response(GTK_DIALOG(replace_dlg.dialog), GPOINTER_TO_INT(user_data));
 }
-
 
 static gboolean
 on_widget_key_pressed_set_focus(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
@@ -606,7 +586,6 @@ on_widget_key_pressed_set_focus(GtkWidget *widget, GdkEventKey *event, gpointer 
 	}
 	return FALSE;
 }
-
 
 static void create_replace_dialog(void)
 {
@@ -727,7 +706,6 @@ static void create_replace_dialog(void)
 	gtk_container_add(GTK_CONTAINER(vbox), exp);
 }
 
-
 void search_show_replace_dialog(void)
 {
 	GeanyDocument *doc = document_get_current();
@@ -765,14 +743,12 @@ void search_show_replace_dialog(void)
 	g_free(sel);
 }
 
-
 static void on_widget_toggled_set_sensitive(GtkToggleButton *togglebutton, gpointer user_data)
 {
 	/* disable extra option entry when checkbutton not checked */
 	gtk_widget_set_sensitive(GTK_WIDGET(user_data),
 		gtk_toggle_button_get_active(togglebutton));
 }
-
 
 static void update_file_patterns(GtkWidget *mode_combo, GtkWidget *fcombo)
 {
@@ -811,7 +787,6 @@ static void update_file_patterns(GtkWidget *mode_combo, GtkWidget *fcombo)
 	}
 }
 
-
 /* creates the combo to choose which files include in the search */
 static GtkWidget *create_fif_file_mode_combo(void)
 {
@@ -842,7 +817,6 @@ static GtkWidget *create_fif_file_mode_combo(void)
 	return combo;
 }
 
-
 /* updates the sensitivity of the project combo item */
 static void update_fif_file_mode_combo(void)
 {
@@ -853,7 +827,6 @@ static void update_fif_file_mode_combo(void)
 	if (gtk_tree_model_get_iter_from_string(model, &iter, "1"))
 		gtk_list_store_set(GTK_LIST_STORE(model), &iter, 1, app->project != NULL, -1);
 }
-
 
 static void create_fif_dialog(void)
 {
@@ -1022,7 +995,6 @@ static void create_fif_dialog(void)
 			G_CALLBACK(gtk_widget_hide_on_delete), NULL);
 }
 
-
 /**
  * Shows the Find in Files dialog.
  *
@@ -1036,7 +1008,6 @@ void search_show_find_in_files_dialog(const gchar *dir)
 {
 	search_show_find_in_files_dialog_full(NULL, dir);
 }
-
 
 void search_show_find_in_files_dialog_full(const gchar *text, const gchar *dir)
 {
@@ -1137,7 +1108,6 @@ void search_show_find_in_files_dialog_full(const gchar *text, const gchar *dir)
 	gtk_window_present(GTK_WINDOW(fif_dlg.dialog));
 }
 
-
 static void
 on_find_replace_checkbutton_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
@@ -1164,7 +1134,6 @@ on_find_replace_checkbutton_toggled(GtkToggleButton *togglebutton, gpointer user
 	}
 }
 
-
 static GeanyMatchInfo *match_info_new(GeanyFindFlags flags, gint start, gint end)
 {
 	GeanyMatchInfo *info = g_slice_alloc(sizeof *info);
@@ -1182,7 +1151,6 @@ void geany_match_info_free(GeanyMatchInfo *info)
 	g_free(info->match_text);
 	g_slice_free1(sizeof *info, info);
 }
-
 
 /* find all in the given range.
  * Returns a list of allocated GeanyMatchInfo, should be freed using:
@@ -1221,7 +1189,6 @@ static GSList *find_range(ScintillaObject *sci, GeanyFindFlags flags, struct Sci
 	return g_slist_reverse(matches);
 }
 
-
 /* Clears markers if text is null/empty.
  * @return Number of matches marked. */
 gint search_mark_all(GeanyDocument *doc, const gchar *search_text, GeanyFindFlags flags)
@@ -1258,13 +1225,11 @@ gint search_mark_all(GeanyDocument *doc, const gchar *search_text, GeanyFindFlag
 	return count;
 }
 
-
 static void
 on_find_entry_activate(GtkEntry *entry, gpointer user_data)
 {
 	on_find_dialog_response(NULL, GEANY_RESPONSE_FIND, user_data);
 }
-
 
 static void
 on_find_entry_activate_backward(GtkEntry *entry, gpointer user_data)
@@ -1276,7 +1241,6 @@ on_find_entry_activate_backward(GtkEntry *entry, gpointer user_data)
 		on_find_dialog_response(NULL, GEANY_RESPONSE_FIND_PREVIOUS, user_data);
 }
 
-
 static GeanyFindFlags int_search_flags(gint match_case, gint whole_word, gint regexp, gint multiline, gint word_start)
 {
 	return (match_case ? GEANY_FIND_MATCHCASE : 0) |
@@ -1286,7 +1250,6 @@ static GeanyFindFlags int_search_flags(gint match_case, gint whole_word, gint re
 		/* SCFIND_WORDSTART overrides SCFIND_WHOLEWORD, but we want the opposite */
 		(word_start && !whole_word ? GEANY_FIND_WORDSTART : 0);
 }
-
 
 static void
 on_find_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
@@ -1377,13 +1340,11 @@ on_find_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 	}
 }
 
-
 static void
 on_replace_find_entry_activate(GtkEntry *entry, gpointer user_data)
 {
 	on_replace_dialog_response(NULL, GEANY_RESPONSE_FIND, NULL);
 }
-
 
 static void
 on_replace_entry_activate(GtkEntry *entry, gpointer user_data)
@@ -1392,7 +1353,6 @@ on_replace_entry_activate(GtkEntry *entry, gpointer user_data)
 		search_prefs.replace_and_find_by_default ? GEANY_RESPONSE_REPLACE_AND_FIND : GEANY_RESPONSE_REPLACE,
 		NULL);
 }
-
 
 static void replace_in_session(GeanyDocument *doc,
 		GeanyFindFlags search_flags_re, gboolean search_replace_escape_re,
@@ -1430,7 +1390,6 @@ static void replace_in_session(GeanyDocument *doc,
 
 	ui_save_buttons_toggle(doc->changed);	/* update save all */
 }
-
 
 static void
 on_replace_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
@@ -1547,7 +1506,6 @@ fail:
 	g_free(original_replace);
 }
 
-
 static GString *get_grep_options(void)
 {
 	GString *gstr = g_string_new("-nHI");	/* line numbers, filenames, ignore binaries */
@@ -1592,7 +1550,6 @@ static GString *get_grep_options(void)
 	return gstr;
 }
 
-
 static void
 on_find_in_files_dialog_response(GtkDialog *dialog, gint response,
 		G_GNUC_UNUSED gpointer user_data)
@@ -1635,7 +1592,6 @@ on_find_in_files_dialog_response(GtkDialog *dialog, gint response,
 	else
 		gtk_widget_hide(fif_dlg.dialog);
 }
-
 
 static gboolean
 search_find_in_files(const gchar *utf8_search_text, const gchar *utf8_dir, const gchar *opts,
@@ -1705,7 +1661,7 @@ search_find_in_files(const gchar *utf8_search_text, const gchar *utf8_dir, const
 		NULL, &error))
  	{
 		gchar *utf8_str;
- 
+
  		ui_progress_bar_start(_("Searching..."));
  		msgwin_set_messages_dir(dir);
 		utf8_str = g_strdup_printf(_("%s %s -- %s (in directory: %s)"),
@@ -1726,7 +1682,6 @@ search_find_in_files(const gchar *utf8_search_text, const gchar *utf8_dir, const
 	return ret;
 }
 
-
 static gboolean pattern_list_match(GSList *patterns, const gchar *str)
 {
 	GSList *item;
@@ -1738,7 +1693,6 @@ static gboolean pattern_list_match(GSList *patterns, const gchar *str)
 	}
 	return FALSE;
 }
-
 
 /* Creates an argument vector of strings, copying argv_prefix[] values for
  * the first arguments, then followed by filenames found in dir.
@@ -1803,7 +1757,6 @@ static gchar **search_get_argv(const gchar **argv_prefix, const gchar *dir)
 	return argv;
 }
 
-
 static void read_fif_io(gchar *msg, GIOCondition condition, gchar *enc, gint msg_color)
 {
 	if (condition & (G_IO_IN | G_IO_PRI))
@@ -1831,18 +1784,15 @@ static void read_fif_io(gchar *msg, GIOCondition condition, gchar *enc, gint msg
 	}
 }
 
-
 static void search_read_io(GString *string, GIOCondition condition, gpointer data)
 {
 	read_fif_io(string->str, condition, data, COLOR_BLACK);
 }
 
-
 static void search_read_io_stderr(GString *string, GIOCondition condition, gpointer data)
 {
 	read_fif_io(string->str, condition, data, COLOR_DARK_RED);
 }
-
 
 static void search_finished(GPid child_pid, gint status, gpointer user_data)
 {
@@ -1888,7 +1838,6 @@ static void search_finished(GPid child_pid, gint status, gpointer user_data)
 	ui_progress_bar_stop();
 }
 
-
 static GRegex *compile_regex(const gchar *str, GeanyFindFlags sflags)
 {
 	GRegex *regex;
@@ -1913,7 +1862,6 @@ static GRegex *compile_regex(const gchar *str, GeanyFindFlags sflags)
 	return regex;
 }
 
-
 /* groups that don't exist are handled OK as len = end - start = (-1) - (-1) = 0 */
 static gchar *get_regex_match_string(const gchar *text, const GeanyMatchInfo *match, guint nth)
 {
@@ -1921,7 +1869,6 @@ static gchar *get_regex_match_string(const gchar *text, const GeanyMatchInfo *ma
 	const gint end = match->matches[nth].end;
 	return g_strndup(&text[start], end - start);
 }
-
 
 static gint find_regex(ScintillaObject *sci, guint pos, GRegex *regex, gboolean multiline, GeanyMatchInfo *match)
 {
@@ -1994,7 +1941,6 @@ static gint find_regex(ScintillaObject *sci, guint pos, GRegex *regex, gboolean 
 	return ret;
 }
 
-
 static gint geany_find_flags_to_sci_flags(GeanyFindFlags flags)
 {
 	g_warn_if_fail(! (flags & GEANY_FIND_REGEXP) || ! (flags & GEANY_FIND_MULTILINE));
@@ -2004,7 +1950,6 @@ static gint geany_find_flags_to_sci_flags(GeanyFindFlags flags)
 		((flags & GEANY_FIND_REGEXP) ? SCFIND_REGEXP | SCFIND_POSIX : 0) |
 		((flags & GEANY_FIND_WORDSTART) ? SCFIND_WORDSTART : 0);
 }
-
 
 gint search_find_prev(ScintillaObject *sci, const gchar *str, GeanyFindFlags flags, GeanyMatchInfo **match_)
 {
@@ -2017,7 +1962,6 @@ gint search_find_prev(ScintillaObject *sci, const gchar *str, GeanyFindFlags fla
 		*match_ = match_info_new(flags, ret, ret + strlen(str));
 	return ret;
 }
-
 
 gint search_find_next(ScintillaObject *sci, const gchar *str, GeanyFindFlags flags, GeanyMatchInfo **match_)
 {
@@ -2056,7 +2000,6 @@ gint search_find_next(ScintillaObject *sci, const gchar *str, GeanyFindFlags fla
 	g_regex_unref(regex);
 	return ret;
 }
-
 
 gint search_replace_match(ScintillaObject *sci, const GeanyMatchInfo *match, const gchar *replace_text)
 {
@@ -2103,7 +2046,6 @@ gint search_replace_match(ScintillaObject *sci, const GeanyMatchInfo *match, con
 	return ret;
 }
 
-
 gint search_find_text(ScintillaObject *sci, GeanyFindFlags flags, struct Sci_TextToFind *ttf, GeanyMatchInfo **match_)
 {
 	GeanyMatchInfo *match = NULL;
@@ -2141,7 +2083,6 @@ gint search_find_text(ScintillaObject *sci, GeanyFindFlags flags, struct Sci_Tex
 	g_regex_unref(regex);
 	return ret;
 }
-
 
 static gint find_document_usage(GeanyDocument *doc, const gchar *search_text, GeanyFindFlags flags)
 {
@@ -2181,7 +2122,6 @@ static gint find_document_usage(GeanyDocument *doc, const gchar *search_text, Ge
 	g_free(short_file_name);
 	return count;
 }
-
 
 void search_find_usage(const gchar *search_text, const gchar *original_search_text,
 		GeanyFindFlags flags, gboolean in_session)
@@ -2233,7 +2173,6 @@ void search_find_usage(const gchar *search_text, const gchar *original_search_te
 	}
 }
 
-
 /* ttf is updated to include the last match position (ttf->chrg.cpMin) and
  * the new search range end (ttf->chrg.cpMax).
  * Note: Normally you would call sci_start/end_undo_action() around this call. */
@@ -2274,7 +2213,6 @@ guint search_replace_range(ScintillaObject *sci, struct Sci_TextToFind *ttf,
 
 	return count;
 }
-
 
 void search_find_again(gboolean change_direction)
 {

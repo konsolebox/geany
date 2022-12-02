@@ -7,7 +7,6 @@
 *
 */
 
-
 #ifndef TM_WORKSPACE_H
 #define TM_WORKSPACE_H
 
@@ -16,7 +15,6 @@
 #include "tm_tag.h"
 
 G_BEGIN_DECLS
-
 
 /** The Tag Manager Workspace. This is a singleton object containing a list
  * of individual source files. There is also a global tag list
@@ -33,7 +31,6 @@ typedef struct TMWorkspace
 	GPtrArray *global_typename_array; /* Like above for global tags */
 } TMWorkspace;
 
-
 void tm_workspace_add_source_file(TMSourceFile *source_file);
 
 void tm_workspace_remove_source_file(TMSourceFile *source_file);
@@ -41,7 +38,6 @@ void tm_workspace_remove_source_file(TMSourceFile *source_file);
 void tm_workspace_add_source_files(GPtrArray *source_files);
 
 void tm_workspace_remove_source_files(GPtrArray *source_files);
-
 
 #ifdef GEANY_PRIVATE
 
@@ -60,7 +56,6 @@ GPtrArray *tm_workspace_find_prefix(const char *prefix, TMParserType lang, guint
 GPtrArray *tm_workspace_find_scope_members (TMSourceFile *source_file, const char *name,
 	gboolean function, gboolean member, const gchar *current_scope, gboolean search_namespace);
 
-
 void tm_workspace_add_source_file_noupdate(TMSourceFile *source_file);
 
 void tm_workspace_update_source_file_buffer(TMSourceFile *source_file, guchar* text_buf,
@@ -68,11 +63,9 @@ void tm_workspace_update_source_file_buffer(TMSourceFile *source_file, guchar* t
 
 void tm_workspace_free(void);
 
-
 #ifdef TM_DEBUG
 void tm_workspace_dump(void);
 #endif /* TM_DEBUG */
-
 
 #endif /* GEANY_PRIVATE */
 

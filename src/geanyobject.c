@@ -43,7 +43,6 @@ GObject	*geany_object;
 
 static guint geany_object_signals[GCB_MAX] = { 0 };
 
-
 typedef struct _GeanyObjectPrivate GeanyObjectPrivate;
 
 struct _GeanyObjectPrivate
@@ -61,7 +60,6 @@ GType geany_object_get_type(void);
 
 G_DEFINE_TYPE(GeanyObject, geany_object, G_TYPE_OBJECT)
 
-
 static gboolean boolean_handled_accumulator(GSignalInvocationHint *ihint, GValue *return_accu,
 											const GValue *handler_return, gpointer dummy)
 {
@@ -73,7 +71,6 @@ static gboolean boolean_handled_accumulator(GSignalInvocationHint *ihint, GValue
 
 	return continue_emission;
 }
-
 
 static void create_signals(GObjectClass *g_object_class)
 {
@@ -231,7 +228,6 @@ static void create_signals(GObjectClass *g_object_class)
 		G_TYPE_KEY_FILE);
 }
 
-
 static void geany_object_class_init(GeanyObjectClass *klass)
 {
 	GObjectClass *g_object_class;
@@ -242,12 +238,10 @@ static void geany_object_class_init(GeanyObjectClass *klass)
 	create_signals(g_object_class);
 }
 
-
 static void geany_object_init(GeanyObject *self)
 {
 	/* nothing to do */
 }
-
 
 GObject *geany_object_new(void)
 {

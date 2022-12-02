@@ -35,17 +35,16 @@
 #include "tm_tag.h"
 #include "tm_parser.h"
 
-
 /* when changing, always keep the three sort criteria below in sync */
-static TMTagAttrType workspace_tags_sort_attrs[] = 
-{ 
+static TMTagAttrType workspace_tags_sort_attrs[] =
+{
 	tm_tag_attr_name_t, tm_tag_attr_file_t, tm_tag_attr_line_t,
 	tm_tag_attr_type_t, tm_tag_attr_scope_t, tm_tag_attr_arglist_t, 0
 };
 
 /* for file tags the file is always identical, don't use for sorting */
-static TMTagAttrType file_tags_sort_attrs[] = 
-{ 
+static TMTagAttrType file_tags_sort_attrs[] =
+{
 	tm_tag_attr_name_t, tm_tag_attr_line_t,
 	tm_tag_attr_type_t, tm_tag_attr_scope_t, tm_tag_attr_arglist_t, 0
 };
@@ -53,7 +52,7 @@ static TMTagAttrType file_tags_sort_attrs[] =
 /* global tags don't have file/line information */
 static TMTagAttrType global_tags_sort_attrs[] =
 {
-	tm_tag_attr_name_t, 
+	tm_tag_attr_name_t,
 	tm_tag_attr_type_t, tm_tag_attr_scope_t, tm_tag_attr_arglist_t, 0
 };
 
@@ -66,7 +65,6 @@ static TMTagType TM_GLOBAL_TYPE_MASK =
 	tm_tag_struct_t | tm_tag_typedef_t | tm_tag_union_t | tm_tag_namespace_t;
 
 static TMWorkspace *theWorkspace = NULL;
-
 
 static gboolean tm_create_workspace(void)
 {
@@ -83,7 +81,6 @@ static gboolean tm_create_workspace(void)
 
 	return TRUE;
 }
-
 
 /* Frees the workspace structure and all child source files. Use only when
  exiting from the main program.
@@ -107,7 +104,6 @@ void tm_workspace_free(void)
 	theWorkspace = NULL;
 }
 
-
 /* Since TMWorkspace is a singleton, you should not create multiple
  workspaces, but get a pointer to the workspace whenever required. The first
  time a pointer is requested, or a source file is added to the workspace,
@@ -121,7 +117,6 @@ const TMWorkspace *tm_get_workspace(void)
 	return theWorkspace;
 }
 
-
 static void tm_workspace_merge_tags(GPtrArray **big_array, GPtrArray *small_array)
 {
 	GPtrArray *new_tags = tm_tags_merge(*big_array, small_array, workspace_tags_sort_attrs, FALSE);
@@ -129,7 +124,6 @@ static void tm_workspace_merge_tags(GPtrArray **big_array, GPtrArray *small_arra
 	g_ptr_array_free(*big_array, TRUE);
 	*big_array = new_tags;
 }
-
 
 static void merge_extracted_tags(GPtrArray **dest, GPtrArray *src, TMTagType tag_types)
 {
@@ -139,7 +133,6 @@ static void merge_extracted_tags(GPtrArray **dest, GPtrArray *src, TMTagType tag
 	tm_workspace_merge_tags(dest, arr);
 	g_ptr_array_free(arr, TRUE);
 }
-
 
 static void update_source_file(TMSourceFile *source_file, guchar* text_buf,
 	gsize buf_size, gboolean use_buffer, gboolean update_workspace)
@@ -174,7 +167,6 @@ static void update_source_file(TMSourceFile *source_file, guchar* text_buf,
 #endif
 }
 
-
 /** Adds a source file to the workspace, parses it and updates the workspace tags.
  @param source_file The source file to add to the workspace.
 */
@@ -187,14 +179,12 @@ void tm_workspace_add_source_file(TMSourceFile *source_file)
 	update_source_file(source_file, NULL, 0, FALSE, TRUE);
 }
 
-
 void tm_workspace_add_source_file_noupdate(TMSourceFile *source_file)
 {
 	g_return_if_fail(source_file != NULL);
 
 	g_ptr_array_add(theWorkspace->source_files, source_file);
 }
-
 
 /* Updates the source file by reparsing the text-buffer passed as parameter.
  Ctags will use a parsing based on buffer instead of on files.
@@ -214,9 +204,8 @@ void tm_workspace_update_source_file_buffer(TMSourceFile *source_file, guchar* t
 	update_source_file(source_file, text_buf, buf_size, TRUE, TRUE);
 }
 
-
 /** Removes a source file from the workspace if it exists. This function also removes
- the tags belonging to this file from the workspace. To completely free the TMSourceFile 
+ the tags belonging to this file from the workspace. To completely free the TMSourceFile
  pointer call tm_source_file_free() on it.
  @param source_file Pointer to the source file to be removed.
 */
@@ -239,8 +228,7 @@ void tm_workspace_remove_source_file(TMSourceFile *source_file)
 	}
 }
 
-
-/* Recreates workspace tag array from all member TMSourceFile objects. Use if you 
+/* Recreates workspace tag array from all member TMSourceFile objects. Use if you
  want to globally refresh the workspace. This function does not call tm_source_file_update()
  which should be called before this function on source files which need to be
  reparsed.
@@ -283,7 +271,6 @@ static void tm_workspace_update(void)
 	theWorkspace->typename_array = tm_tags_extract(theWorkspace->tags_array, TM_GLOBAL_TYPE_MASK);
 }
 
-
 /** Adds multiple source files to the workspace and updates the workspace tag arrays.
  This is more efficient than calling tm_workspace_add_source_file() and
  tm_workspace_update_source_file() separately for each of the files.
@@ -299,14 +286,13 @@ void tm_workspace_add_source_files(GPtrArray *source_files)
 	for (i = 0; i < source_files->len; i++)
 	{
 		TMSourceFile *source_file = source_files->pdata[i];
-		
+
 		tm_workspace_add_source_file_noupdate(source_file);
 		update_source_file(source_file, NULL, 0, FALSE, FALSE);
 	}
-	
+
 	tm_workspace_update();
 }
-
 
 /** Removes multiple source files from the workspace and updates the workspace tag
  arrays. This is more efficient than calling tm_workspace_remove_source_file()
@@ -325,7 +311,7 @@ void tm_workspace_remove_source_files(GPtrArray *source_files)
 	for (i = 0; i < source_files->len; i++)
 	{
 		TMSourceFile *source_file = source_files->pdata[i];
-		
+
 		for (j = 0; j < theWorkspace->source_files->len; j++)
 		{
 			if (theWorkspace->source_files->pdata[j] == source_file)
@@ -335,10 +321,9 @@ void tm_workspace_remove_source_files(GPtrArray *source_files)
 			}
 		}
 	}
-	
+
 	tm_workspace_update();
 }
-
 
 /* Loads the global tag list from the specified file. The global tag list should
  have been first created using tm_workspace_create_global_tags().
@@ -357,7 +342,7 @@ gboolean tm_workspace_load_global_tags(const char *tags_file, TMParserType mode)
 	tm_tags_sort(file_tags, global_tags_sort_attrs, TRUE, TRUE);
 
 	/* reorder the whole array, because tm_tags_find expects a sorted array */
-	new_tags = tm_tags_merge(theWorkspace->global_tags, 
+	new_tags = tm_tags_merge(theWorkspace->global_tags,
 		file_tags, global_tags_sort_attrs, TRUE);
 	g_ptr_array_free(theWorkspace->global_tags, TRUE);
 	g_ptr_array_free(file_tags, TRUE);
@@ -368,7 +353,6 @@ gboolean tm_workspace_load_global_tags(const char *tags_file, TMParserType mode)
 
 	return TRUE;
 }
-
 
 static guint tm_file_inode_hash(gconstpointer key)
 {
@@ -386,7 +370,6 @@ static guint tm_file_inode_hash(gconstpointer key)
 	return 0;
 }
 
-
 static void tm_move_entries_to_g_list(gpointer key, gpointer value, gpointer user_data)
 {
 	GList **pp_list = (GList**)user_data;
@@ -396,7 +379,6 @@ static void tm_move_entries_to_g_list(gpointer key, gpointer value, gpointer use
 
 	*pp_list = g_list_prepend(*pp_list, g_strdup(value));
 }
-
 
 static gboolean write_includes_file(const gchar *outf, GList *includes_files)
 {
@@ -418,7 +400,6 @@ static gboolean write_includes_file(const gchar *outf, GList *includes_files)
 
 	return fclose(fp) == 0;
 }
-
 
 static gboolean combine_include_files(const gchar *outf, GList *file_list)
 {
@@ -451,7 +432,6 @@ static gboolean combine_include_files(const gchar *outf, GList *file_list)
 
 	return fclose(fp) == 0;
 }
-
 
 static gchar *create_temp_file(const gchar *tpl)
 {
@@ -661,7 +641,6 @@ cleanup:
 	return ret;
 }
 
-
 static void fill_find_tags_array(GPtrArray *dst, const GPtrArray *src,
 	const char *name, const char *scope, TMTagType type, TMParserType lang)
 {
@@ -683,7 +662,6 @@ static void fill_find_tags_array(GPtrArray *dst, const GPtrArray *src,
 		tag++;
 	}
 }
-
 
 /* Returns all matching tags found in the workspace.
  @param name The name of the tag to find.
@@ -707,7 +685,6 @@ GPtrArray *tm_workspace_find(const char *name, const char *scope, TMTagType type
 
 	return tags;
 }
-
 
 static void fill_find_tags_array_prefix(GPtrArray *dst, const GPtrArray *src,
 	const char *name, TMParserType lang, guint max_num)
@@ -734,7 +711,6 @@ static void fill_find_tags_array_prefix(GPtrArray *dst, const GPtrArray *src,
 	}
 }
 
-
 /* Returns tags with the specified prefix sorted by name. If there are several
  tags with the same name, only one of them appears in the resulting array.
  @param prefix The prefix of the tag to find.
@@ -757,7 +733,6 @@ GPtrArray *tm_workspace_find_prefix(const char *prefix, TMParserType lang, guint
 
 	return tags;
 }
-
 
 /* Gets all members of type_tag; search them inside the all array.
  * The namespace parameter determines whether we are performing the "namespace"
@@ -807,7 +782,6 @@ find_scope_members_tags (const GPtrArray *all, TMTag *type_tag, gboolean namespa
 	return tags;
 }
 
-
 static gchar *strip_type(const gchar *scoped_name, TMParserType lang)
 {
 	if (scoped_name != NULL)
@@ -825,7 +799,6 @@ static gchar *strip_type(const gchar *scoped_name, TMParserType lang)
 	}
 	return NULL;
 }
-
 
 /* Gets all members of the type with the given name; search them inside tags_array */
 static GPtrArray *
@@ -904,7 +877,6 @@ find_scope_members (const GPtrArray *tags_array, const gchar *name, TMSourceFile
 	return res;
 }
 
-
 /* Checks whether a member tag is directly accessible from method with method_scope */
 static gboolean member_at_method_scope(const GPtrArray *tags, const gchar *method_scope, TMTag *member_tag,
 	TMParserType lang)
@@ -954,7 +926,6 @@ static gboolean member_at_method_scope(const GPtrArray *tags, const gchar *metho
 	return ret;
 }
 
-
 /* For an array of variable/type tags, find members inside the types */
 static GPtrArray *
 find_scope_members_all(const GPtrArray *tags, const GPtrArray *searched_array, TMParserType lang,
@@ -1000,7 +971,6 @@ find_scope_members_all(const GPtrArray *tags, const GPtrArray *searched_array, T
 	return member_tags;
 }
 
-
 static GPtrArray *find_namespace_members_all(const GPtrArray *tags, const GPtrArray *searched_array, TMParserType lang)
 {
 	GPtrArray *member_tags = NULL;
@@ -1015,7 +985,6 @@ static GPtrArray *find_namespace_members_all(const GPtrArray *tags, const GPtrAr
 
 	return member_tags;
 }
-
 
 /* Returns all member tags of a struct/union/class if the provided name is a variable
  of such a type or the name of the type.
@@ -1079,7 +1048,6 @@ tm_workspace_find_scope_members (TMSourceFile *source_file, const char *name,
 	return member_tags;
 }
 
-
 #ifdef TM_DEBUG
 
 /* Dumps the workspace tree - useful for debugging */
@@ -1097,7 +1065,6 @@ void tm_workspace_dump(void)
 	}
 }
 #endif /* TM_DEBUG */
-
 
 #if 0
 

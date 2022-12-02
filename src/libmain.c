@@ -80,7 +80,6 @@
 # include <locale.h>
 #endif
 
-
 GeanyApp	*app;
 gboolean	ignore_callback;	/* hack workaround for GTK+ toggle button callback problem */
 
@@ -112,7 +111,6 @@ static gboolean no_plugins = FALSE;
 #endif
 static gboolean dummy = FALSE;
 
-
 gboolean new_instance_mode_arg_callback(const gchar *option_name, const gchar *value, gpointer data, GError **error)
 {
 	gint len = strlen(option_name);
@@ -129,7 +127,6 @@ gboolean new_instance_mode_arg_callback(const gchar *option_name, const gchar *v
 
 	return TRUE;
 }
-
 
 /* in alphabetical order of short options */
 static GOptionEntry entries[] =
@@ -164,7 +161,6 @@ static GOptionEntry entries[] =
 	{ NULL, 0, 0, 0, NULL, NULL, NULL }
 };
 
-
 static void setup_window_position(void)
 {
 	/* interprets the saved window geometry */
@@ -182,7 +178,6 @@ static void setup_window_position(void)
 	if (ui_prefs.geometry[4] == 1)
 		gtk_window_maximize(GTK_WINDOW(main_widgets.window));
 }
-
 
 /* special things for the initial setup of the checkboxes and related stuff
  * an action on a setting is only performed if the setting is not equal to the program default
@@ -241,7 +236,6 @@ static void apply_settings(void)
 		interface_prefs.msgwin_orientation);
 }
 
-
 static void on_window_active_changed(GtkWindow *window, GParamSpec *pspec, gpointer data)
 {
 	GeanyDocument *doc = document_get_current();
@@ -249,7 +243,6 @@ static void on_window_active_changed(GtkWindow *window, GParamSpec *pspec, gpoin
 	if (doc && gtk_window_is_active(window))
 		document_check_disk_status(doc, TRUE);
 }
-
 
 static void main_init(void)
 {
@@ -310,7 +303,6 @@ static void main_init(void)
 		GEANY_WINDOW_DEFAULT_WIDTH, GEANY_WINDOW_DEFAULT_HEIGHT);
 }
 
-
 const gchar *main_get_version_string(void)
 {
 	static gchar full[] = VERSION " (git >= " REVISION ")";
@@ -320,7 +312,6 @@ const gchar *main_get_version_string(void)
 	else
 		return full;
 }
-
 
 /* get the full file path of a command-line argument
  * N.B. the result should be freed and may contain '/../' or '/./ ' */
@@ -345,7 +336,6 @@ gchar *main_get_argv_filename(const gchar *filename)
 	}
 	return result;
 }
-
 
 /* get a :line:column specifier from the end of a filename (if present),
  * return the line/column values, and remove the specifier from the string
@@ -402,7 +392,6 @@ static void get_line_and_column_from_filename(gchar *filename, gint *line, gint 
 	}
 }
 
-
 #ifdef G_OS_WIN32
 static void change_working_directory_on_windows(void)
 {
@@ -421,14 +410,12 @@ static void change_working_directory_on_windows(void)
 }
 #endif
 
-
 static void setup_paths(void)
 {
 	/* convert path names to locale encoding */
 	app->datadir = utils_get_locale_from_utf8(utils_resource_dir(RESOURCE_DIR_DATA));
 	app->docdir = utils_get_locale_from_utf8(utils_resource_dir(RESOURCE_DIR_DOC));
 }
-
 
 /**
  *  Checks whether the main window has been realized.
@@ -449,7 +436,6 @@ gboolean main_is_realized(void)
 {
 	return main_status.main_window_realized;
 }
-
 
 /**
  *  Initialises the gettext translation system.
@@ -489,7 +475,6 @@ void main_locale_init(const gchar *locale_dir, const gchar *package)
 	(void) bind_textdomain_codeset(package, "UTF-8");
 }
 
-
 static void print_filetypes(void)
 {
 	const GSList *list, *node;
@@ -507,7 +492,6 @@ static void print_filetypes(void)
 	filetypes_free_types();
 }
 
-
 static void wait_for_input_on_windows(void)
 {
 #ifdef G_OS_WIN32
@@ -518,7 +502,6 @@ static void wait_for_input_on_windows(void)
 	}
 #endif
 }
-
 
 static void parse_command_line_options(gint *argc, gchar ***argv)
 {
@@ -648,7 +631,6 @@ static void parse_command_line_options(gint *argc, gchar ***argv)
 #endif
 }
 
-
 static gint create_config_dir(void)
 {
 	gint saved_errno = 0;
@@ -761,7 +743,6 @@ For more information read the documentation (in ", app->docdir, G_DIR_SEPARATOR_
 	return saved_errno;
 }
 
-
 /* Returns 0 if config dir is OK. */
 static gint setup_config_dir(void)
 {
@@ -845,7 +826,6 @@ gboolean main_handle_filename(const gchar *locale_filename)
 	return FALSE;
 }
 
-
 /* open files from command line */
 static void open_cl_files(gint argc, gchar **argv)
 {
@@ -877,7 +857,6 @@ static void open_cl_files(gint argc, gchar **argv)
 	}
 }
 
-
 static void load_session_project_file(void)
 {
 	gchar *locale_filename;
@@ -892,7 +871,6 @@ static void load_session_project_file(void)
 	g_free(locale_filename);
 	g_free(project_prefs.session_file);	/* no longer needed */
 }
-
 
 static void load_settings(void)
 {
@@ -912,7 +890,6 @@ static void load_settings(void)
 #endif
 }
 
-
 void main_load_project_from_command_line(const gchar *locale_filename, gboolean use_session)
 {
 	gchar *pfile;
@@ -927,7 +904,6 @@ void main_load_project_from_command_line(const gchar *locale_filename, gboolean 
 	}
 	g_free(pfile);
 }
-
 
 static void load_startup_files(gint argc, gchar **argv)
 {
@@ -972,13 +948,11 @@ static void load_startup_files(gint argc, gchar **argv)
 	open_cl_files(argc, argv);
 }
 
-
 static gboolean send_startup_complete(gpointer data)
 {
 	g_signal_emit_by_name(geany_object, "geany-startup-complete");
 	return FALSE;
 }
-
 
 static const gchar *get_locale(void)
 {
@@ -988,7 +962,6 @@ static const gchar *get_locale(void)
 #endif
 	return locale;
 }
-
 
 #if ! GTK_CHECK_VERSION(3, 0, 0)
 /* This prepends our own gtkrc file to the list of RC files to be loaded by GTK at startup.
@@ -1034,7 +1007,6 @@ static void setup_gtk2_styles(void)
 	g_strfreev(new_files);
 }
 #endif
-
 
 GEANY_EXPORT_SYMBOL
 gint main_lib(gint argc, gchar **argv)
@@ -1254,7 +1226,6 @@ gint main_lib(gint argc, gchar **argv)
 	return 0;
 }
 
-
 static void queue_free(GQueue *queue)
 {
 	while (! g_queue_is_empty(queue))
@@ -1263,7 +1234,6 @@ static void queue_free(GQueue *queue)
 	}
 	g_queue_free(queue);
 }
-
 
 static void do_main_quit(void)
 {
@@ -1369,7 +1339,6 @@ static void do_main_quit(void)
 	gtk_main_quit();
 }
 
-
 static gboolean check_no_unsaved(void)
 {
 	guint i;
@@ -1383,7 +1352,6 @@ static gboolean check_no_unsaved(void)
 	}
 	return TRUE;    /* no unsaved edits */
 }
-
 
 /* Returns false when quitting is aborted due to user cancellation */
 gboolean main_quit(void)

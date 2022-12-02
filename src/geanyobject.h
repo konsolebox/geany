@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_OBJECT_H
 #define GEANY_OBJECT_H 1
 
@@ -30,7 +29,6 @@
 #include "Scintilla.h"
 
 #include "gtkcompat.h"
-
 
 G_BEGIN_DECLS
 
@@ -60,7 +58,6 @@ typedef enum
 	GCB_MAX
 }
 GeanyCallbackId;
-
 
 #define GEANY_OBJECT_TYPE				(geany_object_get_type())
 #define GEANY_OBJECT(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj),\

@@ -30,7 +30,6 @@
 
 #include "geanywraplabel.h"
 
-
 struct _GeanyWrapLabelClass
 {
 	GtkLabelClass parent_class;
@@ -47,7 +46,6 @@ struct _GeanyWrapLabel
 	GtkLabel parent;
 	GeanyWrapLabelPrivate *priv;
 };
-
 
 #if GTK_CHECK_VERSION(3, 0, 0)
 static gboolean geany_wrap_label_draw(GtkWidget *widget, cairo_t *cr);
@@ -70,7 +68,6 @@ static void geany_wrap_label_label_notify	(GObject *object, GParamSpec *pspec, g
 
 G_DEFINE_TYPE(GeanyWrapLabel, geany_wrap_label, GTK_TYPE_LABEL)
 
-
 static void geany_wrap_label_class_init(GeanyWrapLabelClass *klass)
 {
 	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS(klass);
@@ -91,7 +88,6 @@ static void geany_wrap_label_class_init(GeanyWrapLabelClass *klass)
 	g_type_class_add_private(klass, sizeof (GeanyWrapLabelPrivate));
 }
 
-
 static void geany_wrap_label_init(GeanyWrapLabel *self)
 {
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self,
@@ -103,7 +99,6 @@ static void geany_wrap_label_init(GeanyWrapLabel *self)
 	g_signal_connect(self, "notify::label", G_CALLBACK(geany_wrap_label_label_notify), NULL);
 	gtk_misc_set_alignment(GTK_MISC(self), 0.0, 0.0);
 }
-
 
 /* Sets the point at which the text should wrap. */
 static void geany_wrap_label_set_wrap_width(GtkWidget *widget, gint width)
@@ -131,7 +126,6 @@ static void geany_wrap_label_set_wrap_width(GtkWidget *widget, gint width)
 	}
 }
 
-
 /* updates the wrap width when the label text changes */
 static void geany_wrap_label_label_notify(GObject *object, GParamSpec *pspec, gpointer data)
 {
@@ -139,7 +133,6 @@ static void geany_wrap_label_label_notify(GObject *object, GParamSpec *pspec, gp
 
 	geany_wrap_label_set_wrap_width(GTK_WIDGET(object), self->priv->wrap_width);
 }
-
 
 #if GTK_CHECK_VERSION(3, 0, 0)
 /* makes sure the layout is setup for rendering and chains to parent renderer */
@@ -154,13 +147,11 @@ static gboolean geany_wrap_label_draw(GtkWidget *widget, cairo_t *cr)
 	return (* GTK_WIDGET_CLASS(geany_wrap_label_parent_class)->draw)(widget, cr);
 }
 
-
 static void geany_wrap_label_get_preferred_width (GtkWidget *widget,
 		gint *minimal_width, gint *natural_width)
 {
 	*minimal_width = *natural_width = 0;
 }
-
 
 static void geany_wrap_label_get_preferred_width_for_height (GtkWidget *widget,
 		gint height, gint *minimal_width, gint *natural_width)
@@ -174,13 +165,11 @@ static void geany_wrap_label_get_preferred_width_for_height (GtkWidget *widget,
 	*minimal_width = 0;
 }
 
-
 static void geany_wrap_label_get_preferred_height (GtkWidget *widget,
 		gint *minimal_height, gint *natural_height)
 {
 	*minimal_height = *natural_height = GEANY_WRAP_LABEL(widget)->priv->wrap_height;
 }
-
 
 static void geany_wrap_label_get_preferred_height_for_width (GtkWidget *widget,
 		gint width, gint *minimal_height, gint *natural_height)
@@ -193,7 +182,6 @@ static void geany_wrap_label_get_preferred_height_for_width (GtkWidget *widget,
 
 	*minimal_height = *natural_height;
 }
-
 
 static GtkSizeRequestMode geany_wrap_label_get_request_mode(GtkWidget *widget)
 {
@@ -214,7 +202,6 @@ static gboolean geany_wrap_label_expose(GtkWidget *widget, GdkEventExpose *event
 	return (* GTK_WIDGET_CLASS(geany_wrap_label_parent_class)->expose_event)(widget, event);
 }
 
-
 /* Forces the height to be the size necessary for the Pango layout, while allowing the
  * width to be flexible. */
 static void geany_wrap_label_size_request(GtkWidget *widget, GtkRequisition *req)
@@ -223,7 +210,6 @@ static void geany_wrap_label_size_request(GtkWidget *widget, GtkRequisition *req
 	req->height = GEANY_WRAP_LABEL(widget)->priv->wrap_height;
 }
 #endif /* GTK3 */
-
 
 /* Sets the wrap width to the width allocated to us. */
 static void geany_wrap_label_size_allocate(GtkWidget *widget, GtkAllocation *alloc)
@@ -242,7 +228,6 @@ static void geany_wrap_label_size_allocate(GtkWidget *widget, GtkAllocation *all
 }
 #endif
 }
-
 
 GtkWidget *geany_wrap_label_new(const gchar *text)
 {

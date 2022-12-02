@@ -63,7 +63,7 @@ typedef enum GeanyBuildCmdEntries
 
 void build_activate_menu_item(const GeanyBuildGroup grp, const guint cmd);
 
-const gchar *build_get_current_menu_item(const GeanyBuildGroup grp, const guint cmd, 
+const gchar *build_get_current_menu_item(const GeanyBuildGroup grp, const guint cmd,
                                          const GeanyBuildCmdEntries field);
 
 void build_remove_menu_item(const GeanyBuildSource src, const GeanyBuildGroup grp, const gint cmd);
@@ -72,7 +72,6 @@ void build_set_menu_item(const GeanyBuildSource src, const GeanyBuildGroup grp,
                          const guint cmd, const GeanyBuildCmdEntries field, const gchar *value);
 
 guint build_get_group_count(const GeanyBuildGroup grp);
-
 
 #ifdef GEANY_PRIVATE
 
@@ -177,7 +176,6 @@ typedef struct BuildDestination
 
 /* opaque pointers returned from build functions and passed back to them */
 typedef struct BuildTableFields *BuildTableData;
-
 
 void build_init(void);
 

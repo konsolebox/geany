@@ -45,12 +45,10 @@ typedef enum
 	tm_tag_max_t = 1048575 /**< Maximum value of TMTagType */
 } TMTagType;
 
-
 /** @gironly
  * A integral type which can hold known parser type IDs
  **/
 typedef gint TMParserType;
-
 
 #ifdef GEANY_PRIVATE
 
@@ -111,7 +109,6 @@ enum
 	TM_PARSER_POWERSHELL,
 	TM_PARSER_COUNT
 };
-
 
 void tm_parser_verify_type_mappings(void);
 

@@ -99,7 +99,6 @@ static gboolean spawn_parse_argv(const gchar *command_line, gint *argcp, gchar *
 
 #define G_IO_FAILURE (G_IO_ERR | G_IO_HUP | G_IO_NVAL)  /* always used together */
 
-
 /*
  *  Checks whether a command line is syntactically valid and extracts the program name from it.
  *
@@ -204,7 +203,6 @@ static gchar *spawn_get_program_name(const gchar *command_line, GError **error)
 	return program;
 }
 
-
 /**
  *  Checks whether a command line is valid.
  *
@@ -267,7 +265,6 @@ gboolean spawn_check_command(const gchar *command_line, gboolean execute, GError
 	return TRUE;
 }
 
-
 /**
  *  Kills a process.
  *
@@ -304,7 +301,6 @@ gboolean spawn_kill_process(GPid pid, GError **error)
 #endif
 	return TRUE;
 }
-
 
 #ifdef G_OS_WIN32
 static gchar *spawn_create_process_with_pipes(wchar_t *w_command_line, const wchar_t *w_working_directory,
@@ -434,7 +430,6 @@ leave:
 	return failure;
 }
 
-
 static void spawn_append_argument(GString *command, const char *text)
 {
 	const char *s;
@@ -486,7 +481,6 @@ static void spawn_append_argument(GString *command, const char *text)
 	}
 }
 #endif /* G_OS_WIN32 */
-
 
 /*
  *  Executes a child program asynchronously and setups pipes.
@@ -788,7 +782,6 @@ static gboolean spawn_async_with_pipes(const gchar *working_directory, const gch
 #endif  /* G_OS_WIN32 */
 }
 
-
 /**
  *  Executes a child asynchronously.
  *
@@ -815,7 +808,6 @@ gboolean spawn_async(const gchar *working_directory, const gchar *command_line, 
 	return spawn_async_with_pipes(working_directory, command_line, argv, envp, child_pid,
 		NULL, NULL, NULL, error);
 }
-
 
 /*
  * Spawn with callbacks - general event sequence:
@@ -844,7 +836,6 @@ typedef struct _SpawnChannelData
 	gsize max_length;
 } SpawnChannelData;
 
-
 static void spawn_destroy_cb(gpointer data)
 {
 	SpawnChannelData *sc = (SpawnChannelData *) data;
@@ -859,7 +850,6 @@ static void spawn_destroy_cb(gpointer data)
 		g_string_free(sc->line_buffer, TRUE);
 }
 
-
 static gboolean spawn_write_cb(GIOChannel *channel, GIOCondition condition, gpointer data)
 {
 	SpawnChannelData *sc = (SpawnChannelData *) data;
@@ -869,7 +859,6 @@ static gboolean spawn_write_cb(GIOChannel *channel, GIOCondition condition, gpoi
 
 	return !(condition & G_IO_FAILURE);
 }
-
 
 static gboolean spawn_read_cb(GIOChannel *channel, GIOCondition condition, gpointer data)
 {
@@ -974,7 +963,6 @@ static gboolean spawn_read_cb(GIOChannel *channel, GIOCondition condition, gpoin
 	return !failure_cond;
 }
 
-
 typedef struct _SpawnWatcherData
 {
 	SpawnChannelData sc[3];       /* stdin, stdout, stderr */
@@ -985,7 +973,6 @@ typedef struct _SpawnWatcherData
 	GMainContext *main_context;  /* NULL if async execution */
 	GMainLoop *main_loop;        /* NULL if async execution */
 } SpawnWatcherData;
-
 
 static void spawn_finalize(SpawnWatcherData *sw)
 {
@@ -1002,7 +989,6 @@ static void spawn_finalize(SpawnWatcherData *sw)
 	g_slice_free(SpawnWatcherData, sw);
 }
 
-
 static gboolean spawn_timeout_cb(gpointer data)
 {
 	SpawnWatcherData *sw = (SpawnWatcherData *) data;
@@ -1015,7 +1001,6 @@ static gboolean spawn_timeout_cb(gpointer data)
 	spawn_finalize(sw);
 	return FALSE;
 }
-
 
 static void spawn_watch_cb(GPid pid, gint status, gpointer data)
 {
@@ -1040,7 +1025,6 @@ static void spawn_watch_cb(GPid pid, gint status, gpointer data)
 
 	spawn_finalize(sw);
 }
-
 
 /** @girskip
  *  Executes a child program and setups callbacks.
@@ -1206,7 +1190,6 @@ gboolean spawn_with_callbacks(const gchar *working_directory, const gchar *comma
 	return FALSE;
 }
 
-
 /**
  *  Writes (a portion of) the data pointed by @a data->ptr to the @a channel.
  *
@@ -1250,19 +1233,16 @@ gboolean spawn_write_data(GIOChannel *channel, GIOCondition condition, SpawnWrit
 	return data->size > 0 && !(condition & G_IO_FAILURE);
 }
 
-
 static void spawn_append_gstring_cb(GString *string, GIOCondition condition, gpointer data)
 {
 	if (condition & (G_IO_IN | G_IO_PRI))
 		g_string_append_len((GString *) data, string->str, string->len);
 }
 
-
 static void spawn_get_exit_status_cb(G_GNUC_UNUSED GPid pid, gint status, gpointer exit_status)
 {
 	*(gint *) exit_status = status;
 }
-
 
 /**
  *  Executes a child synchronously.
@@ -1306,11 +1286,9 @@ gboolean spawn_sync(const gchar *working_directory, const gchar *command_line, g
 		exit_status ? spawn_get_exit_status_cb : NULL, exit_status, NULL, error);
 }
 
-
 /* tests, not part of the API */
 #ifdef SPAWN_TEST
 #include <stdio.h>
-
 
 static gboolean read_line(const char *prompt, char *buffer, size_t size)
 {
@@ -1327,7 +1305,6 @@ static gboolean read_line(const char *prompt, char *buffer, size_t size)
 
 	return *buffer;
 }
-
 
 static GString *read_string(const char *prompt)
 {
@@ -1351,7 +1328,6 @@ static GString *read_string(const char *prompt)
 	return string;
 }
 
-
 static void print_cb(GString *string, GIOCondition condition, gpointer data)
 {
 	if (condition & (G_IO_IN | G_IO_PRI))
@@ -1369,7 +1345,6 @@ static void print_cb(GString *string, GIOCondition condition, gpointer data)
 	}
 }
 
-
 static void print_status(gint status)
 {
 	fputs("finished, ", stderr);
@@ -1380,13 +1355,11 @@ static void print_status(gint status)
 		fputs("abnormal termination\n", stderr);
 }
 
-
 static void exit_cb(GPid pid, gint status, G_GNUC_UNUSED gpointer data)
 {
 	fprintf(stderr, "process %u ", (guint) pid);
 	print_status(status);
 }
-
 
 static void watch_cb(GPid pid, gint status, gpointer data)
 {
@@ -1394,7 +1367,6 @@ static void watch_cb(GPid pid, gint status, gpointer data)
 	exit_cb(pid, status, NULL);
 	g_main_loop_quit((GMainLoop *) data);
 }
-
 
 int main(int argc, char **argv)
 {

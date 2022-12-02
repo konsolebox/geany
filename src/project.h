@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_PROJECT_H
 #define GEANY_PROJECT_H 1
 
@@ -29,7 +28,6 @@
 G_BEGIN_DECLS
 
 #define GEANY_PROJECT_EXT				"geany"
-
 
 /** Structure for representing a project. */
 typedef struct GeanyProject
@@ -47,9 +45,7 @@ typedef struct GeanyProject
 }
 GeanyProject;
 
-
 void project_write_config(void);
-
 
 #ifdef GEANY_PRIVATE
 
@@ -62,11 +58,9 @@ typedef struct ProjectPrefs
 
 extern ProjectPrefs project_prefs;
 
-
 void project_init(void);
 
 void project_finalize(void);
-
 
 void project_new(void);
 
@@ -80,13 +74,11 @@ void project_build_properties(void);
 
 gboolean project_ask_close(void);
 
-
 gboolean project_load_file(const gchar *locale_file_name);
 
 gboolean project_load_file_with_session(const gchar *locale_file_name);
 
 gchar *project_get_base_path(void);
-
 
 const struct GeanyFilePrefs *project_get_file_prefs(void);
 

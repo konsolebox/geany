@@ -48,7 +48,6 @@ enum
 	DIALOG_RESPONSE_CLEAR = 1
 };
 
-
 static void update_dialog(void)
 {
 	if (dialog_textbuffer != NULL)
@@ -63,7 +62,6 @@ static void update_dialog(void)
 	}
 }
 
-
 /* Geany's main debug/log function, declared in geany.h */
 void geany_debug(gchar const *format, ...)
 {
@@ -72,7 +70,6 @@ void geany_debug(gchar const *format, ...)
 	g_logv(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, format, args);
 	va_end(args);
 }
-
 
 static void handler_print(const gchar *msg)
 {
@@ -84,7 +81,6 @@ static void handler_print(const gchar *msg)
 	}
 }
 
-
 static void handler_printerr(const gchar *msg)
 {
 	fprintf(stderr, "%s\n", msg);
@@ -94,7 +90,6 @@ static void handler_printerr(const gchar *msg)
 		update_dialog();
 	}
 }
-
 
 static const gchar *get_log_prefix(GLogLevelFlags log_level)
 {
@@ -115,7 +110,6 @@ static const gchar *get_log_prefix(GLogLevelFlags log_level)
 	}
 	return "LOG";
 }
-
 
 static void handler_log(const gchar *domain, GLogLevelFlags level, const gchar *msg, gpointer data)
 {
@@ -148,7 +142,6 @@ static void handler_log(const gchar *domain, GLogLevelFlags level, const gchar *
 	update_dialog();
 }
 
-
 void log_handlers_init(void)
 {
 	log_buffer = g_string_sized_new(2048);
@@ -157,7 +150,6 @@ void log_handlers_init(void)
 	g_set_printerr_handler(handler_printerr);
 	g_log_set_default_handler(handler_log, NULL);
 }
-
 
 static void on_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 {
@@ -177,7 +169,6 @@ static void on_dialog_response(GtkDialog *dialog, gint response, gpointer user_d
 		dialog_textbuffer = NULL;
 	}
 }
-
 
 void log_show_debug_messages_dialog(void)
 {
@@ -214,7 +205,6 @@ void log_show_debug_messages_dialog(void)
 
 	update_dialog(); /* set text after showing the window, to not scroll an unrealized textview */
 }
-
 
 void log_finalize(void)
 {

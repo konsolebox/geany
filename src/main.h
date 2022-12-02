@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_MAIN_H
 #define GEANY_MAIN_H 1
 
@@ -32,7 +31,6 @@ void main_reload_configuration(void);
 void main_locale_init(const gchar *locale_dir, const gchar *gettext_package);
 
 gboolean main_is_realized(void);
-
 
 #ifdef GEANY_PRIVATE
 
@@ -58,7 +56,6 @@ CommandLineOptions;
 
 extern CommandLineOptions cl_options;
 
-
 typedef struct GeanyStatus
 {
 	gboolean	opening_session_files;	/* state at startup while opening session files */
@@ -70,7 +67,6 @@ typedef struct GeanyStatus
 GeanyStatus;
 
 extern GeanyStatus main_status;
-
 
 const gchar *main_get_version_string(void);
 

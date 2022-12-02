@@ -59,7 +59,6 @@
 
 #include <string.h>
 
-
 typedef struct
 {
 	gchar *prefix;
@@ -67,9 +66,7 @@ typedef struct
 }
 ForEachDocData;
 
-
 GList *active_plugin_list = NULL; /* list of only actually loaded plugins, always valid */
-
 
 static gboolean want_plugins = FALSE;
 
@@ -88,7 +85,6 @@ typedef struct {
 	gchar		extension[8];
 	Plugin		*plugin; /* &builtin_so_proxy_plugin for native plugins */
 } PluginProxy;
-
 
 static gpointer plugin_load_gmodule(GeanyPlugin *proxy, GeanyPlugin *plugin, const gchar *filename, gpointer pdata);
 static void plugin_unload_gmodule(GeanyPlugin *proxy, GeanyPlugin *plugin, gpointer load_data, gpointer pdata);
@@ -136,7 +132,6 @@ geany_data_init(void)
 	geany_data = gd;
 }
 
-
 /* In order to have nested proxies work the count of dependent plugins must propagate up.
  * This prevents that any plugin in the tree is unloaded while a leaf plugin is active. */
 static void proxied_count_inc(Plugin *proxy)
@@ -148,7 +143,6 @@ static void proxied_count_inc(Plugin *proxy)
 	} while (proxy != NULL);
 }
 
-
 static void proxied_count_dec(Plugin *proxy)
 {
 	g_warn_if_fail(proxy->proxied_count > 0);
@@ -159,7 +153,6 @@ static void proxied_count_dec(Plugin *proxy)
 		proxy = proxy->proxy;
 	} while (proxy != NULL);
 }
-
 
 /* Prevent the same plugin filename being loaded more than once.
  * Note: g_module_name always returns the .so name, even when Plugin::filename is a .la file. */
@@ -203,7 +196,6 @@ plugin_loaded(Plugin *plugin)
 	return FALSE;
 }
 
-
 static Plugin *find_active_plugin_by_name(const gchar *filename)
 {
 	GList *item;
@@ -218,7 +210,6 @@ static Plugin *find_active_plugin_by_name(const gchar *filename)
 
 	return NULL;
 }
-
 
 /* Mimics plugin_version_check() of legacy plugins for use with plugin_check_version() below */
 #define PLUGIN_VERSION_CODE(api, abi) ((abi) != GEANY_ABI_VERSION ? -1 : (api))
@@ -249,7 +240,6 @@ plugin_check_version(Plugin *plugin, int plugin_version_code)
 	return ret;
 }
 
-
 static void add_callbacks(Plugin *plugin, PluginCallback *callbacks)
 {
 	PluginCallback *cb;
@@ -274,7 +264,6 @@ static void add_callbacks(Plugin *plugin, PluginCallback *callbacks)
 			cb->callback, cb->user_data ? cb->user_data : plugin->cb_data);
 	}
 }
-
 
 static void read_key_group(Plugin *plugin)
 {
@@ -313,7 +302,6 @@ static void read_key_group(Plugin *plugin)
 			plugin->info.name);
 }
 
-
 static gint cmp_plugin_names(gconstpointer a, gconstpointer b)
 {
 	const Plugin *pa = a;
@@ -321,7 +309,6 @@ static gint cmp_plugin_names(gconstpointer a, gconstpointer b)
 
 	return strcmp(pa->info.name, pb->info.name);
 }
-
 
 /** Register a plugin to Geany.
  *
@@ -390,7 +377,6 @@ gboolean geany_plugin_register(GeanyPlugin *plugin, gint api_version, gint min_a
 
 	return PLUGIN_LOADED_OK(p);
 }
-
 
 /** Register a plugin to Geany, with plugin-defined data.
  *
@@ -542,7 +528,6 @@ static void register_legacy_plugin(Plugin *plugin, GModule *module)
 	geany_plugin_set_data(&plugin->public, h, free_legacy_cbs);
 }
 
-
 static gboolean
 plugin_load(Plugin *plugin)
 {
@@ -599,7 +584,6 @@ plugin_load(Plugin *plugin)
 	return TRUE;
 }
 
-
 static gpointer plugin_load_gmodule(GeanyPlugin *proxy, GeanyPlugin *subplugin, const gchar *fname, gpointer pdata)
 {
 	GModule *module;
@@ -644,7 +628,6 @@ static gpointer plugin_load_gmodule(GeanyPlugin *proxy, GeanyPlugin *subplugin, 
 	return module;
 }
 
-
 static void plugin_unload_gmodule(GeanyPlugin *proxy, GeanyPlugin *subplugin, gpointer load_data, gpointer pdata)
 {
 	GModule *module = (GModule *) load_data;
@@ -654,7 +637,6 @@ static void plugin_unload_gmodule(GeanyPlugin *proxy, GeanyPlugin *subplugin, gp
 	if (! g_module_close(module))
 		g_warning("%s: %s", subplugin->priv->filename, g_module_error());
 }
-
 
 /* Load and optionally init a plugin.
  * load_plugin decides whether the plugin's plugin_init() function should be called or not. If it is
@@ -753,7 +735,6 @@ err:
 	return NULL;
 }
 
-
 static void on_object_weak_notify(gpointer data, GObject *old_ptr)
 {
 	Plugin *plugin = data;
@@ -775,7 +756,6 @@ static void on_object_weak_notify(gpointer data, GObject *old_ptr)
 	}
 }
 
-
 /* add an object to watch for destruction, and release pointers to it when destroyed.
  * this should only be used by plugin_signal_connect() to add a watch on
  * the object lifetime and nuke out references to it in plugin->signal_ids */
@@ -783,7 +763,6 @@ void plugin_watch_object(Plugin *plugin, gpointer object)
 {
 	g_object_weak_ref(object, on_object_weak_notify, plugin);
 }
-
 
 static void remove_callbacks(Plugin *plugin)
 {
@@ -802,7 +781,6 @@ static void remove_callbacks(Plugin *plugin)
 	g_array_free(signal_ids, TRUE);
 }
 
-
 static void remove_sources(Plugin *plugin)
 {
 	GList *item;
@@ -818,7 +796,6 @@ static void remove_sources(Plugin *plugin)
 	/* don't free the list here, it is allocated inside each source's data */
 }
 
-
 /* Make the GModule backing plugin resident (if it's GModule-backed at all) */
 void plugin_make_resident(Plugin *plugin)
 {
@@ -830,7 +807,6 @@ void plugin_make_resident(Plugin *plugin)
 	else
 		g_warning("Skipping g_module_make_resident() for non-native plugin");
 }
-
 
 /* Retrieve the address of a symbol sym located in plugin, if it's GModule-backed */
 gpointer plugin_get_module_symbol(Plugin *plugin, const gchar *sym)
@@ -852,12 +828,10 @@ gpointer plugin_get_module_symbol(Plugin *plugin, const gchar *sym)
 	return NULL;
 }
 
-
 static gboolean is_active_plugin(Plugin *plugin)
 {
 	return (g_list_find(active_plugin_list, plugin) != NULL);
 }
-
 
 static void remove_each_doc_data(GQuark key_id, gpointer data, gpointer user_data)
 {
@@ -866,7 +840,6 @@ static void remove_each_doc_data(GQuark key_id, gpointer data, gpointer user_dat
 	if (g_str_has_prefix(key, doc_data->prefix))
 		g_datalist_remove_data(&doc_data->document->priv->data, key);
 }
-
 
 static void remove_doc_data(Plugin *plugin)
 {
@@ -886,7 +859,6 @@ static void remove_doc_data(Plugin *plugin)
 
 	g_free(data.prefix);
 }
-
 
 /* Clean up anything used by an active plugin  */
 static void
@@ -922,7 +894,6 @@ plugin_cleanup(Plugin *plugin)
 	geany_debug("Unloaded: %s", plugin->filename);
 }
 
-
 /* Remove all plugins that proxy is a proxy for from plugin_list (and free) */
 static void free_subplugins(Plugin *proxy)
 {
@@ -940,7 +911,6 @@ static void free_subplugins(Plugin *proxy)
 		item = next;
 	}
 }
-
 
 /* Returns true if the removal was successful (=> never for non-proxies) */
 static gboolean unregister_proxy(Plugin *proxy)
@@ -961,7 +931,6 @@ static gboolean unregister_proxy(Plugin *proxy)
 	}
 	return is_proxy;
 }
-
 
 /* Cleanup a plugin and free all resources allocated on behalf of it.
  *
@@ -998,7 +967,6 @@ plugin_free(Plugin *plugin)
 	g_free(plugin);
 }
 
-
 static gchar *get_custom_plugin_path(const gchar *plugin_path_config,
 									 const gchar *plugin_path_system)
 {
@@ -1020,7 +988,6 @@ static gchar *get_custom_plugin_path(const gchar *plugin_path_config,
 	}
 	return plugin_path_custom;
 }
-
 
 /* all 3 paths Geany looks for plugins in can change (even system path on Windows)
  * so we need to check active plugins are in the right place before loading */
@@ -1051,7 +1018,6 @@ static gboolean check_plugin_path(const gchar *fname)
 	g_free(plugin_path_system);
 	return ret;
 }
-
 
 /* Returns NULL if this ain't a plugin,
  * otherwise it returns the appropriate PluginProxy instance to load it */
@@ -1100,7 +1066,6 @@ static PluginProxy* is_plugin(const gchar *file)
 	return NULL;
 }
 
-
 /* load active plugins at startup */
 static void
 load_active_plugins(void)
@@ -1139,7 +1104,6 @@ load_active_plugins(void)
 	} while (proxies != active_proxies.length);
 }
 
-
 static void
 load_plugins_from_path(const gchar *path)
 {
@@ -1166,12 +1130,10 @@ load_plugins_from_path(const gchar *path)
 		geany_debug("Added %d plugin(s) in '%s'.", count, path);
 }
 
-
 static gchar *get_plugin_path(void)
 {
 	return g_strdup(utils_resource_dir(RESOURCE_DIR_PLUGIN));
 }
-
 
 /* See load_all_plugins(), this simply sorts items with lower hierarchy level first
  * (where hierarchy level == number of intermediate proxies before the builtin so loader) */
@@ -1193,7 +1155,6 @@ static gint cmp_plugin_by_proxy(gconstpointer a, gconstpointer b)
 		pb = pb->proxy;
 	}
 }
-
 
 /* Load (but don't initialize) all plugins for the Plugin Manager dialog */
 static void load_all_plugins(void)
@@ -1230,7 +1191,6 @@ static void load_all_plugins(void)
 	g_free(plugin_path_system);
 }
 
-
 static void on_tools_menu_show(GtkWidget *menu_item, G_GNUC_UNUSED gpointer user_data)
 {
 	GList *item, *list = gtk_container_get_children(GTK_CONTAINER(menu_item));
@@ -1253,7 +1213,6 @@ static void on_tools_menu_show(GtkWidget *menu_item, G_GNUC_UNUSED gpointer user
 
 	ui_widget_show_hide(menu_separator, have_plugin_menu_items);
 }
-
 
 /* Calling this starts up plugin support */
 void plugins_load_active(void)
@@ -1279,7 +1238,6 @@ void plugins_load_active(void)
 
 	load_active_plugins();
 }
-
 
 /* Update the global active plugins list so it's up-to-date when configuration
  * is saved. Called in response to GeanyObject's "save-settings" signal. */
@@ -1322,7 +1280,6 @@ static void update_active_plugins_pref(void)
 	active_plugins_pref[i] = NULL;
 }
 
-
 /* called even if plugin support is disabled */
 void plugins_init(void)
 {
@@ -1347,7 +1304,6 @@ void plugins_init(void)
 	g_queue_push_head(&active_proxies, &builtin_so_proxy);
 }
 
-
 /* Same as plugin_free(), except it does nothing for proxies-in-use, to be called on
  * finalize in a loop */
 static void plugin_free_leaf(Plugin *p)
@@ -1355,7 +1311,6 @@ static void plugin_free_leaf(Plugin *p)
 	if (p->proxied_count == 0)
 		plugin_free(p);
 }
-
 
 /* called even if plugin support is disabled */
 void plugins_finalize(void)
@@ -1372,7 +1327,6 @@ void plugins_finalize(void)
 
 	g_strfreev(active_plugins_pref);
 }
-
 
 /* Check whether there are any plugins loaded which provide a configure symbol */
 gboolean plugins_have_preferences(void)
@@ -1391,7 +1345,6 @@ gboolean plugins_have_preferences(void)
 
 	return FALSE;
 }
-
 
 /* Plugin Manager */
 
@@ -1424,7 +1377,6 @@ PluginManagerWidgets;
 
 static PluginManagerWidgets pm_widgets;
 
-
 static void pm_update_buttons(Plugin *p)
 {
 	gboolean has_configure = FALSE;
@@ -1447,7 +1399,6 @@ static void pm_update_buttons(Plugin *p)
 	gtk_widget_set_sensitive(pm_widgets.popup_keybindings_menu_item, has_keybindings);
 }
 
-
 static void pm_selection_changed(GtkTreeSelection *selection, gpointer user_data)
 {
 	GtkTreeIter iter;
@@ -1462,7 +1413,6 @@ static void pm_selection_changed(GtkTreeSelection *selection, gpointer user_data
 			pm_update_buttons(p);
 	}
 }
-
 
 static gboolean find_iter_for_plugin(Plugin *p, GtkTreeModel *model, GtkTreeIter *iter)
 {
@@ -1481,9 +1431,7 @@ static gboolean find_iter_for_plugin(Plugin *p, GtkTreeModel *model, GtkTreeIter
 	return FALSE;
 }
 
-
 static void pm_populate(GtkTreeStore *store);
-
 
 static void pm_plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 {
@@ -1668,7 +1616,6 @@ static gboolean pm_treeview_query_tooltip(GtkWidget *widget, gint x, gint y,
 	return p != NULL;
 }
 
-
 static void pm_treeview_text_cell_data_func(GtkTreeViewColumn *column, GtkCellRenderer *cell,
 		GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
 {
@@ -1687,7 +1634,6 @@ static void pm_treeview_text_cell_data_func(GtkTreeViewColumn *column, GtkCellRe
 	}
 }
 
-
 static gboolean pm_treeview_button_press_cb(GtkWidget *widget, GdkEventButton *event,
 		G_GNUC_UNUSED gpointer user_data)
 {
@@ -1698,7 +1644,6 @@ static gboolean pm_treeview_button_press_cb(GtkWidget *widget, GdkEventButton *e
 	}
 	return FALSE;
 }
-
 
 static gint pm_tree_sort_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b,
 		gpointer user_data)
@@ -1713,7 +1658,6 @@ static gint pm_tree_sort_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *
 	else
 		return pa - pb;
 }
-
 
 static gboolean pm_tree_search(const gchar *key, const gchar *haystack)
 {
@@ -1756,7 +1700,6 @@ static gboolean pm_tree_search(const gchar *key, const gchar *haystack)
 	return matched;
 }
 
-
 static gboolean pm_tree_filter_func(GtkTreeModel *model, GtkTreeIter *iter, gpointer user_data)
 {
 	Plugin *plugin;
@@ -1780,13 +1723,11 @@ static gboolean pm_tree_filter_func(GtkTreeModel *model, GtkTreeIter *iter, gpoi
 	return matched;
 }
 
-
 static void on_pm_tree_filter_entry_changed_cb(GtkEntry *entry, gpointer user_data)
 {
 	GtkTreeModel *filter_model = gtk_tree_view_get_model(GTK_TREE_VIEW(pm_widgets.tree));
 	gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(filter_model));
 }
-
 
 static void on_pm_tree_filter_entry_icon_release_cb(GtkEntry *entry, GtkEntryIconPosition icon_pos,
 		GdkEvent *event, gpointer user_data)
@@ -1794,7 +1735,6 @@ static void on_pm_tree_filter_entry_icon_release_cb(GtkEntry *entry, GtkEntryIco
 	if (event->button.button == 1 && icon_pos == GTK_ENTRY_ICON_PRIMARY)
 		on_pm_tree_filter_entry_changed_cb(entry, user_data);
 }
-
 
 static void pm_prepare_treeview(GtkWidget *tree, GtkTreeStore *store)
 {
@@ -1847,7 +1787,6 @@ static void pm_prepare_treeview(GtkWidget *tree, GtkTreeStore *store)
 	pm_populate(store);
 }
 
-
 static void pm_on_plugin_button_clicked(G_GNUC_UNUSED GtkButton *button, gpointer user_data)
 {
 	GtkTreeModel *model;
@@ -1872,7 +1811,6 @@ static void pm_on_plugin_button_clicked(G_GNUC_UNUSED GtkButton *button, gpointe
 	}
 }
 
-
 static void
 free_non_active_plugin(gpointer data, gpointer user_data)
 {
@@ -1884,7 +1822,6 @@ free_non_active_plugin(gpointer data, gpointer user_data)
 
 	plugin_free(plugin);
 }
-
 
 /* Callback when plugin manager dialog closes, responses GTK_RESPONSE_CLOSE and
  * GTK_RESPONSE_DELETE_EVENT are treated the same. */
@@ -1913,7 +1850,6 @@ static void pm_dialog_response(GtkDialog *dialog, gint response, gpointer user_d
 			break;
 	}
 }
-
 
 static void pm_show_dialog(GtkMenuItem *menuitem, gpointer user_data)
 {
@@ -2003,7 +1939,6 @@ static void pm_show_dialog(GtkMenuItem *menuitem, gpointer user_data)
 	pm_update_buttons(NULL);
 	gtk_widget_grab_focus(pm_widgets.filter_entry);
 }
-
 
 /** Register the plugin as a proxy for other plugins
  *

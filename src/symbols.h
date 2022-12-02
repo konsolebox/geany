@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_SYMBOLS_H
 #define GEANY_SYMBOLS_H 1
 
@@ -31,7 +30,6 @@ G_BEGIN_DECLS
 
 const gchar *symbols_get_context_separator(gint ft_id);
 
-
 #ifdef GEANY_PRIVATE
 
 enum
@@ -40,7 +38,6 @@ enum
 	SYMBOLS_SORT_BY_APPEARANCE,
 	SYMBOLS_SORT_USE_PREVIOUS
 };
-
 
 void symbols_init(void);
 

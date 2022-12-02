@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_EDITOR_H
 #define GEANY_EDITOR_H 1
 
@@ -30,7 +29,6 @@
 #include "ScintillaWidget.h" /* for ScintillaObject */
 
 #include <glib.h>
-
 
 G_BEGIN_DECLS
 
@@ -140,7 +138,6 @@ typedef struct GeanyEditorPrefs
 }
 GeanyEditorPrefs;
 
-
 #define GEANY_TYPE_EDITOR (editor_get_type())
 GType editor_get_type (void);
 
@@ -158,7 +155,6 @@ typedef struct GeanyEditor
 	gint			 indent_width;
 }
 GeanyEditor;
-
 
 const GeanyIndentPrefs *editor_get_indent_prefs(GeanyEditor *editor);
 
@@ -194,7 +190,6 @@ const gchar *editor_find_snippet(GeanyEditor *editor, const gchar *snippet_name)
 
 void editor_insert_snippet(GeanyEditor *editor, gint pos, const gchar *snippet);
 
-
 #ifdef GEANY_PRIVATE
 
 extern GeanyEditorPrefs editor_prefs;
@@ -223,7 +218,6 @@ typedef struct
 } EditorInfo;
 
 extern EditorInfo editor_info;
-
 
 void editor_init(void);
 
@@ -274,7 +268,6 @@ void editor_snippets_free(void);
 
 const GeanyEditorPrefs *editor_get_prefs(GeanyEditor *editor);
 
-
 /* General editing functions */
 
 void editor_find_current_word(GeanyEditor *editor, gint pos, gchar *word, gsize wordlen,
@@ -284,7 +277,6 @@ void editor_find_current_word_sciwc(GeanyEditor *editor, gint pos, gchar *word, 
 
 gchar *editor_get_default_selection(GeanyEditor *editor, gboolean use_current_word, const gchar *wordchars);
 
-
 void editor_select_word(GeanyEditor *editor);
 
 void editor_select_lines(GeanyEditor *editor, gboolean extra_line);
@@ -292,7 +284,6 @@ void editor_select_lines(GeanyEditor *editor, gboolean extra_line);
 void editor_select_paragraph(GeanyEditor *editor);
 
 void editor_select_indent_block(GeanyEditor *editor);
-
 
 void editor_set_font(GeanyEditor *editor, const gchar *font);
 

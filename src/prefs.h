@@ -52,7 +52,6 @@ typedef struct GeanyToolPrefs
 }
 GeanyToolPrefs;
 
-
 #ifdef GEANY_PRIVATE
 
 extern GeanyPrefs prefs;

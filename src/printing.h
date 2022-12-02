@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_PRINTING_H
 #define GEANY_PRINTING_H 1
 
@@ -42,7 +41,6 @@ typedef struct PrintingPrefs
 } PrintingPrefs;
 
 extern PrintingPrefs printing_prefs;
-
 
 void printing_page_setup_gtk(void);
 

@@ -70,7 +70,6 @@
 
 #include "gtkcompat.h"
 
-
 #ifndef G_OS_WIN32
 # include <sys/time.h>
 # include <sys/types.h>
@@ -93,7 +92,6 @@
 #include <gdk/gdkx.h>
 #endif
 
-
 #ifdef G_OS_WIN32
 #define REMOTE_CMD_PORT		49876
 #define SOCKET_IS_VALID(s)	((s) != INVALID_SOCKET)
@@ -104,7 +102,6 @@
 #define BUFFER_LENGTH 4096
 
 struct SocketInfo socket_info;
-
 
 #ifdef G_OS_WIN32
 static gint socket_fd_connect_inet	(gushort port);
@@ -122,8 +119,6 @@ static gint socket_fd_check_io		(gint fd, GIOCondition cond);
 static gint socket_fd_read			(gint sock, gchar *buf, gint len);
 static gint socket_fd_recv			(gint fd, gchar *buf, gint len, gint flags);
 static gint socket_fd_close			(gint sock);
-
-
 
 static void send_open_command(gint sock, gint argc, gchar **argv)
 {
@@ -178,7 +173,6 @@ static void send_open_command(gint sock, gint argc, gchar **argv)
 	socket_fd_write_all(sock, ".\n", 2);
 }
 
-
 #ifndef G_OS_WIN32
 static void remove_socket_link_full(void)
 {
@@ -198,7 +192,6 @@ static void remove_socket_link_full(void)
 	g_unlink(socket_info.file_name);
 }
 #endif
-
 
 static void socket_get_document_list(gint sock)
 {
@@ -223,7 +216,6 @@ static void socket_get_document_list(gint sock)
 	while (n_read >= BUFFER_LENGTH);
 }
 
-
 #ifndef G_OS_WIN32
 static void check_socket_permissions(void)
 {
@@ -245,7 +237,6 @@ static void check_socket_permissions(void)
 	}
 }
 #endif
-
 
 /* (Unix domain) socket support to replace the old FIFO code
  * (taken from Sylpheed, thanks)
@@ -342,7 +333,6 @@ gint socket_init(gint argc, gchar **argv)
 	return -2;
 }
 
-
 gint socket_finalize(void)
 {
 	if (socket_info.lock_socket < 0)
@@ -370,7 +360,6 @@ gint socket_finalize(void)
 	return 0;
 }
 
-
 #ifdef G_OS_UNIX
 static gint socket_fd_connect_unix(const gchar *path)
 {
@@ -396,7 +385,6 @@ static gint socket_fd_connect_unix(const gchar *path)
 
 	return sock;
 }
-
 
 static gint socket_fd_open_unix(const gchar *path)
 {
@@ -477,7 +465,6 @@ static gint socket_fd_close(gint fd)
 #endif
 }
 
-
 #ifdef G_OS_WIN32
 static gint socket_fd_open_inet(gushort port)
 {
@@ -522,7 +509,6 @@ static gint socket_fd_open_inet(gushort port)
 	return sock;
 }
 
-
 static gint socket_fd_connect_inet(gushort port)
 {
 	SOCKET sock;
@@ -549,7 +535,6 @@ static gint socket_fd_connect_inet(gushort port)
 	return sock;
 }
 
-
 static void socket_init_win32(void)
 {
 	WSADATA wsadata;
@@ -560,7 +545,6 @@ static void socket_init_win32(void)
 	return;
 }
 #endif
-
 
 static void handle_input_filename(const gchar *buf)
 {
@@ -587,7 +571,6 @@ static void handle_input_filename(const gchar *buf)
 	g_free(locale_filename);
 }
 
-
 static gchar *build_document_list(void)
 {
 	GString *doc_list = g_string_new(NULL);
@@ -602,7 +585,6 @@ static gchar *build_document_list(void)
 	}
 	return g_string_free(doc_list, FALSE);
 }
-
 
 gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpointer data)
 {
@@ -702,7 +684,6 @@ gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpoint
 	return TRUE;
 }
 
-
 static gint socket_fd_gets(gint fd, gchar *buf, gint len)
 {
 	gchar *newline, *bp = buf;
@@ -726,7 +707,6 @@ static gint socket_fd_gets(gint fd, gchar *buf, gint len)
 	return bp - buf;
 }
 
-
 static gint socket_fd_recv(gint fd, gchar *buf, gint len, gint flags)
 {
 	if (socket_fd_check_io(fd, G_IO_IN) < 0)
@@ -734,7 +714,6 @@ static gint socket_fd_recv(gint fd, gchar *buf, gint len, gint flags)
 
 	return recv(fd, buf, len, flags);
 }
-
 
 static gint socket_fd_read(gint fd, gchar *buf, gint len)
 {
@@ -747,7 +726,6 @@ static gint socket_fd_read(gint fd, gchar *buf, gint len)
 	return read(fd, buf, len);
 #endif
 }
-
 
 static gint socket_fd_check_io(gint fd, GIOCondition cond)
 {
@@ -799,7 +777,6 @@ static gint socket_fd_check_io(gint fd, GIOCondition cond)
 	}
 }
 
-
 static gint socket_fd_write_all(gint fd, const gchar *buf, gint len)
 {
 	gint n, wrlen = 0;
@@ -817,7 +794,6 @@ static gint socket_fd_write_all(gint fd, const gchar *buf, gint len)
 	return wrlen;
 }
 
-
 gint socket_fd_write(gint fd, const gchar *buf, gint len)
 {
 	if (socket_fd_check_io(fd, G_IO_OUT) < 0)
@@ -829,6 +805,5 @@ gint socket_fd_write(gint fd, const gchar *buf, gint len)
 	return write(fd, buf, len);
 #endif
 }
-
 
 #endif

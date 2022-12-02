@@ -59,7 +59,6 @@
 #include <stdarg.h>
 #include <gdk/gdkkeysyms.h>
 
-
 #define DEFAULT_STATUSBAR_TEMPLATE N_(\
 	"line: %l / %L\t "   \
 	"col: %c\t "         \
@@ -114,7 +113,6 @@ typedef struct
 	void (*activate_cb)(GtkMenuItem *, gpointer);
 } GeanyRecentFiles;
 
-
 static void update_recent_menu(GeanyRecentFiles *grf);
 static void recent_file_loaded(const gchar *utf8_filename, GeanyRecentFiles *grf);
 static void recent_file_activate_cb(GtkMenuItem *menuitem, gpointer user_data);
@@ -122,14 +120,12 @@ static void recent_project_activate_cb(GtkMenuItem *menuitem, gpointer user_data
 static GtkWidget *progress_bar_create(void);
 static void ui_menu_sort_by_label(GtkMenu *menu);
 
-
 /* simple wrapper for gtk_widget_set_sensitive() to allow widget being NULL */
 void ui_widget_set_sensitive(GtkWidget *widget, gboolean set)
 {
 	if (widget != NULL)
 		gtk_widget_set_sensitive(widget, set);
 }
-
 
 /* allow_override is TRUE if text can be ignored when another message has been set
  * that didn't use allow_override and has not timed out. */
@@ -162,7 +158,6 @@ static void set_statusbar(const gchar *text, gboolean allow_override)
 	}
 }
 
-
 /** Displays text on the statusbar.
  * @param log Whether the message should be recorded in the Status window.
  * @param format A @c printf -style string. */
@@ -184,7 +179,6 @@ void ui_set_statusbar(gboolean log, const gchar *format, ...)
 
 	g_free(string);
 }
-
 
 /* note: some comments below are for translators */
 static gchar *create_statusbar_statistics(GeanyDocument *doc,
@@ -321,7 +315,6 @@ static gchar *create_statusbar_statistics(GeanyDocument *doc,
 	return g_string_free(stats_str, FALSE);
 }
 
-
 /* updates the status bar document statistics */
 void ui_update_statusbar(GeanyDocument *doc, gint pos)
 {
@@ -362,7 +355,6 @@ void ui_update_statusbar(GeanyDocument *doc, gint pos)
 		set_statusbar("", TRUE);	/* can be overridden by status messages */
 	}
 }
-
 
 /* This sets the window title according to the current filename. */
 void ui_set_window_title(GeanyDocument *doc)
@@ -411,7 +403,6 @@ void ui_set_window_title(GeanyDocument *doc)
 	g_string_free(str, TRUE);
 }
 
-
 void ui_set_editor_font(const gchar *font_name)
 {
 	guint i;
@@ -438,7 +429,6 @@ void ui_set_editor_font(const gchar *font_name)
 	ui_set_statusbar(TRUE, _("Font updated (%s)."), interface_prefs.editor_font);
 }
 
-
 void ui_set_fullscreen(void)
 {
 	if (ui_prefs.fullscreen)
@@ -450,7 +440,6 @@ void ui_set_fullscreen(void)
 		gtk_window_unfullscreen(GTK_WINDOW(main_widgets.window));
 	}
 }
-
 
 void ui_update_popup_reundo_items(GeanyDocument *doc)
 {
@@ -484,7 +473,6 @@ void ui_update_popup_reundo_items(GeanyDocument *doc)
 	}
 }
 
-
 void ui_update_popup_copy_items(GeanyDocument *doc)
 {
 	gboolean enable;
@@ -502,7 +490,6 @@ void ui_update_popup_copy_items(GeanyDocument *doc)
 		ui_widget_set_sensitive(widgets.popup_copy_items[i], enable);
 }
 
-
 void ui_update_popup_goto_items(gboolean enable)
 {
 	guint i, len;
@@ -510,7 +497,6 @@ void ui_update_popup_goto_items(gboolean enable)
 	for (i = 0; i < len; i++)
 		ui_widget_set_sensitive(widgets.popup_goto_items[i], enable);
 }
-
 
 void ui_update_menu_copy_items(GeanyDocument *doc)
 {
@@ -538,7 +524,6 @@ void ui_update_menu_copy_items(GeanyDocument *doc)
 		ui_widget_set_sensitive(widgets.menu_copy_items[i], enable);
 }
 
-
 void ui_update_insert_include_item(GeanyDocument *doc, gint item)
 {
 	gboolean enable = FALSE;
@@ -553,14 +538,12 @@ void ui_update_insert_include_item(GeanyDocument *doc, gint item)
 	ui_widget_set_sensitive(widgets.menu_insert_include_items[item], enable);
 }
 
-
 void ui_update_fold_items(void)
 {
 	ui_widget_show_hide(ui_lookup_widget(main_widgets.window, "menu_fold_all1"), editor_prefs.folding);
 	ui_widget_show_hide(ui_lookup_widget(main_widgets.window, "menu_unfold_all1"), editor_prefs.folding);
 	ui_widget_show_hide(ui_lookup_widget(main_widgets.window, "separator22"), editor_prefs.folding);
 }
-
 
 /* @include include name or NULL for empty with cursor ready for typing it */
 static void insert_include(GeanyDocument *doc, gint pos, const gchar *include)
@@ -592,18 +575,15 @@ static void insert_include(GeanyDocument *doc, gint pos, const gchar *include)
 		sci_goto_pos(doc->editor->sci, pos_after, FALSE);
 }
 
-
 static void on_popup_insert_include_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	insert_include(document_get_current(), editor_info.click_pos, user_data);
 }
 
-
 static void on_menu_insert_include_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	insert_include(document_get_current(), -1, user_data);
 }
-
 
 static void insert_include_items(GtkMenu *me, GtkMenu *mp, gchar **includes, gchar *label)
 {
@@ -636,7 +616,6 @@ static void insert_include_items(GtkMenu *me, GtkMenu *mp, gchar **includes, gch
 	gtk_container_add(GTK_CONTAINER(me), edit_menu_item);
 	gtk_container_add(GTK_CONTAINER(mp), popup_menu_item);
 }
-
 
 void ui_create_insert_menu_items(void)
 {
@@ -685,7 +664,6 @@ void ui_create_insert_menu_items(void)
 	insert_include_items(menu_edit, menu_popup, (gchar**) c_includes_cppstdlib, _("C++ Standard Library"));
 	insert_include_items(menu_edit, menu_popup, (gchar**) c_includes_stl, _("C++ STL"));
 }
-
 
 static void insert_date(GeanyDocument *doc, gint pos, const gchar *date_style)
 {
@@ -747,18 +725,15 @@ static void insert_date(GeanyDocument *doc, gint pos, const gchar *date_style)
 	}
 }
 
-
 static void on_popup_insert_date_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	insert_date(document_get_current(), editor_info.click_pos, user_data);
 }
 
-
 static void on_menu_insert_date_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	insert_date(document_get_current(), -1, user_data);
 }
-
 
 static void insert_date_items(GtkMenu *me, GtkMenu *mp, gchar *label)
 {
@@ -774,7 +749,6 @@ static void insert_date_items(GtkMenu *me, GtkMenu *mp, gchar *label)
 	gtk_widget_show(item);
 	g_signal_connect(item, "activate", G_CALLBACK(on_popup_insert_date_activate), label);
 }
-
 
 void ui_create_insert_date_menu_items(void)
 {
@@ -821,7 +795,6 @@ void ui_create_insert_date_menu_items(void)
 	insert_date_items(menu_edit, menu_popup, _("_Set Custom Date Format"));
 }
 
-
 void ui_save_buttons_toggle(gboolean enable)
 {
 	guint i;
@@ -848,7 +821,6 @@ void ui_save_buttons_toggle(gboolean enable)
 	ui_widget_set_sensitive(widgets.save_buttons[2], dirty_tabs);
 	ui_widget_set_sensitive(widgets.save_buttons[3], dirty_tabs);
 }
-
 
 #define add_doc_widget(widget_name) \
 	g_ptr_array_add(widgets.document_buttons, ui_lookup_widget(main_widgets.window, widget_name))
@@ -941,7 +913,6 @@ static void init_document_widgets(void)
 	add_doc_toolitem("Print");
 }
 
-
 void ui_document_buttons_update(void)
 {
 	guint i;
@@ -957,12 +928,10 @@ void ui_document_buttons_update(void)
 	}
 }
 
-
 static void on_doc_sensitive_widget_destroy(GtkWidget *widget, G_GNUC_UNUSED gpointer user_data)
 {
 	g_ptr_array_remove_fast(widgets.document_buttons, widget);
 }
-
 
 /** Adds a widget to the list of widgets that should be set sensitive/insensitive
  * when some documents are present/no documents are open.
@@ -982,7 +951,6 @@ void ui_add_document_sensitive(GtkWidget *widget)
 	g_signal_connect(widget, "destroy", G_CALLBACK(on_doc_sensitive_widget_destroy), NULL);
 }
 
-
 void ui_widget_show_hide(GtkWidget *widget, gboolean show)
 {
 	if (show)
@@ -994,7 +962,6 @@ void ui_widget_show_hide(GtkWidget *widget, gboolean show)
 		gtk_widget_hide(widget);
 	}
 }
-
 
 void ui_sidebar_show_hide(void)
 {
@@ -1023,7 +990,6 @@ void ui_sidebar_show_hide(void)
 	ui_widget_show_hide(gtk_notebook_get_nth_page(
 		GTK_NOTEBOOK(main_widgets.sidebar_notebook), 1), interface_prefs.sidebar_openfiles_visible);
 }
-
 
 void ui_document_show_hide(GeanyDocument *doc)
 {
@@ -1100,12 +1066,10 @@ void ui_document_show_hide(GeanyDocument *doc)
 	ignore_callback = FALSE;
 }
 
-
 void ui_set_search_entry_background(GtkWidget *widget, gboolean success)
 {
 	gtk_widget_set_name(widget, success ? NULL : "geany-search-entry-no-match");
 }
-
 
 static void recent_create_menu(GeanyRecentFiles *grf)
 {
@@ -1132,7 +1096,6 @@ static void recent_create_menu(GeanyRecentFiles *grf)
 	}
 }
 
-
 static GeanyRecentFiles *recent_get_recent_files(void)
 {
 	static GeanyRecentFiles grf = { RECENT_FILE_FILE, NULL, NULL, NULL, NULL };
@@ -1148,7 +1111,6 @@ static GeanyRecentFiles *recent_get_recent_files(void)
 	return &grf;
 }
 
-
 static GeanyRecentFiles *recent_get_recent_projects(void)
 {
 	static GeanyRecentFiles grf = { RECENT_FILE_PROJECT, NULL, NULL, NULL, NULL };
@@ -1163,13 +1125,11 @@ static GeanyRecentFiles *recent_get_recent_projects(void)
 	return &grf;
 }
 
-
 void ui_create_recent_menus(void)
 {
 	recent_create_menu(recent_get_recent_files());
 	recent_create_menu(recent_get_recent_projects());
 }
-
 
 static void recent_file_activate_cb(GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer user_data)
 {
@@ -1183,7 +1143,6 @@ static void recent_file_activate_cb(GtkMenuItem *menuitem, G_GNUC_UNUSED gpointe
 	g_free(utf8_filename);
 }
 
-
 static void recent_project_activate_cb(GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer user_data)
 {
 	gchar *utf8_filename = ui_menu_item_get_text(menuitem);
@@ -1195,7 +1154,6 @@ static void recent_project_activate_cb(GtkMenuItem *menuitem, G_GNUC_UNUSED gpoi
 	g_free(locale_filename);
 	g_free(utf8_filename);
 }
-
 
 static void add_recent_file(const gchar *utf8_filename, GeanyRecentFiles *grf,
 		const GtkRecentData *rdata)
@@ -1226,7 +1184,6 @@ static void add_recent_file(const gchar *utf8_filename, GeanyRecentFiles *grf,
 		recent_file_loaded(utf8_filename, grf);
 }
 
-
 void ui_add_recent_document(GeanyDocument *doc)
 {
 	/* what are the groups for actually? */
@@ -1251,12 +1208,10 @@ void ui_add_recent_document(GeanyDocument *doc)
 	add_recent_file(doc->file_name, recent_get_recent_files(), &rdata);
 }
 
-
 void ui_add_recent_project_file(const gchar *utf8_filename)
 {
 	add_recent_file(utf8_filename, recent_get_recent_projects(), NULL);
 }
-
 
 /* Returns: newly allocated string with the UTF-8 menu text. */
 gchar *ui_menu_item_get_text(GtkMenuItem *menu_item)
@@ -1274,7 +1229,6 @@ gchar *ui_menu_item_get_text(GtkMenuItem *menu_item)
 	return g_strdup(text);
 }
 
-
 static gint find_recent_file_item(gconstpointer list_data, gconstpointer user_data)
 {
 	gchar *menu_text = ui_menu_item_get_text(GTK_MENU_ITEM(list_data));
@@ -1288,7 +1242,6 @@ static gint find_recent_file_item(gconstpointer list_data, gconstpointer user_da
 	g_free(menu_text);
 	return result;
 }
-
 
 /* update the project menu item's sensitivity */
 void ui_update_recent_project_menu(void)
@@ -1312,7 +1265,6 @@ void ui_update_recent_project_menu(void)
 	g_list_free(children);
 }
 
-
 /* Use instead of gtk_menu_reorder_child() to update the menubar properly on OS X */
 static void menu_reorder_child(GtkMenu *menu, GtkWidget *child, gint position)
 {
@@ -1324,7 +1276,6 @@ static void menu_reorder_child(GtkMenu *menu, GtkWidget *child, gint position)
 	gtkosx_application_sync_menubar(gtkosx_application_get());
 #endif
 }
-
 
 static void add_recent_file_menu_item(const gchar *utf8_filename, GeanyRecentFiles *grf, GtkWidget *menu)
 {
@@ -1343,7 +1294,6 @@ static void add_recent_file_menu_item(const gchar *utf8_filename, GeanyRecentFil
 	}
 	g_signal_connect(child, "activate", G_CALLBACK(grf->activate_cb), NULL);
 }
-
 
 static void recent_file_loaded(const gchar *utf8_filename, GeanyRecentFiles *grf)
 {
@@ -1378,7 +1328,6 @@ static void recent_file_loaded(const gchar *utf8_filename, GeanyRecentFiles *grf
 	if (grf->type == RECENT_FILE_PROJECT)
 		ui_update_recent_project_menu();
 }
-
 
 static void update_recent_menu(GeanyRecentFiles *grf)
 {
@@ -1417,7 +1366,6 @@ static void update_recent_menu(GeanyRecentFiles *grf)
 		ui_update_recent_project_menu();
 }
 
-
 void ui_toggle_editor_features(GeanyUIEditorFeatures feature)
 {
 	guint i;
@@ -1447,7 +1395,6 @@ void ui_toggle_editor_features(GeanyUIEditorFeatures feature)
 	}
 }
 
-
 void ui_update_view_editor_menu_items(void)
 {
 	ignore_callback = TRUE;
@@ -1459,14 +1406,13 @@ void ui_update_view_editor_menu_items(void)
 	ignore_callback = FALSE;
 }
 
-
 /** Creates a GNOME HIG-style frame (with no border and indented child alignment).
  * @param label_text The label text.
  * @param alignment An address to store the alignment widget pointer.
  *
  * @return @transfer{floating} The frame widget, setting the alignment container for
  * packing child widgets.
- * 
+ *
  * @deprecated 1.29: Use GTK API directly
  **/
 GEANY_API_SYMBOL
@@ -1488,7 +1434,6 @@ GtkWidget *ui_frame_new_with_alignment(const gchar *label_text, GtkWidget **alig
 	return frame;
 }
 
-
 /** Makes a fixed border for dialogs without increasing the button box border.
  * @param dialog The parent container for the @c GtkVBox.
  *
@@ -1502,7 +1447,6 @@ GtkWidget *ui_dialog_vbox_new(GtkDialog *dialog)
 	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), vbox, TRUE, TRUE, 0);
 	return vbox;
 }
-
 
 /* Reorders a dialog's buttons
  * @param dialog A dialog
@@ -1538,7 +1482,6 @@ void ui_dialog_set_primary_button_order(GtkDialog *dialog, gint response, ...)
 	va_end(ap);
 }
 
-
 /** Creates a @c GtkButton with custom text and a stock image similar to
  * @c gtk_button_new_from_stock().
  * @param stock_id A @c GTK_STOCK_NAME string.
@@ -1559,7 +1502,6 @@ GtkWidget *ui_button_new_with_image(const gchar *stock_id, const gchar *text)
 	return button;
 }
 
-
 /** Creates a @c GtkImageMenuItem with a stock image and a custom label.
  * @param stock_id Stock image ID, e.g. @c GTK_STOCK_OPEN.
  * @param label Menu item label, can include mnemonics.
@@ -1579,7 +1521,6 @@ ui_image_menu_item_new(const gchar *stock_id, const gchar *label)
 	return item;
 }
 
-
 static void entry_clear_icon_release_cb(GtkEntry *entry, gint icon_pos,
 										GdkEvent *event, gpointer data)
 {
@@ -1589,7 +1530,6 @@ static void entry_clear_icon_release_cb(GtkEntry *entry, gint icon_pos,
 		gtk_widget_grab_focus(GTK_WIDGET(entry));
 	}
 }
-
 
 /** Adds a small clear icon to the right end of the passed @a entry.
  *  A callback to clear the contents of the GtkEntry is automatically added.
@@ -1605,7 +1545,6 @@ void ui_entry_add_clear_icon(GtkEntry *entry)
 		"secondary-icon-activatable", TRUE, NULL);
 	g_signal_connect(entry, "icon-release", G_CALLBACK(entry_clear_icon_release_cb), NULL);
 }
-
 
 /* Adds a :activate-backwards signal emitted by default when <Shift>Return is pressed */
 void ui_entry_add_activate_backward_signal(GtkEntry *entry)
@@ -1635,13 +1574,11 @@ void ui_entry_add_activate_backward_signal(GtkEntry *entry)
 	}
 }
 
-
 static void add_to_size_group(GtkWidget *widget, gpointer size_group)
 {
 	g_return_if_fail(GTK_IS_SIZE_GROUP(size_group));
 	gtk_size_group_add_widget(GTK_SIZE_GROUP(size_group), widget);
 }
-
 
 /* Copies the spacing and layout of the master GtkHButtonBox and synchronises
  * the width of each button box's children.
@@ -1661,7 +1598,6 @@ void ui_hbutton_box_copy_layout(GtkButtonBox *master, GtkButtonBox *copy)
 	gtk_container_foreach(GTK_CONTAINER(copy), add_to_size_group, size_group);
 	g_object_unref(size_group);
 }
-
 
 static gboolean tree_model_find_text(GtkTreeModel *model,
 		GtkTreeIter *iter, gint column, const gchar *text)
@@ -1684,7 +1620,6 @@ static gboolean tree_model_find_text(GtkTreeModel *model,
 	}
 	return FALSE;
 }
-
 
 /** Prepends @a text to the drop down list, removing a duplicate element in
  * the list if found. Also ensures there are <= @a history_len elements.
@@ -1722,7 +1657,6 @@ void ui_combo_box_add_to_history(GtkComboBoxText *combo_entry,
 	gtk_tree_path_free(path);
 }
 
-
 /* Same as gtk_combo_box_text_prepend_text(), except that text is only prepended if it not already
  * exists in the combo's model. */
 void ui_combo_box_prepend_text_once(GtkComboBoxText *combo, const gchar *text)
@@ -1737,7 +1671,6 @@ void ui_combo_box_prepend_text_once(GtkComboBoxText *combo, const gchar *text)
 	gtk_combo_box_text_prepend_text(combo, text);
 }
 
-
 /* Changes the color of the notebook tab text and open files items according to
  * document status. */
 void ui_update_tab_status(GeanyDocument *doc)
@@ -1746,7 +1679,6 @@ void ui_update_tab_status(GeanyDocument *doc)
 
 	sidebar_openfiles_update(doc);
 }
-
 
 static gboolean tree_model_iter_get_next(GtkTreeModel *model, GtkTreeIter *iter,
 		gboolean down)
@@ -1762,7 +1694,6 @@ static gboolean tree_model_iter_get_next(GtkTreeModel *model, GtkTreeIter *iter,
 	gtk_tree_path_free(path);
 	return result;
 }
-
 
 /* note: the while loop might be more efficient when searching upwards if it
  * used tree paths instead of tree iters, but in practice it probably doesn't matter much. */
@@ -1805,20 +1736,17 @@ static gboolean tree_view_find(GtkTreeView *treeview, TVMatchCallback cb, gboole
 	return TRUE;
 }
 
-
 /* Returns FALSE if the treeview has items but no matching next item. */
 gboolean ui_tree_view_find_next(GtkTreeView *treeview, TVMatchCallback cb)
 {
 	return tree_view_find(treeview, cb, TRUE);
 }
 
-
 /* Returns FALSE if the treeview has items but no matching next item. */
 gboolean ui_tree_view_find_previous(GtkTreeView *treeview, TVMatchCallback cb)
 {
 	return tree_view_find(treeview, cb, FALSE);
 }
-
 
 /* Shamelessly stolen from GTK */
 static gboolean ui_tree_view_query_tooltip_cb(GtkWidget *widget, gint x, gint y,
@@ -1853,7 +1781,6 @@ static gboolean ui_tree_view_query_tooltip_cb(GtkWidget *widget, gint x, gint y,
 	return tootlip_set;
 }
 
-
 /** Adds text tooltips to a tree view.
  *
  * This is similar to gtk_tree_view_set_tooltip_column() but considers the column contents to be
@@ -1881,7 +1808,6 @@ void ui_tree_view_set_tooltip_text_column(GtkTreeView *tree_view, gint column)
 	gtk_widget_set_has_tooltip(GTK_WIDGET(tree_view), TRUE);
 }
 
-
 /**
  * Modifies the font of a widget using gtk_widget_modify_font().
  *
@@ -1897,7 +1823,6 @@ void ui_widget_modify_font_from_string(GtkWidget *widget, const gchar *str)
 	gtk_widget_modify_font(widget, pfd);
 	pango_font_description_free(pfd);
 }
-
 
 /** Creates a @c GtkHBox with @a entry packed into it and an open button which runs a
  * file chooser, replacing entry text (if successful) with the path returned from the
@@ -1938,9 +1863,7 @@ GtkWidget *ui_path_box_new(const gchar *title, GtkFileChooserAction action, GtkE
 	return hbox;
 }
 
-
 static void ui_path_box_open_clicked(GtkButton *button, gpointer user_data);
-
 
 /* Setup a GtkButton to run a GtkFileChooser, setting entry text if successful.
  * title can be NULL.
@@ -1956,7 +1879,6 @@ void ui_setup_open_button_callback(GtkWidget *open_btn, const gchar *title,
 	g_object_set_data(G_OBJECT(open_btn), "action", GINT_TO_POINTER(action));
 	g_signal_connect(open_btn, "clicked", G_CALLBACK(ui_path_box_open_clicked), path_entry);
 }
-
 
 #ifndef G_OS_WIN32
 static gchar *run_file_chooser(const gchar *title, GtkFileChooserAction action,
@@ -1995,7 +1917,6 @@ static gchar *run_file_chooser(const gchar *title, GtkFileChooserAction action,
 	return ret_path;
 }
 #endif
-
 
 static void ui_path_box_open_clicked(GtkButton *button, gpointer user_data)
 {
@@ -2040,7 +1961,6 @@ static void ui_path_box_open_clicked(GtkButton *button, gpointer user_data)
 	}
 }
 
-
 void ui_statusbar_showhide(gboolean state)
 {
 	/* handle statusbar visibility */
@@ -2052,7 +1972,6 @@ void ui_statusbar_showhide(gboolean state)
 	else
 		gtk_widget_hide(ui_widgets.statusbar);
 }
-
 
 /** Packs all @c GtkWidgets passed after the row argument into a table, using
  * one widget per cell. The first widget is not expanded as the table grows,
@@ -2077,7 +1996,6 @@ void ui_table_add_row(GtkTable *table, gint row, ...)
 	}
 	va_end(args);
 }
-
 
 static void on_config_file_clicked(GtkWidget *widget, gpointer user_data)
 {
@@ -2107,12 +2025,10 @@ static void on_config_file_clicked(GtkWidget *widget, gpointer user_data)
 	}
 }
 
-
 static void free_on_closure_notify(gpointer data, GClosure *closure)
 {
 	g_free(data);
 }
-
 
 /* @note You should connect to the "document-save" signal yourself to detect
  * if the user has just saved the config file, reloading it. */
@@ -2140,13 +2056,11 @@ void ui_add_config_file_menu_item(const gchar *real_path, const gchar *label, Gt
 			g_strdup(real_path), free_on_closure_notify, 0);
 }
 
-
 static gboolean sort_menu(gpointer data)
 {
 	ui_menu_sort_by_label(GTK_MENU(data));
 	return FALSE;
 }
-
 
 static void create_config_files_menu(void)
 {
@@ -2166,7 +2080,6 @@ static void create_config_files_menu(void)
 	/* sort menu after all items added */
 	g_idle_add(sort_menu, widgets.config_files_menu);
 }
-
 
 /* adds factory icons with a named icon source using the stock items id */
 static void add_stock_icons(const GtkStockItem *items, gsize count)
@@ -2189,7 +2102,6 @@ static void add_stock_icons(const GtkStockItem *items, gsize count)
 	g_object_unref(factory);
 }
 
-
 void ui_init_stock_items(void)
 {
 	GtkStockItem items[] =
@@ -2203,7 +2115,6 @@ void ui_init_stock_items(void)
 	add_stock_icons(items, G_N_ELEMENTS(items));
 }
 
-
 void ui_init_toolbar_widgets(void)
 {
 	widgets.save_buttons[1] = toolbar_get_widget_by_name("Save");
@@ -2211,7 +2122,6 @@ void ui_init_toolbar_widgets(void)
 	widgets.redo_items[2] = toolbar_get_widget_by_name("Redo");
 	widgets.undo_items[2] = toolbar_get_widget_by_name("Undo");
 }
-
 
 void ui_swap_sidebar_pos(void)
 {
@@ -2233,7 +2143,6 @@ void ui_swap_sidebar_pos(void)
 		- gtk_paned_get_position(GTK_PANED(pane)));
 }
 
-
 static void init_recent_files(void)
 {
 	GtkWidget *toolbar_recent_files_menu;
@@ -2251,7 +2160,6 @@ static void init_recent_files(void)
 		toolbar_get_action_by_name("Open")), toolbar_recent_files_menu);
 }
 
-
 static void ui_menu_move(GtkWidget *menu, GtkWidget *old, GtkWidget *new)
 {
 	g_object_ref(menu);
@@ -2259,7 +2167,6 @@ static void ui_menu_move(GtkWidget *menu, GtkWidget *old, GtkWidget *new)
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(new), menu);
 	g_object_unref(menu);
 }
-
 
 typedef struct GeanySharedMenu
 {
@@ -2286,7 +2193,6 @@ static void on_editor_menu_show(GtkWidget *widget, GeanySharedMenu *items)
 	}
 }
 
-
 static void on_editor_menu_hide(GtkWidget *widget, GeanySharedMenu *items)
 {
 	GeanySharedMenu *item;
@@ -2300,7 +2206,6 @@ static void on_editor_menu_hide(GtkWidget *widget, GeanySharedMenu *items)
 		ui_menu_move(menu, popup, bar);
 	}
 }
-
 
 /* Currently ui_init() is called before keyfile.c stash group code is initialized,
  * so this is called after that's done. */
@@ -2331,7 +2236,6 @@ void ui_init_prefs(void)
 		"msgwin_scribble_visible", TRUE);
 }
 
-
 /* Used to find out the name of the GtkBuilder retrieved object since
  * some objects will be GTK_IS_BUILDABLE() and use the GtkBuildable
  * 'name' property for that and those that don't implement GtkBuildable
@@ -2352,37 +2256,31 @@ static const gchar *ui_guess_object_name(GObject *obj)
 	return name;
 }
 
-
 /* Compatibility functions */
 GtkWidget *create_edit_menu1(void)
 {
 	return edit_menu1;
 }
 
-
 GtkWidget *create_prefs_dialog(void)
 {
 	return prefs_dialog;
 }
-
 
 GtkWidget *create_project_dialog(void)
 {
 	return project_dialog;
 }
 
-
 GtkWidget *create_toolbar_popup_menu1(void)
 {
 	return toolbar_popup_menu1;
 }
 
-
 GtkWidget *create_window1(void)
 {
 	return window1;
 }
-
 
 static GtkWidget *ui_get_top_parent(GtkWidget *widget)
 {
@@ -2405,7 +2303,6 @@ static GtkWidget *ui_get_top_parent(GtkWidget *widget)
 
 	return widget;
 }
-
 
 void ui_init_builder(void)
 {
@@ -2475,7 +2372,6 @@ void ui_init_builder(void)
 	g_slist_free(all_objects);
 }
 
-
 static void init_custom_style(void)
 {
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -2518,7 +2414,6 @@ static void init_custom_style(void)
 	/* see setup_gtk2_styles() in main.c */
 #endif
 }
-
 
 void ui_init(void)
 {
@@ -2574,7 +2469,6 @@ void ui_init(void)
 	create_config_files_menu();
 }
 
-
 void ui_finalize_builder(void)
 {
 	if (GTK_IS_BUILDER(builder))
@@ -2593,7 +2487,6 @@ void ui_finalize_builder(void)
 		gtk_widget_destroy(window1);
 }
 
-
 static void auto_separator_update(GeanyAutoSeparator *autosep)
 {
 	g_return_if_fail(autosep->item_count >= 0);
@@ -2607,7 +2500,6 @@ static void auto_separator_update(GeanyAutoSeparator *autosep)
 	}
 }
 
-
 static void on_auto_separator_item_show_hide(GtkWidget *widget, gpointer user_data)
 {
 	GeanyAutoSeparator *autosep = user_data;
@@ -2618,7 +2510,6 @@ static void on_auto_separator_item_show_hide(GtkWidget *widget, gpointer user_da
 		autosep->show_count--;
 	auto_separator_update(autosep);
 }
-
 
 static void on_auto_separator_item_destroy(GtkWidget *widget, gpointer user_data)
 {
@@ -2632,7 +2523,6 @@ static void on_auto_separator_item_destroy(GtkWidget *widget, gpointer user_data
 	autosep->show_count = MAX(autosep->item_count, 0);
 	auto_separator_update(autosep);
 }
-
 
 /* Show the separator widget if @a item or another is visible. */
 /* Note: This would be neater taking a widget argument, setting a "visible-count"
@@ -2656,7 +2546,6 @@ void ui_auto_separator_add_ref(GeanyAutoSeparator *autosep, GtkWidget *item)
 	g_signal_connect(item, "destroy", G_CALLBACK(on_auto_separator_item_destroy), autosep);
 }
 
-
 /**
  * Sets @a text as the contents of the tooltip for @a widget.
  *
@@ -2671,7 +2560,6 @@ void ui_widget_set_tooltip_text(GtkWidget *widget, const gchar *text)
 {
 	gtk_widget_set_tooltip_text(widget, text);
 }
-
 
 /** Returns a widget from a name in a component, usually created by Glade.
  * Call it with the toplevel widget in the component (i.e. a window/dialog),
@@ -2712,7 +2600,6 @@ GtkWidget *ui_lookup_widget(GtkWidget *widget, const gchar *widget_name)
 	return found_widget;
 }
 
-
 /* wraps gtk_builder_get_object()
  * unlike ui_lookup_widget(), it does only support getting object created from the main
  * UI file, but it can fetch any object, not only widgets */
@@ -2721,10 +2608,8 @@ gpointer ui_builder_get_object (const gchar *name)
 	return gtk_builder_get_object (builder, name);
 }
 
-
 /* Progress Bar */
 static guint progress_bar_timer_id = 0;
-
 
 static GtkWidget *progress_bar_create(void)
 {
@@ -2737,14 +2622,12 @@ static GtkWidget *progress_bar_create(void)
 	return bar;
 }
 
-
 static gboolean progress_bar_pulse(gpointer data)
 {
 	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(main_widgets.progressbar));
 
 	return TRUE;
 }
-
 
 /**
  * Starts a constantly pulsing progressbar in the right corner of the statusbar
@@ -2779,7 +2662,6 @@ void ui_progress_bar_start(const gchar *text)
 	gtk_widget_show(GTK_WIDGET(main_widgets.progressbar));
 }
 
-
 /** Stops a running progress bar and hides the widget again.
  *
  *  @since 0.16
@@ -2795,7 +2677,6 @@ void ui_progress_bar_stop(void)
 		progress_bar_timer_id = 0;
 	}
 }
-
 
 static gint compare_menu_item_labels(gconstpointer a, gconstpointer b)
 {
@@ -2818,7 +2699,6 @@ static gint compare_menu_item_labels(gconstpointer a, gconstpointer b)
 	return result;
 }
 
-
 /* Currently @a menu should contain only GtkMenuItems with labels. */
 static void ui_menu_sort_by_label(GtkMenu *menu)
 {
@@ -2836,7 +2716,6 @@ static void ui_menu_sort_by_label(GtkMenu *menu)
 	g_list_free(list);
 }
 
-
 void ui_label_set_markup(GtkLabel *label, const gchar *format, ...)
 {
 	va_list a;
@@ -2851,7 +2730,6 @@ void ui_label_set_markup(GtkLabel *label, const gchar *format, ...)
 	g_free(text);
 }
 
-
 GtkWidget *ui_label_new_bold(const gchar *text)
 {
 	GtkWidget *label;
@@ -2860,7 +2738,6 @@ GtkWidget *ui_label_new_bold(const gchar *text)
 	ui_label_set_markup(GTK_LABEL(label), "<b>%s</b>", text);
 	return label;
 }
-
 
 /** @girskip
  * Adds a list of document items to @a menu.
@@ -2876,7 +2753,6 @@ void ui_menu_add_document_items(GtkMenu *menu, GeanyDocument *active, GCallback 
 {
 	ui_menu_add_document_items_sorted(menu, active, callback, NULL);
 }
-
 
 /** @girskip
  * Adds a list of document items to @a menu.
@@ -2942,7 +2818,6 @@ void ui_menu_add_document_items_sorted(GtkMenu *menu, GeanyDocument *active,
 	g_ptr_array_free(sorted_documents, TRUE);
 }
 
-
 /** Checks whether the passed @a keyval is the Enter or Return key.
  * There are three different Enter/Return key values
  * (@c GDK_Return, @c GDK_ISO_Enter, @c GDK_KP_Enter).
@@ -2955,7 +2830,6 @@ gboolean ui_is_keyval_enter_or_return(guint keyval)
 {
 	return (keyval == GDK_Return || keyval == GDK_ISO_Enter|| keyval == GDK_KP_Enter);
 }
-
 
 /** Reads an integer from the GTK default settings registry
  * (see http://library.gnome.org/devel/gtk/stable/GtkSettings.html).
@@ -2977,7 +2851,6 @@ gint ui_get_gtk_settings_integer(const gchar *property_name, gint default_value)
 		return default_value;
 }
 
-
 void ui_editable_insert_text_callback(GtkEditable *editable, gchar *new_text,
 									  gint new_text_len, gint *position, gpointer data)
 {
@@ -2997,7 +2870,6 @@ void ui_editable_insert_text_callback(GtkEditable *editable, gchar *new_text,
 		first = FALSE;
 	}
 }
-
 
 /* gets the icon that applies to a particular MIME type */
 GIcon *ui_get_mime_icon(const gchar *mime_type)
@@ -3041,7 +2913,6 @@ GIcon *ui_get_mime_icon(const gchar *mime_type)
 	return icon;
 }
 
-
 void ui_focus_current_document(void)
 {
 	GeanyDocument *doc = document_get_current();
@@ -3049,7 +2920,6 @@ void ui_focus_current_document(void)
 	if (doc != NULL)
 		document_grab_focus(doc);
 }
-
 
 /** Finds the label text associated with stock_id
  * @param stock_id stock_id to lookup e.g. @c GTK_STOCK_OPEN.
@@ -3066,7 +2936,6 @@ const gchar *ui_lookup_stock_label(const gchar *stock_id)
 	g_warning("No stock id '%s'!", stock_id);
 	return NULL;
 }
-
 
 /* finds the next iter at any level
  * @param iter in/out, the current iter, will be changed to the next one
@@ -3106,7 +2975,6 @@ gboolean ui_tree_model_iter_any_next(GtkTreeModel *model, GtkTreeIter *iter, gbo
 	return TRUE;
 }
 
-
 GtkWidget *ui_create_encodings_combo_box(gboolean has_detect, gint default_enc)
 {
 	GtkCellRenderer *renderer;
@@ -3128,7 +2996,6 @@ GtkWidget *ui_create_encodings_combo_box(gboolean has_detect, gint default_enc)
 	return combo;
 }
 
-
 gint ui_encodings_combo_box_get_active_encoding(GtkComboBox *combo)
 {
 	GtkTreeIter iter;
@@ -3143,7 +3010,6 @@ gint ui_encodings_combo_box_get_active_encoding(GtkComboBox *combo)
 
 	return enc;
 }
-
 
 gboolean ui_encodings_combo_box_set_active_encoding(GtkComboBox *combo, gint enc)
 {

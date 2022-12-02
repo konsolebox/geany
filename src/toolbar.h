@@ -38,11 +38,9 @@ typedef struct GeanyToolbarPrefs
 }
 GeanyToolbarPrefs;
 
-
 #ifdef GEANY_PRIVATE
 
 extern GeanyToolbarPrefs toolbar_prefs;
-
 
 GtkWidget *toolbar_get_widget_child_by_name(const gchar *name);
 

@@ -27,7 +27,6 @@
 
 #include "entry.h" /* for sTagEntryInfo */
 
-
 G_BEGIN_DECLS
 
 /* Callback invoked for every tag found by the parser. The return value is
@@ -38,7 +37,6 @@ typedef gboolean (*TMCtagsNewTagCallback) (const tagEntryInfo *const tag,
 /* Callback invoked at the beginning of every parsing pass. The return value is
  * currently unused */
 typedef gboolean (*TMCtagsPassStartCallback) (void *user_data);
-
 
 void tm_ctags_init(void);
 

@@ -52,7 +52,6 @@
 
 #include <glib/gstdio.h>
 
-
 SidebarTreeviews tv = {NULL, NULL, NULL};
 /* while typeahead searching, editor should not get focus */
 static gboolean may_steal_focus = FALSE;
@@ -126,7 +125,6 @@ static void sidebar_tabs_show_hide(GtkNotebook *notebook, GtkWidget *child,
 static void on_openfiles_renamed(GtkCellRenderer *renderer, const gchar *path_string,
 		const gchar *name_new, gpointer user_data);
 
-
 /* the prepare_* functions are document-related, but I think they fit better here than in document.c */
 static void prepare_taglist(GtkWidget *tree, GtkTreeStore *store)
 {
@@ -172,7 +170,6 @@ static void prepare_taglist(GtkWidget *tree, GtkTreeStore *store)
 	/* callback for changed selection not necessary, will be handled by button-press-event */
 }
 
-
 static gboolean
 on_default_tag_tree_button_press_event(GtkWidget *widget, GdkEventButton *event,
 		gpointer user_data)
@@ -185,7 +182,6 @@ on_default_tag_tree_button_press_event(GtkWidget *widget, GdkEventButton *event,
 	}
 	return FALSE;
 }
-
 
 static void create_default_tag_tree(void)
 {
@@ -205,7 +201,6 @@ static void create_default_tag_tree(void)
 		G_CALLBACK(on_default_tag_tree_button_press_event), NULL);
 	g_object_ref((gpointer)tv.default_tag_tree);	/* to hold it after removing */
 }
-
 
 /* update = rescan the tags for doc->filename */
 void sidebar_update_tag_list(GeanyDocument *doc, gboolean update)
@@ -272,7 +267,6 @@ void sidebar_update_tag_list(GeanyDocument *doc, gboolean update)
 	#undef CHANGE_TREE
 }
 
-
 /* cleverly sorts documents by their short name */
 static gint documents_sort_func(GtkTreeModel *model, GtkTreeIter *iter_a,
 								GtkTreeIter *iter_b, gpointer data)
@@ -293,7 +287,6 @@ static gint documents_sort_func(GtkTreeModel *model, GtkTreeIter *iter_a,
 
 	return cmp;
 }
-
 
 /* does some preparing things to the open files list widget */
 static void prepare_openfiles(void)
@@ -357,7 +350,6 @@ static void prepare_openfiles(void)
 		G_CALLBACK(sidebar_key_press_cb), NULL);
 }
 
-
 static gboolean utils_filename_has_prefix(const gchar *str, const gchar *prefix)
 {
 	gchar *head = g_strndup(str, strlen(prefix));
@@ -366,7 +358,6 @@ static gboolean utils_filename_has_prefix(const gchar *str, const gchar *prefix)
 	g_free(head);
 	return ret;
 }
-
 
 gchar *sidebar_get_doc_folder(GeanyDocument *doc, gchar **out_path)
 {
@@ -483,7 +474,6 @@ exit:
 	return g_strdup(doc->priv->folder);
 }
 
-
 static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 {
 	if (!documents_show_paths)
@@ -529,7 +519,6 @@ static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 	return &parent;
 }
 
-
 /* Also sets doc->priv->iter.
  * This is called recursively in sidebar_openfiles_update_all(). */
 void sidebar_openfiles_add(GeanyDocument *doc)
@@ -563,7 +552,6 @@ void sidebar_openfiles_add(GeanyDocument *doc)
 	g_free(basename);
 }
 
-
 static void openfiles_remove(GeanyDocument *doc)
 {
 	GtkTreeIter *iter = &doc->priv->iter;
@@ -575,7 +563,6 @@ static void openfiles_remove(GeanyDocument *doc)
 	else
 		gtk_tree_store_remove(store_openfiles, iter);
 }
-
 
 void sidebar_openfiles_update(GeanyDocument *doc)
 {
@@ -611,7 +598,6 @@ void sidebar_openfiles_update(GeanyDocument *doc)
 	g_free(fname);
 }
 
-
 void sidebar_openfiles_update_all(void)
 {
 	guint i;
@@ -622,7 +608,6 @@ void sidebar_openfiles_update_all(void)
 		sidebar_openfiles_add(documents[i]);
 	}
 }
-
 
 void sidebar_remove_document(GeanyDocument *doc)
 {
@@ -637,13 +622,11 @@ void sidebar_remove_document(GeanyDocument *doc)
 	}
 }
 
-
 static void on_hide_sidebar(void)
 {
 	ui_prefs.sidebar_visible = FALSE;
 	ui_sidebar_show_hide();
 }
-
 
 static gboolean on_sidebar_display_symbol_list_show(GtkWidget *item)
 {
@@ -652,14 +635,12 @@ static gboolean on_sidebar_display_symbol_list_show(GtkWidget *item)
 	return FALSE;
 }
 
-
 static gboolean on_sidebar_display_open_files_show(GtkWidget *item)
 {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item),
 		interface_prefs.sidebar_openfiles_visible);
 	return FALSE;
 }
-
 
 void sidebar_add_common_menu_items(GtkMenu *menu)
 {
@@ -701,13 +682,11 @@ void sidebar_add_common_menu_items(GtkMenu *menu)
 	g_signal_connect(item, "activate", G_CALLBACK(on_hide_sidebar), NULL);
 }
 
-
 static void on_openfiles_show_paths_activate(GtkCheckMenuItem *item, gpointer user_data)
 {
 	documents_show_paths = gtk_check_menu_item_get_active(item);
 	sidebar_openfiles_update_all();
 }
-
 
 static void on_list_document_activate(GtkCheckMenuItem *item, gpointer user_data)
 {
@@ -716,14 +695,12 @@ static void on_list_document_activate(GtkCheckMenuItem *item, gpointer user_data
 	sidebar_tabs_show_hide(GTK_NOTEBOOK(main_widgets.sidebar_notebook), NULL, 0, NULL);
 }
 
-
 static void on_list_symbol_activate(GtkCheckMenuItem *item, gpointer user_data)
 {
 	interface_prefs.sidebar_symbol_visible = gtk_check_menu_item_get_active(item);
 	ui_sidebar_show_hide();
 	sidebar_tabs_show_hide(GTK_NOTEBOOK(main_widgets.sidebar_notebook), NULL, 0, NULL);
 }
-
 
 static void on_find_in_files(GtkMenuItem *menuitem, gpointer user_data)
 {
@@ -749,7 +726,6 @@ static void on_find_in_files(GtkMenuItem *menuitem, gpointer user_data)
 	g_free(dir);
 }
 
-
 static void on_openfiles_expand_collapse(GtkMenuItem *menuitem, gpointer user_data)
 {
 	gboolean expand = GPOINTER_TO_INT(user_data);
@@ -759,7 +735,6 @@ static void on_openfiles_expand_collapse(GtkMenuItem *menuitem, gpointer user_da
 	else
 		gtk_tree_view_collapse_all(GTK_TREE_VIEW(tv.tree_openfiles));
 }
-
 
 static void create_openfiles_popup_menu(void)
 {
@@ -897,7 +872,6 @@ static void create_openfiles_popup_menu(void)
 	sidebar_add_common_menu_items(GTK_MENU(openfiles_popup_menu));
 }
 
-
 static void unfold_parent(GtkTreeIter *iter)
 {
 	GtkTreeIter parent;
@@ -909,7 +883,6 @@ static void unfold_parent(GtkTreeIter *iter)
 		gtk_tree_path_free(path);
 	}
 }
-
 
 /* compares the given data with the doc pointer from the selected row of openfiles
  * treeview, in case of a match the row is selected and TRUE is returned
@@ -932,12 +905,10 @@ static gboolean tree_model_find_node(GtkTreeModel *model, GtkTreePath *path,
 	else return FALSE;
 }
 
-
 void sidebar_select_openfiles_item(GeanyDocument *doc)
 {
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_openfiles), tree_model_find_node, doc);
 }
-
 
 static void rename_file_inplace(GeanyDocument *doc)
 {
@@ -960,7 +931,6 @@ static void rename_file_inplace(GeanyDocument *doc)
 	gtk_tree_path_free(path);
 	g_list_free(renderers);
 }
-
 
 /* callbacks */
 
@@ -1017,7 +987,6 @@ static void document_action(GeanyDocument *doc, gint action)
 	}
 }
 
-
 static void document_action_recursive(GtkTreeModel *model, GtkTreeIter *parent, gint action)
 {
 	GtkTreeIter child;
@@ -1031,7 +1000,6 @@ static void document_action_recursive(GtkTreeModel *model, GtkTreeIter *parent, 
 		--i;
 	}
 }
-
 
 static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_data)
 {
@@ -1162,14 +1130,12 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 	}
 }
 
-
 static void change_focus_to_editor(GeanyDocument *doc, GtkWidget *source_widget)
 {
 	if (may_steal_focus)
 		document_try_focus(doc, source_widget);
 	may_steal_focus = FALSE;
 }
-
 
 static gboolean openfiles_go_to_selection(GtkTreeSelection *selection, guint keyval)
 {
@@ -1191,7 +1157,6 @@ static gboolean openfiles_go_to_selection(GtkTreeSelection *selection, guint key
 	}
 	return FALSE;
 }
-
 
 static gboolean taglist_go_to_selection(GtkTreeSelection *selection, guint keyval, guint state)
 {
@@ -1228,7 +1193,6 @@ static gboolean taglist_go_to_selection(GtkTreeSelection *selection, guint keyva
 	return handled;
 }
 
-
 static gboolean sidebar_key_press_cb(GtkWidget *widget, GdkEventKey *event,
 											 gpointer user_data)
 {
@@ -1254,7 +1218,6 @@ static gboolean sidebar_key_press_cb(GtkWidget *widget, GdkEventKey *event,
 	}
 	return FALSE;
 }
-
 
 static gboolean sidebar_button_press_cb(GtkWidget *widget, GdkEventButton *event,
 		G_GNUC_UNUSED gpointer user_data)
@@ -1330,7 +1293,6 @@ static gboolean sidebar_button_press_cb(GtkWidget *widget, GdkEventButton *event
 	return handled;
 }
 
-
 static void documents_menu_update(GtkTreeSelection *selection)
 {
 	GtkTreeModel *model;
@@ -1366,7 +1328,6 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gtk_widget_set_sensitive(doc_items.collapse_all, documents_show_paths);
 }
 
-
 static StashGroup *stash_group = NULL;
 
 static void on_load_settings(void)
@@ -1379,13 +1340,11 @@ static void on_load_settings(void)
 	sidebar_tabs_show_hide(GTK_NOTEBOOK(main_widgets.sidebar_notebook), NULL, 0, NULL);
 }
 
-
 static void on_save_settings(void)
 {
 	stash_group_update(stash_group, NULL);
 	sidebar_tabs_show_hide(GTK_NOTEBOOK(main_widgets.sidebar_notebook), NULL, 0, NULL);
 }
-
 
 static void on_sidebar_switch_page(GtkNotebook *notebook,
 	gpointer page, guint page_num, gpointer user_data)
@@ -1393,7 +1352,6 @@ static void on_sidebar_switch_page(GtkNotebook *notebook,
 	if (page_num == TREEVIEW_SYMBOL)
 		sidebar_update_tag_list(document_get_current(), FALSE);
 }
-
 
 void sidebar_init(void)
 {
@@ -1438,7 +1396,6 @@ void sidebar_finalize(void)
 		gtk_widget_destroy(openfiles_popup_menu);
 }
 
-
 void sidebar_focus_openfiles_tab(void)
 {
 	if (ui_prefs.sidebar_visible && interface_prefs.sidebar_openfiles_visible)
@@ -1449,7 +1406,6 @@ void sidebar_focus_openfiles_tab(void)
 		gtk_widget_grab_focus(tv.tree_openfiles);
 	}
 }
-
 
 void sidebar_focus_symbols_tab(void)
 {
@@ -1463,7 +1419,6 @@ void sidebar_focus_symbols_tab(void)
 	}
 }
 
-
 static void sidebar_tabs_show_hide(GtkNotebook *notebook, GtkWidget *child,
 								   guint page_num, gpointer data)
 {
@@ -1476,7 +1431,6 @@ static void sidebar_tabs_show_hide(GtkNotebook *notebook, GtkWidget *child,
 
 	gtk_notebook_set_show_tabs(notebook, (tabs > 1));
 }
-
 
 static void on_openfiles_renamed(GtkCellRenderer *renderer, const gchar *path_string,
 		const gchar *new_basename, gpointer user_data)
@@ -1508,7 +1462,6 @@ static void on_openfiles_renamed(GtkCellRenderer *renderer, const gchar *path_st
 		}
 	}
 }
-
 
 void sidebar_rename_file_cb(G_GNUC_UNUSED guint key_id)
 {

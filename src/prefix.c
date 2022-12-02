@@ -21,15 +21,12 @@
  */
 #ifdef ENABLE_BINRELOC
 
-
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
 #include <string.h>
 #include <glib.h>
 #include "prefix.h"
-
 
 #undef NULL
 #define NULL ((void *) 0)
@@ -40,15 +37,12 @@
 	#define br_return_val_if_fail(expr, val) if (!(expr)) return val
 #endif /* __GNUC__ */
 
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <unistd.h>
 
-
 static char *br_last_value = (char*)NULL;
-
 
 static void
 br_free_last_value (void)
@@ -56,7 +50,6 @@ br_free_last_value (void)
 	if (br_last_value)
 		free (br_last_value);
 }
-
 
 /**
  * br_thread_local_store:
@@ -78,7 +71,6 @@ br_thread_local_store (char *str)
 {
 	static int initialized = 0;
 
-
 	if (!initialized)
 	{
 		atexit (br_free_last_value);
@@ -91,7 +83,6 @@ br_thread_local_store (char *str)
 
 	return (const char *) str;
 }
-
 
 /**
  * br_locate:
@@ -176,7 +167,6 @@ br_locate (void *symbol)
 	return NULL;
 }
 
-
 /**
  * br_extract_prefix:
  * path: The full path of an executable or library.
@@ -222,7 +212,6 @@ br_extract_prefix (const char *path)
 	return result;
 }
 
-
 /**
  * br_locate_prefix:
  * symbol: A symbol that belongs to the app/library you want to locate.
@@ -250,7 +239,6 @@ br_locate_prefix (void *symbol)
 	free (path);
 	return prefix;
 }
-
 
 /**
  * br_prepend_prefix:
@@ -285,7 +273,6 @@ br_prepend_prefix (void *symbol, char *path)
 	free (tmp);
 	return newpath;
 }
-
 
 #else /* ENABLE_BINRELOC */
 

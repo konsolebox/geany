@@ -13,7 +13,6 @@
  tags for individual files.
 */
 
-
 #include <stdio.h>
 #include <limits.h>
 #include <stdlib.h>
@@ -37,7 +36,6 @@ typedef struct
 	TMSourceFile public;
 	guint refcount;
 } TMSourceFilePriv;
-
 
 typedef enum {
 	TM_FILE_FORMAT_TAGMANAGER,
@@ -66,7 +64,6 @@ enum
 	TA_POINTER
 };
 
-
 #define SOURCE_FILE_NEW(S) ((S) = g_slice_new(TMSourceFilePriv))
 #define SOURCE_FILE_FREE(S) g_slice_free(TMSourceFilePriv, (TMSourceFilePriv *) S)
 
@@ -81,7 +78,6 @@ static int get_path_max(const char *path)
 	return path_max;
 #endif
 }
-
 
 #ifdef G_OS_WIN32
 /* realpath implementation for Windows found at http://bugzilla.gnome.org/show_bug.cgi?id=342926
@@ -661,7 +657,7 @@ static gboolean ctags_new_tag(const tagEntryInfo *const tag,
 }
 
 /* Initializes a TMSourceFile structure from a file name. */
-static gboolean tm_source_file_init(TMSourceFile *source_file, const char *file_name, 
+static gboolean tm_source_file_init(TMSourceFile *source_file, const char *file_name,
 	const char* name)
 {
 	GStatBuf s;
@@ -722,7 +718,6 @@ TMSourceFile *tm_source_file_new(const char *file_name, const char *name)
 	priv->refcount = 1;
 	return &priv->public;
 }
-
 
 static TMSourceFile *tm_source_file_dup(TMSourceFile *source_file)
 {
@@ -798,19 +793,19 @@ gboolean tm_source_file_parse(TMSourceFile *source_file, guchar* text_buf, gsize
 		g_warning("Attempt to parse NULL file");
 		return FALSE;
 	}
-	
+
 	if (source_file->lang == TM_PARSER_NONE)
 	{
 		tm_tags_array_free(source_file->tags_array, FALSE);
 		return FALSE;
 	}
-	
+
 	file_name = source_file->file_name;
-	
+
 	if (!use_buffer)
 	{
 		GStatBuf s;
-		
+
 		/* load file to memory and parse it from memory unless the file is too big */
 		if (g_stat(file_name, &s) != 0 || s.st_size > 10*1024*1024)
 			parse_file = TRUE;

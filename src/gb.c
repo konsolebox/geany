@@ -28,18 +28,15 @@
 
 #include "gtkcompat.h"
 
-
 #define AREA_SIZE 300
 #define BALL_SIZE 4
 #define BORDER_THIKNESS 4
 #define HANDLE_THIKNESS 4
 #define HANDLE_SHRINK 3
 
-
 #define GEANY_TYPE_PONG		(geany_pong_get_type())
 #define GEANY_PONG(o)		(G_TYPE_CHECK_INSTANCE_CAST((o), GEANY_TYPE_PONG, GeanyPong))
 #define GEANY_IS_PONG(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), GEANY_TYPE_PONG))
-
 
 typedef struct _GeanyPong GeanyPong;
 typedef struct _GeanyPongClass GeanyPongClass;
@@ -71,14 +68,11 @@ struct _GeanyPongClass
 	GtkDialogClass parent_class;
 };
 
-
 static void geany_pong_finalize(GObject *obj);
 static void geany_pong_response(GtkDialog *self, gint response);
 static GType geany_pong_get_type(void) G_GNUC_CONST;
 
-
 G_DEFINE_TYPE(GeanyPong, geany_pong, GTK_TYPE_DIALOG)
-
 
 #if GTK_CHECK_VERSION(3, 0, 0)
 static void geany_pong_set_cairo_source_color(cairo_t *cr, GdkRGBA *c, gdouble a)
@@ -91,7 +85,6 @@ static void geany_pong_set_cairo_source_color(cairo_t *cr, GdkColor *c, gdouble 
 	cairo_set_source_rgba(cr, c->red/65535.0, c->green/65535.0, c->blue/65535.0, a);
 }
 #endif
-
 
 static gboolean geany_pong_area_draw(GtkWidget *area, cairo_t *cr, GeanyPong *self)
 {
@@ -172,7 +165,6 @@ static gboolean geany_pong_area_draw(GtkWidget *area, cairo_t *cr, GeanyPong *se
 	return TRUE;
 }
 
-
 #if ! GTK_CHECK_VERSION(3, 0, 0)
 static gboolean geany_pong_area_expose(GtkWidget *area, GdkEventExpose *event, GeanyPong *self)
 {
@@ -186,7 +178,6 @@ static gboolean geany_pong_area_expose(GtkWidget *area, GdkEventExpose *event, G
 }
 #endif
 
-
 static void geany_pong_reset_ball(GeanyPong *self)
 {
 	self->ball_speed = 5;
@@ -198,7 +189,6 @@ static void geany_pong_reset_ball(GeanyPong *self)
 		self->ball_vec[0] *= -1;
 }
 
-
 static void geany_pong_update_score(GeanyPong *self)
 {
 	gchar buf[16];
@@ -206,7 +196,6 @@ static void geany_pong_update_score(GeanyPong *self)
 	g_snprintf(buf, sizeof buf, "%u", self->score);
 	gtk_label_set_text(GTK_LABEL(self->score_label), buf);
 }
-
 
 static gboolean geany_pong_area_timeout(gpointer data)
 {
@@ -286,7 +275,6 @@ static gboolean geany_pong_area_timeout(gpointer data)
 	return self->source_id != 0;
 }
 
-
 static gboolean geany_pong_area_button_press(GtkWidget *area, GdkEventButton *event, GeanyPong *self)
 {
 	if (event->type == GDK_BUTTON_PRESS &&
@@ -306,7 +294,6 @@ static gboolean geany_pong_area_button_press(GtkWidget *area, GdkEventButton *ev
 	return FALSE;
 }
 
-
 static gboolean geany_pong_area_motion_notify(GtkWidget *area, GdkEventMotion *event, GeanyPong *self)
 {
 	self->handle_pos = (gint) event->x;
@@ -319,7 +306,6 @@ static gboolean geany_pong_area_motion_notify(GtkWidget *area, GdkEventMotion *e
 	return TRUE;
 }
 
-
 static void geany_pong_class_init(GeanyPongClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
@@ -328,7 +314,6 @@ static void geany_pong_class_init(GeanyPongClass *klass)
 	object_class->finalize = geany_pong_finalize;
 	dialog_class->response = geany_pong_response;
 }
-
 
 static void geany_pong_init(GeanyPong *self)
 {
@@ -387,7 +372,6 @@ static void geany_pong_init(GeanyPong *self)
 	gtk_widget_show_all(vbox);
 }
 
-
 static void geany_pong_finalize(GObject *obj)
 {
 	GeanyPong *self = GEANY_PONG(obj);
@@ -397,7 +381,6 @@ static void geany_pong_finalize(GObject *obj)
 
 	G_OBJECT_CLASS(geany_pong_parent_class)->finalize(obj);
 }
-
 
 static void geany_pong_help(GeanyPong *self)
 {
@@ -445,7 +428,6 @@ static void geany_pong_help(GeanyPong *self)
 	gtk_widget_destroy(dialog);
 }
 
-
 static void geany_pong_response(GtkDialog *self, gint response)
 {
 	g_return_if_fail(GEANY_IS_PONG(self));
@@ -461,12 +443,10 @@ static void geany_pong_response(GtkDialog *self, gint response)
 	}
 }
 
-
 static GtkWidget *geany_pong_new(GtkWindow *parent)
 {
 	return g_object_new(GEANY_TYPE_PONG, "transient-for", parent, NULL);
 }
-
 
 static gboolean gb_on_key_pressed(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 {

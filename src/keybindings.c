@@ -59,7 +59,6 @@
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
 
-
 GPtrArray *keybinding_groups;	/* array of GeanyKeyGroup pointers, in visual order */
 
 /* keyfile group name for non-plugin KB groups */
@@ -70,7 +69,6 @@ static GeanyKeyBinding binding_ids[GEANY_KEYS_COUNT];
 
 static GtkAccelGroup *kb_accel_group = NULL;
 static const gboolean swap_alt_tab_order = FALSE;
-
 
 /* central keypress event handler, almost all keypress events go to this function */
 static gboolean on_key_press_event(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
@@ -110,12 +108,11 @@ static void cb_func_sort_tabs(guint key_id);
 
 static void add_popup_menu_accels(void);
 
-
-/** Gets significant modifiers from a GdkModifierType mask. The set of 
- * significant modifiers corresponds to the default modifier mask as returned 
+/** Gets significant modifiers from a GdkModifierType mask. The set of
+ * significant modifiers corresponds to the default modifier mask as returned
  * by @c gtk_accelerator_get_default_mod_mask(). In addition, it improves
  * the Command key handling on OS X by adding @c GEANY_PRIMARY_MOD_MASK
- * when needed. For this reason it is preferred to use this function 
+ * when needed. For this reason it is preferred to use this function
  * instead of @c gtk_accelerator_set_default_mod_mask().
  * @param mods GdkModifierType mask.
  * @return Significant modifiers from the mask.
@@ -129,7 +126,6 @@ GdkModifierType keybindings_get_modifiers(GdkModifierType mods)
 #endif
 	return mods & gtk_accelerator_get_default_mod_mask();
 }
-
 
 /** Looks up a keybinding item.
  * @param group Group.
@@ -147,7 +143,6 @@ GeanyKeyBinding *keybindings_get_item(GeanyKeyGroup *group, gsize key_id)
 	g_assert(key_id < GEANY_KEYS_COUNT);
 	return &binding_ids[key_id];
 }
-
 
 /* This is used to set default keybindings on startup.
  * Menu accels are set in apply_kb_accel(). */
@@ -203,7 +198,6 @@ GeanyKeyBinding *keybindings_set_item(GeanyKeyGroup *group, gsize key_id,
 	return kb;
 }
 
-
 /** Creates a new keybinding using a GeanyKeyBindingFunc and attaches it to a keybinding group
  *
  * If given the callback should return @c TRUE if the keybinding was handled, otherwise @c FALSE
@@ -245,7 +239,6 @@ GeanyKeyBinding *keybindings_set_item_full(GeanyKeyGroup *group, gsize key_id,
 	return kb;
 }
 
-
 static void free_key_binding(gpointer item)
 {
 	GeanyKeyBinding *kb = item;
@@ -256,7 +249,6 @@ static void free_key_binding(gpointer item)
 	if (kb->cb_data_destroy)
 		kb->cb_data_destroy(kb->cb_data);
 }
-
 
 static void add_kb_group(GeanyKeyGroup *group,
 		const gchar *name, const gchar *label, GeanyKeyGroupCallback callback, gboolean plugin)
@@ -274,7 +266,6 @@ static void add_kb_group(GeanyKeyGroup *group,
 	group->key_items = g_ptr_array_new_with_free_func(plugin ? free_key_binding : NULL);
 }
 
-
 GeanyKeyGroup *keybindings_get_core_group(guint id)
 {
 	static GeanyKeyGroup groups[GEANY_KEY_GROUP_COUNT];
@@ -283,7 +274,6 @@ GeanyKeyGroup *keybindings_get_core_group(guint id)
 
 	return &groups[id];
 }
-
 
 static void add_kb(GeanyKeyGroup *group, gsize key_id,
 		GeanyKeyCallback callback, guint key, GdkModifierType mod,
@@ -295,7 +285,6 @@ static void add_kb(GeanyKeyGroup *group, gsize key_id,
 	keybindings_set_item(group, key_id, callback,
 		key, mod, kf_name, label, widget);
 }
-
 
 #define ADD_KB_GROUP(group_id, label, callback) \
 	add_kb_group(keybindings_get_core_group(group_id),\
@@ -735,7 +724,6 @@ static void init_default_kb(void)
 		0, 0, "sidebar_rename_file", _("Rename File"), NULL);
 }
 
-
 static void free_key_group(gpointer item)
 {
 	GeanyKeyGroup *group = item;
@@ -754,7 +742,6 @@ static void free_key_group(gpointer item)
 	}
 }
 
-
 void keybindings_init(void)
 {
 	memset(binding_ids, 0, sizeof binding_ids);
@@ -767,7 +754,6 @@ void keybindings_init(void)
 
 	g_signal_connect(main_widgets.window, "key-press-event", G_CALLBACK(on_key_press_event), NULL);
 }
-
 
 typedef void (*KBItemCallback) (GeanyKeyGroup *group, GeanyKeyBinding *kb, gpointer user_data);
 
@@ -783,7 +769,6 @@ static void keybindings_foreach(KBItemCallback cb, gpointer user_data)
 			cb(group, kb, user_data);
 	}
 }
-
 
 static void load_kb(GeanyKeyGroup *group, GeanyKeyBinding *kb, gpointer user_data)
 {
@@ -801,7 +786,6 @@ static void load_kb(GeanyKeyGroup *group, GeanyKeyBinding *kb, gpointer user_dat
 		g_free(val);
 	}
 }
-
 
 static void load_user_kb(void)
 {
@@ -834,7 +818,6 @@ static void load_user_kb(void)
 	g_key_file_free(config);
 }
 
-
 static void apply_kb_accel(GeanyKeyGroup *group, GeanyKeyBinding *kb, gpointer user_data)
 {
 	if (kb->key != 0 && kb->menu_item)
@@ -843,7 +826,6 @@ static void apply_kb_accel(GeanyKeyGroup *group, GeanyKeyBinding *kb, gpointer u
 			kb->key, kb->mods, GTK_ACCEL_VISIBLE);
 	}
 }
-
 
 void keybindings_load_keyfile(void)
 {
@@ -854,7 +836,6 @@ void keybindings_load_keyfile(void)
 	keybindings_foreach(apply_kb_accel, NULL);
 }
 
-
 static void add_menu_accel(GeanyKeyGroup *group, guint kb_id, GtkWidget *menuitem)
 {
 	GeanyKeyBinding *kb = keybindings_get_item(group, kb_id);
@@ -863,7 +844,6 @@ static void add_menu_accel(GeanyKeyGroup *group, guint kb_id, GtkWidget *menuite
 		gtk_widget_add_accelerator(menuitem, "activate", kb_accel_group,
 			kb->key, kb->mods, GTK_ACCEL_VISIBLE);
 }
-
 
 #define GEANY_ADD_POPUP_ACCEL(kb_id, wid) \
 	add_menu_accel(group, kb_id, ui_lookup_widget(main_widgets.editor_menu, G_STRINGIFY(wid)))
@@ -905,7 +885,6 @@ static void add_popup_menu_accels(void)
 	/* Build menu items are set if the build menus are created */
 }
 
-
 static void set_keyfile_kb(GeanyKeyGroup *group, GeanyKeyBinding *kb, gpointer user_data)
 {
 	GKeyFile *config = user_data;
@@ -915,7 +894,6 @@ static void set_keyfile_kb(GeanyKeyGroup *group, GeanyKeyBinding *kb, gpointer u
 	g_key_file_set_string(config, group->name, kb->name, val);
 	g_free(val);
 }
-
 
 /* just write the content of the keys array to the config file */
 void keybindings_write_to_file(void)
@@ -936,7 +914,6 @@ void keybindings_write_to_file(void)
 	g_key_file_free(config);
 }
 
-
 void keybindings_free(void)
 {
 	GeanyKeyGroup *group;
@@ -948,12 +925,10 @@ void keybindings_free(void)
 	g_ptr_array_free(keybinding_groups, TRUE);
 }
 
-
 gchar *keybindings_get_label(GeanyKeyBinding *kb)
 {
 	return utils_str_remove_chars(g_strdup(kb->label), "_");
 }
-
 
 static void fill_shortcut_labels_treeview(GtkWidget *tree)
 {
@@ -992,7 +967,6 @@ static void fill_shortcut_labels_treeview(GtkWidget *tree)
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tree), GTK_TREE_MODEL(store));
 	g_object_unref(store);
 }
-
 
 static GtkWidget *create_dialog(void)
 {
@@ -1043,7 +1017,6 @@ static GtkWidget *create_dialog(void)
 	return dialog;
 }
 
-
 static void key_dialog_show_prefs(void)
 {
 	GtkWidget *wid;
@@ -1061,13 +1034,11 @@ static void key_dialog_show_prefs(void)
 	}
 }
 
-
 void keybindings_dialog_show_prefs_scroll(const gchar *name)
 {
 	key_dialog_show_prefs();
 	prefs_kb_search_name(name);
 }
-
 
 /* non-modal keyboard shortcuts dialog, so user can edit whilst seeing the shortcuts */
 static GtkWidget *key_dialog = NULL;
@@ -1082,7 +1053,6 @@ static void on_dialog_response(GtkWidget *dialog, gint response, gpointer user_d
 	key_dialog = NULL;
 }
 
-
 void keybindings_show_shortcuts(void)
 {
 	if (key_dialog)
@@ -1092,7 +1062,6 @@ void keybindings_show_shortcuts(void)
 	g_signal_connect(key_dialog, "response", G_CALLBACK(on_dialog_response), NULL);
 	gtk_widget_show_all(key_dialog);
 }
-
 
 static gboolean check_fixed_kb(guint keyval, guint state)
 {
@@ -1128,7 +1097,6 @@ static gboolean check_fixed_kb(guint keyval, guint state)
 	return FALSE;
 }
 
-
 static gboolean check_snippet_completion(GeanyDocument *doc)
 {
 	GtkWidget *focusw = gtk_window_get_focus(GTK_WINDOW(main_widgets.window));
@@ -1146,7 +1114,6 @@ static gboolean check_snippet_completion(GeanyDocument *doc)
 	}
 	return FALSE;
 }
-
 
 /* Transforms a GdkEventKey event into a GdkEventButton event */
 static void trigger_button_event(GtkWidget *widget, guint32 event_time)
@@ -1169,7 +1136,6 @@ static void trigger_button_event(GtkWidget *widget, guint32 event_time)
 
 	g_free(event);
 }
-
 
 /* Special case for the Menu key and Shift-F10 to show the right-click popup menu for various
  * widgets. Without this special handling, the notebook tab list of the documents' notebook
@@ -1221,14 +1187,12 @@ static gboolean check_menu_key(GeanyDocument *doc, guint keyval, guint state, gu
 	return FALSE;
 }
 
-
 #ifdef HAVE_VTE
 static gboolean set_sensitive(gpointer widget)
 {
 	gtk_widget_set_sensitive(GTK_WIDGET(widget), TRUE);
 	return FALSE;
 }
-
 
 static gboolean check_vte(GdkModifierType state, guint keyval)
 {
@@ -1272,7 +1236,6 @@ static gboolean check_vte(GdkModifierType state, guint keyval)
 }
 #endif
 
-
 /* Map the keypad keys to their equivalent functions (taken from ScintillaGTK.cxx) */
 static guint key_kp_translate(guint key_in)
 {
@@ -1303,7 +1266,6 @@ static guint key_kp_translate(guint key_in)
 	}
 }
 
-
 /* Check if event keypress matches keybinding combo */
 gboolean keybindings_check_event(GdkEventKey *ev, GeanyKeyBinding *kb)
 {
@@ -1324,7 +1286,6 @@ gboolean keybindings_check_event(GdkEventKey *ev, GeanyKeyBinding *kb)
 
 	return (keyval == kb->key && state == kb->mods);
 }
-
 
 static gboolean run_kb(GeanyKeyBinding *kb, GeanyKeyGroup *group)
 {
@@ -1348,7 +1309,6 @@ static gboolean run_kb(GeanyKeyBinding *kb, GeanyKeyGroup *group)
 
 	return handled;
 }
-
 
 /* central keypress event handler, almost all keypress events go to this function */
 static gboolean on_key_press_event(GtkWidget *widget, GdkEventKey *ev, gpointer user_data)
@@ -1403,7 +1363,6 @@ static gboolean on_key_press_event(GtkWidget *widget, GdkEventKey *ev, gpointer 
 	return FALSE;
 }
 
-
 /* group_id must be a core group, e.g. GEANY_KEY_GROUP_EDITOR
  * key_id e.g. GEANY_KEYS_EDITOR_CALLTIP */
 GeanyKeyBinding *keybindings_lookup_item(guint group_id, guint key_id)
@@ -1417,7 +1376,6 @@ GeanyKeyBinding *keybindings_lookup_item(guint group_id, guint key_id)
 	g_return_val_if_fail(group, NULL);
 	return keybindings_get_item(group, key_id);
 }
-
 
 /** Mimics a (built-in only) keybinding action.
  * 	Example: @code keybindings_send_command(GEANY_KEY_GROUP_FILE, GEANY_KEYS_FILE_OPEN); @endcode
@@ -1435,10 +1393,8 @@ void keybindings_send_command(guint group_id, guint key_id)
 		run_kb(kb, group);
 }
 
-
 /* These are the callback functions, either each group or each shortcut has it's
  * own function. */
-
 
 static gboolean cb_func_file_action(guint key_id)
 {
@@ -1501,7 +1457,6 @@ static gboolean cb_func_file_action(guint key_id)
 	return TRUE;
 }
 
-
 static gboolean cb_func_project_action(guint key_id)
 {
 	switch (key_id)
@@ -1524,7 +1479,6 @@ static gboolean cb_func_project_action(guint key_id)
 	return TRUE;
 }
 
-
 static void cb_func_menu_preferences(guint key_id)
 {
 	switch (key_id)
@@ -1538,12 +1492,10 @@ static void cb_func_menu_preferences(guint key_id)
 	}
 }
 
-
 static void cb_func_menu_help(G_GNUC_UNUSED guint key_id)
 {
 	on_help1_activate(NULL, NULL);
 }
-
 
 static gboolean cb_func_search_action(guint key_id)
 {
@@ -1608,12 +1560,10 @@ static gboolean cb_func_search_action(guint key_id)
 	return TRUE;
 }
 
-
 static void cb_func_menu_opencolorchooser(G_GNUC_UNUSED guint key_id)
 {
 	on_show_color_chooser1_activate(NULL, NULL);
 }
-
 
 static gboolean cb_func_view_action(guint key_id)
 {
@@ -1640,7 +1590,6 @@ static gboolean cb_func_view_action(guint key_id)
 	return TRUE;
 }
 
-
 static void cb_func_menu_fullscreen(G_GNUC_UNUSED guint key_id)
 {
 	GtkCheckMenuItem *c = GTK_CHECK_MENU_ITEM(
@@ -1649,7 +1598,6 @@ static void cb_func_menu_fullscreen(G_GNUC_UNUSED guint key_id)
 	gtk_check_menu_item_set_active(c, ! gtk_check_menu_item_get_active(c));
 }
 
-
 static void cb_func_menu_messagewindow(G_GNUC_UNUSED guint key_id)
 {
 	GtkCheckMenuItem *c = GTK_CHECK_MENU_ITEM(
@@ -1657,7 +1605,6 @@ static void cb_func_menu_messagewindow(G_GNUC_UNUSED guint key_id)
 
 	gtk_check_menu_item_set_active(c, ! gtk_check_menu_item_get_active(c));
 }
-
 
 static gboolean cb_func_build_action(guint key_id)
 {
@@ -1713,7 +1660,6 @@ static gboolean cb_func_build_action(guint key_id)
 	return TRUE;
 }
 
-
 static gboolean read_current_word(GeanyDocument *doc, gboolean sci_word)
 {
 	g_return_val_if_fail(DOC_VALID(doc), FALSE);
@@ -1732,7 +1678,6 @@ static gboolean read_current_word(GeanyDocument *doc, gboolean sci_word)
 	return (*editor_info.current_word != 0);
 }
 
-
 static gboolean check_current_word(GeanyDocument *doc, gboolean sci_word)
 {
 	if (! read_current_word(doc, sci_word))
@@ -1743,7 +1688,6 @@ static gboolean check_current_word(GeanyDocument *doc, gboolean sci_word)
 	return TRUE;
 }
 
-
 static gchar *get_current_word_or_sel(GeanyDocument *doc, gboolean sci_word)
 {
 	ScintillaObject *sci = doc->editor->sci;
@@ -1753,7 +1697,6 @@ static gchar *get_current_word_or_sel(GeanyDocument *doc, gboolean sci_word)
 
 	return read_current_word(doc, sci_word) ? g_strdup(editor_info.current_word) : NULL;
 }
-
 
 static void focus_sidebar(void)
 {
@@ -1766,7 +1709,6 @@ static void focus_sidebar(void)
 		gtk_widget_child_focus(page, GTK_DIR_TAB_FORWARD);
 	}
 }
-
 
 static GtkWidget *find_focus_widget(GtkWidget *widget)
 {
@@ -1792,7 +1734,6 @@ static GtkWidget *find_focus_widget(GtkWidget *widget)
 	return focus;
 }
 
-
 static void focus_msgwindow(void)
 {
 	if (ui_prefs.msgwindow_visible)
@@ -1807,7 +1748,6 @@ static void focus_msgwindow(void)
 			utils_beep();
 	}
 }
-
 
 static gboolean cb_func_switch_action(guint key_id)
 {
@@ -1861,7 +1801,6 @@ static gboolean cb_func_switch_action(guint key_id)
 	}
 	return TRUE;
 }
-
 
 static void switch_notebook_page(gint direction)
 {
@@ -1917,24 +1856,20 @@ static void switch_notebook_page(gint direction)
 	}
 }
 
-
 static void cb_func_switch_tableft(G_GNUC_UNUSED guint key_id)
 {
 	switch_notebook_page(GTK_DIR_LEFT);
 }
-
 
 static void cb_func_switch_tabright(G_GNUC_UNUSED guint key_id)
 {
 	switch_notebook_page(GTK_DIR_RIGHT);
 }
 
-
 static void cb_func_switch_tablastused(G_GNUC_UNUSED guint key_id)
 {
 	notebook_switch_tablastused();
 }
-
 
 /* move document left/right/first/last */
 static void cb_func_move_tab(guint key_id)
@@ -1972,7 +1907,6 @@ static void cb_func_move_tab(guint key_id)
 	return;
 }
 
-
 static void cb_func_sort_tabs(guint key_id)
 {
 	switch (key_id)
@@ -1987,7 +1921,6 @@ static void cb_func_sort_tabs(guint key_id)
 			notebook_sort_tabs(NOTEBOOK_TAB_SORT_BY_FOLDER);
 	}
 }
-
 
 static void goto_matching_brace(GeanyDocument *doc)
 {
@@ -2007,7 +1940,6 @@ static void goto_matching_brace(GeanyDocument *doc)
 		editor_display_current_line(doc->editor, 0.5F);
 	}
 }
-
 
 static gboolean cb_func_clipboard_action(guint key_id)
 {
@@ -2036,7 +1968,6 @@ static gboolean cb_func_clipboard_action(guint key_id)
 	return TRUE;
 }
 
-
 static void goto_tag(GeanyDocument *doc, gboolean definition)
 {
 	gchar *text = get_current_word_or_sel(doc, FALSE);
@@ -2048,7 +1979,6 @@ static void goto_tag(GeanyDocument *doc, gboolean definition)
 
 	g_free(text);
 }
-
 
 /* Common function for goto keybindings, useful even when sci doesn't have focus. */
 static gboolean cb_func_goto_action(guint key_id)
@@ -2151,7 +2081,6 @@ static gboolean cb_func_goto_action(guint key_id)
 	return TRUE;
 }
 
-
 static void duplicate_lines(GeanyEditor *editor)
 {
 	if (sci_get_lines_selected(editor->sci) > 1)
@@ -2165,13 +2094,11 @@ static void duplicate_lines(GeanyEditor *editor)
 		sci_line_duplicate(editor->sci);
 }
 
-
 static void delete_lines(GeanyEditor *editor)
 {
 	editor_select_lines(editor, TRUE); /* include last line (like cut lines, copy lines do) */
 	sci_clear(editor->sci);	/* (SCI_LINEDELETE only does 1 line) */
 }
-
 
 /* common function for editor keybindings, only valid when scintilla has focus. */
 static gboolean cb_func_editor_action(guint key_id)
@@ -2264,7 +2191,6 @@ static gboolean cb_func_editor_action(guint key_id)
 	return TRUE;
 }
 
-
 static void join_lines(GeanyEditor *editor)
 {
 	gint start, end, i;
@@ -2288,7 +2214,6 @@ static void join_lines(GeanyEditor *editor)
 	sci_lines_join(editor->sci);
 }
 
-
 static gint get_reflow_column(GeanyEditor *editor)
 {
 	const GeanyEditorPrefs *eprefs = editor_get_prefs(editor);
@@ -2299,7 +2224,6 @@ static gint get_reflow_column(GeanyEditor *editor)
 	else
 		return -1; /* do nothing */
 }
-
 
 /* Split the line where the cursor is positioned, on `column`,
    possibly many times if the line is long.
@@ -2360,7 +2284,6 @@ static gint split_line(GeanyEditor *editor, gint column)
 	return line - start_line;
 }
 
-
 static void reflow_lines(GeanyEditor *editor, gint column)
 {
 	gint start, indent, linescount, i;
@@ -2409,7 +2332,6 @@ static void reflow_lines(GeanyEditor *editor, gint column)
 	}
 }
 
-
 /* deselect last newline of selection, if any */
 static void sci_deselect_last_newline(ScintillaObject *sci)
 {
@@ -2423,7 +2345,6 @@ static void sci_deselect_last_newline(ScintillaObject *sci)
 		sci_set_selection(sci, start, end);
 	}
 }
-
 
 static void reflow_paragraph(GeanyEditor *editor)
 {
@@ -2451,7 +2372,6 @@ static void reflow_paragraph(GeanyEditor *editor)
 	sci_end_undo_action(sci);
 }
 
-
 static void join_paragraph(GeanyEditor *editor)
 {
 	ScintillaObject *sci = editor->sci;
@@ -2476,7 +2396,6 @@ static void join_paragraph(GeanyEditor *editor)
 
 	sci_end_undo_action(sci);
 }
-
 
 /* common function for format keybindings, only valid when scintilla has focus. */
 static gboolean cb_func_format_action(guint key_id)
@@ -2566,7 +2485,6 @@ static gboolean cb_func_format_action(guint key_id)
 	return TRUE;
 }
 
-
 /* common function for select keybindings, valid for scintilla and/or gtk_editable objects. */
 static gboolean cb_func_select_action(guint key_id)
 {
@@ -2601,7 +2519,6 @@ static gboolean cb_func_select_action(guint key_id)
 	}
 	return TRUE;
 }
-
 
 static gboolean cb_func_document_action(guint key_id)
 {
@@ -2659,7 +2576,6 @@ static gboolean cb_func_document_action(guint key_id)
 	return TRUE;
 }
 
-
 static void insert_line_after(GeanyEditor *editor)
 {
 	ScintillaObject *sci = editor->sci;
@@ -2667,7 +2583,6 @@ static void insert_line_after(GeanyEditor *editor)
 	sci_send_command(sci, SCI_LINEEND);
 	sci_send_command(sci, SCI_NEWLINE);
 }
-
 
 static void insert_line_before(GeanyEditor *editor)
 {
@@ -2679,7 +2594,6 @@ static void insert_line_before(GeanyEditor *editor)
 	sci_send_command(sci, SCI_NEWLINE);
 	sci_send_command(sci, SCI_LINEUP);
 }
-
 
 /* common function for insert keybindings, only valid when scintilla has focus. */
 static gboolean cb_func_insert_action(guint key_id)
@@ -2710,7 +2624,6 @@ static gboolean cb_func_insert_action(guint key_id)
 	return TRUE;
 }
 
-
 /* update key combination */
 void keybindings_update_combo(GeanyKeyBinding *kb, guint key, GdkModifierType mods)
 {
@@ -2726,7 +2639,6 @@ void keybindings_update_combo(GeanyKeyBinding *kb, guint key, GdkModifierType mo
 		gtk_widget_add_accelerator(widget, "activate", kb_accel_group,
 			kb->key, kb->mods, GTK_ACCEL_VISIBLE);
 }
-
 
 /* used for plugins, can be called repeatedly. */
 GeanyKeyGroup *keybindings_set_group(GeanyKeyGroup *group, const gchar *section_name,
@@ -2749,7 +2661,6 @@ GeanyKeyGroup *keybindings_set_group(GeanyKeyGroup *group, const gchar *section_
 	g_ptr_array_set_size(group->key_items, 0);
 	return group;
 }
-
 
 void keybindings_free_group(GeanyKeyGroup *group)
 {

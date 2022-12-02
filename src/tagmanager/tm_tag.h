@@ -88,7 +88,7 @@ typedef struct TMTag
 	char *name; /**< Name of tag */
 	TMTagType type; /**< Tag Type */
 	gint refcount; /* the reference count of the tag */
-	
+
 	/** These are tag attributes */
 	TMSourceFile *file; /**< File in which the tag occurs; NULL for global tags */
 	gulong line; /**< Line number of the tag */
@@ -103,7 +103,6 @@ typedef struct TMTag
 	TMParserType lang; /* Programming language of the file */
 } TMTag;
 
-
 #ifdef GEANY_PRIVATE
 
 /* The GType for a TMTag */
@@ -115,7 +114,7 @@ TMTag *tm_tag_new(void);
 
 void tm_tags_remove_file_tags(TMSourceFile *source_file, GPtrArray *tags_array);
 
-GPtrArray *tm_tags_merge(GPtrArray *big_array, GPtrArray *small_array, 
+GPtrArray *tm_tags_merge(GPtrArray *big_array, GPtrArray *small_array,
 	TMTagAttrType *sort_attributes, gboolean unref_duplicates);
 
 void tm_tags_sort(GPtrArray *tags_array, TMTagAttrType *sort_attributes,

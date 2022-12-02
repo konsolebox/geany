@@ -43,7 +43,6 @@
 
 #include <gdk/gdkkeysyms.h>
 
-
 #define GEANY_DND_NOTEBOOK_TAB_TYPE	"geany_dnd_notebook_tab"
 
 static const GtkTargetEntry drag_targets[] =
@@ -68,7 +67,6 @@ static GtkWidget *switch_dialog_label = NULL;
 
 static gboolean doc_saves_to_new_file = FALSE;
 
-
 static void
 notebook_page_reordered_cb(GtkNotebook *notebook, GtkWidget *child, guint page_num,
 		gpointer user_data);
@@ -91,7 +89,6 @@ static void on_document_open(GObject *obj, GeanyDocument *doc);
 static void on_document_before_save(GObject *obj, GeanyDocument *doc);
 static void on_document_save(GObject *obj, GeanyDocument *doc);
 
-
 static void update_mru_docs_head(GeanyDocument *doc)
 {
 	if (doc)
@@ -103,7 +100,6 @@ static void update_mru_docs_head(GeanyDocument *doc)
 			g_queue_pop_tail(mru_docs);
 	}
 }
-
 
 /* before the tab changes, add the current document to the MRU list */
 static void on_notebook_switch_page(GtkNotebook *notebook,
@@ -122,7 +118,6 @@ static void on_notebook_switch_page(GtkNotebook *notebook,
 		update_mru_docs_head(new);
 }
 
-
 static void on_document_close(GObject *obj, GeanyDocument *doc)
 {
 	if (! main_status.quitting)
@@ -134,7 +129,6 @@ static void on_document_close(GObject *obj, GeanyDocument *doc)
 			g_queue_clear(mru_docs);
 	}
 }
-
 
 static GtkWidget *ui_minimal_dialog_new(GtkWindow *parent, const gchar *title)
 {
@@ -154,7 +148,6 @@ static GtkWidget *ui_minimal_dialog_new(GtkWindow *parent, const gchar *title)
 	gtk_widget_set_name(dialog, "GeanyDialog");
 	return dialog;
 }
-
 
 static gboolean is_modifier_key(guint keyval)
 {
@@ -177,7 +170,6 @@ static gboolean is_modifier_key(guint keyval)
 			return FALSE;
 	}
 }
-
 
 static gboolean on_key_release_event(GtkWidget *widget, GdkEventKey *ev, gpointer user_data)
 {
@@ -202,7 +194,6 @@ static gboolean on_key_release_event(GtkWidget *widget, GdkEventKey *ev, gpointe
 	return FALSE;
 }
 
-
 static GtkWidget *create_switch_dialog(void)
 {
 	GtkWidget *dialog, *widget, *vbox;
@@ -226,7 +217,6 @@ static GtkWidget *create_switch_dialog(void)
 	g_signal_connect(dialog, "key-release-event", G_CALLBACK(on_key_release_event), NULL);
 	return dialog;
 }
-
 
 static void update_filename_label(void)
 {
@@ -266,7 +256,6 @@ static void update_filename_label(void)
 	g_free(msg);
 }
 
-
 static gboolean on_switch_timeout(G_GNUC_UNUSED gpointer data)
 {
 	if (!switch_in_progress || switch_dialog)
@@ -277,7 +266,6 @@ static gboolean on_switch_timeout(G_GNUC_UNUSED gpointer data)
 	update_filename_label();
 	return FALSE;
 }
-
 
 void notebook_switch_tablastused(void)
 {
@@ -307,12 +295,10 @@ void notebook_switch_tablastused(void)
 		update_filename_label();
 }
 
-
 gboolean notebook_switch_in_progress(void)
 {
 	return switch_in_progress;
 }
-
 
 static gboolean focus_sci(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
@@ -323,7 +309,6 @@ static gboolean focus_sci(GtkWidget *widget, GdkEventButton *event, gpointer use
 
 	return FALSE;
 }
-
 
 static gboolean gtk_notebook_show_arrows(GtkNotebook *notebook)
 {
@@ -357,7 +342,6 @@ struct _FakeGtkNotebookPage
 	return show_arrow;
 #endif
 }
-
 
 static gboolean is_position_on_tab_bar(GtkNotebook *notebook, GdkEventButton *event)
 {
@@ -416,7 +400,6 @@ static gboolean is_position_on_tab_bar(GtkNotebook *notebook, GdkEventButton *ev
 	return FALSE;
 }
 
-
 static void tab_bar_menu_activate_cb(GtkMenuItem *menuitem, gpointer data)
 {
 	GeanyDocument *doc = data;
@@ -426,7 +409,6 @@ static void tab_bar_menu_activate_cb(GtkMenuItem *menuitem, gpointer data)
 
 	document_show_tab(doc);
 }
-
 
 static void on_open_in_new_window_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
@@ -439,7 +421,6 @@ static void on_open_in_new_window_activate(GtkMenuItem *menuitem, gpointer user_
 	utils_start_new_geany_instance(doc_path);
 	g_free(doc_path);
 }
-
 
 static void show_tab_bar_popup_menu(GdkEventButton *event, GeanyDocument *doc)
 {
@@ -517,7 +498,6 @@ static void show_tab_bar_popup_menu(GdkEventButton *event, GeanyDocument *doc)
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, event->time);
 }
 
-
 static gboolean notebook_tab_bar_click_cb(GtkWidget *widget, GdkEventButton *event,
 										  gpointer user_data)
 {
@@ -549,7 +529,6 @@ static gboolean notebook_tab_bar_click_cb(GtkWidget *widget, GdkEventButton *eve
 	return FALSE;
 }
 
-
 void notebook_init(void)
 {
 	g_signal_connect_after(main_widgets.notebook, "button-press-event",
@@ -575,12 +554,10 @@ void notebook_init(void)
 	setup_tab_dnd();
 }
 
-
 void notebook_free(void)
 {
 	g_queue_free(mru_docs);
 }
-
 
 static void setup_tab_dnd(void)
 {
@@ -588,7 +565,6 @@ static void setup_tab_dnd(void)
 
 	g_signal_connect(notebook, "page-reordered", G_CALLBACK(notebook_page_reordered_cb), NULL);
 }
-
 
 static void
 notebook_page_reordered_cb(GtkNotebook *notebook, GtkWidget *child, guint page_num,
@@ -598,7 +574,6 @@ notebook_page_reordered_cb(GtkNotebook *notebook, GtkWidget *child, guint page_n
 	 * Note: if enabled, it's best to move the item instead of recreating all items. */
 	/*sidebar_openfiles_update_all();*/
 }
-
 
 /* call this after the number of tabs in main_widgets.notebook changes. */
 static void tab_count_changed(void)
@@ -621,7 +596,6 @@ static void tab_count_changed(void)
 		break;
 	}
 }
-
 
 static gboolean notebook_tab_click(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
@@ -660,7 +634,6 @@ static gboolean notebook_tab_click(GtkWidget *widget, GdkEventButton *event, gpo
 	return FALSE;
 }
 
-
 static void notebook_tab_close_button_style_set(GtkWidget *btn, GtkRcStyle *prev_style,
 												gpointer data)
 {
@@ -669,7 +642,6 @@ static void notebook_tab_close_button_style_set(GtkWidget *btn, GtkRcStyle *prev
 	gtk_icon_size_lookup_for_settings(gtk_widget_get_settings(btn), GTK_ICON_SIZE_MENU, &w, &h);
 	gtk_widget_set_size_request(btn, w + 2, h + 2);
 }
-
 
 /* Returns page number of notebook page, or -1 on error
  *
@@ -754,7 +726,6 @@ gint notebook_new_tab(GeanyDocument *this)
 	return tabnum;
 }
 
-
 static void
 notebook_tab_close_clicked_cb(GtkButton *button, gpointer data)
 {
@@ -762,7 +733,6 @@ notebook_tab_close_clicked_cb(GtkButton *button, gpointer data)
 
 	document_close(doc);
 }
-
 
 /* Always use this instead of gtk_notebook_remove_page(). */
 void notebook_remove_page(gint page_num)
@@ -794,12 +764,10 @@ void notebook_remove_page(gint page_num)
 	tab_count_changed();
 }
 
-
 static gchar *get_doc_dirname(const GeanyDocument *doc)
 {
 	return doc->real_path ? g_path_get_dirname(doc->real_path) : g_strdup("");
 }
-
 
 static gint compare_filenames(const gchar *a, const gchar *b)
 {
@@ -811,7 +779,6 @@ static gint compare_filenames(const gchar *a, const gchar *b)
 	return cmp;
 }
 
-
 static gint compare_docs_by_filename(gconstpointer a, gconstpointer b)
 {
 	gchar *base_a = g_path_get_basename(DOC_FILENAME(*(GeanyDocument **) a));
@@ -821,7 +788,6 @@ static gint compare_docs_by_filename(gconstpointer a, gconstpointer b)
 	g_free(base_a);
 	return cmp;
 }
-
 
 static gint compare_docs_by_pathname(gconstpointer a, gconstpointer b)
 {
@@ -837,7 +803,6 @@ static gint compare_docs_by_pathname(gconstpointer a, gconstpointer b)
 	return cmp;
 }
 
-
 static gint compare_docs_by_folder(gconstpointer a, gconstpointer b)
 {
 	gchar *folder_a = sidebar_get_doc_folder(*(GeanyDocument **) a, NULL);
@@ -851,7 +816,6 @@ static gint compare_docs_by_folder(gconstpointer a, gconstpointer b)
 	g_free(folder_a);
 	return cmp;
 }
-
 
 static GCompareFunc get_compare_func(NotebookTabSortMethod method)
 {
@@ -868,14 +832,12 @@ static GCompareFunc get_compare_func(NotebookTabSortMethod method)
 	return NULL;
 }
 
-
 static void move_tab(GeanyDocument *doc, gint pos)
 {
 	GtkWidget *child = document_get_notebook_child(doc);
 	g_assert(child != NULL);
 	gtk_notebook_reorder_child(GTK_NOTEBOOK(main_widgets.notebook), child, pos);
 }
-
 
 void notebook_sort_tabs(NotebookTabSortMethod method)
 {
@@ -899,24 +861,20 @@ void notebook_sort_tabs(NotebookTabSortMethod method)
 	g_ptr_array_free(docs, TRUE);
 }
 
-
 void on_sort_tabs_by_filename_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	notebook_sort_tabs(NOTEBOOK_TAB_SORT_BY_FILENAME);
 }
-
 
 void on_sort_tabs_by_pathname_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	notebook_sort_tabs(NOTEBOOK_TAB_SORT_BY_PATHNAME);
 }
 
-
 void on_sort_tabs_by_folder_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	notebook_sort_tabs(NOTEBOOK_TAB_SORT_BY_FOLDER);
 }
-
 
 static void gradually_sort_tab(GeanyDocument *doc, NotebookTabSortMethod method)
 {
@@ -944,32 +902,27 @@ static void gradually_sort_tab(GeanyDocument *doc, NotebookTabSortMethod method)
 	}
 }
 
-
 static void on_document_new(GObject *obj, GeanyDocument *doc)
 {
 	if (doc->file_name)
 		gradually_sort_tab(doc, interface_prefs.notebook_auto_sort_tabs);
 }
 
-
 static void on_document_open(GObject *obj, GeanyDocument *doc)
 {
 	gradually_sort_tab(doc, interface_prefs.notebook_auto_sort_tabs);
 }
-
 
 static void on_document_before_save(GObject *obj, GeanyDocument *doc)
 {
 	doc_saves_to_new_file = doc->real_path == NULL;
 }
 
-
 static void on_document_save(GObject *obj, GeanyDocument *doc)
 {
 	if (doc_saves_to_new_file)
 		gradually_sort_tab(doc, interface_prefs.notebook_auto_sort_tabs);
 }
-
 
 static void
 on_window_drag_data_received(GtkWidget *widget, GdkDragContext *drag_context,

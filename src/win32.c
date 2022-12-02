@@ -60,12 +60,10 @@
 #include <glib/gstdio.h>
 #include <gdk/gdkwin32.h>
 
-
 /* The timer handle used to refresh windows below modal native dialogs. If
  * ever more than one dialog can be shown at a time, this needs to be changed
  * to be for specific dialogs. */
 static UINT_PTR dialog_timer = 0;
-
 
 G_INLINE_FUNC void win32_dialog_reset_timer(HWND hwnd)
 {
@@ -75,7 +73,6 @@ G_INLINE_FUNC void win32_dialog_reset_timer(HWND hwnd)
 		dialog_timer = 0;
 	}
 }
-
 
 VOID CALLBACK
 win32_dialog_update_main_window(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
@@ -91,7 +88,6 @@ win32_dialog_update_main_window(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dw
 	/* Cancel any pending timers since we just did an update */
 	win32_dialog_reset_timer(hwnd);
 }
-
 
 G_INLINE_FUNC UINT_PTR win32_dialog_queue_main_window_redraw(HWND dlg, UINT msg,
 	WPARAM wParam, LPARAM lParam, gboolean postpone)
@@ -115,7 +111,6 @@ G_INLINE_FUNC UINT_PTR win32_dialog_queue_main_window_redraw(HWND dlg, UINT msg,
 	return 0; /* always let the default proc handle it */
 }
 
-
 /* This function is called for OPENFILENAME lpfnHook function and it establishes
  * a timer that is reset each time which will update the main window loop eventually. */
 UINT_PTR CALLBACK win32_dialog_explorer_hook_proc(HWND dlg, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -123,14 +118,12 @@ UINT_PTR CALLBACK win32_dialog_explorer_hook_proc(HWND dlg, UINT msg, WPARAM wPa
 	return win32_dialog_queue_main_window_redraw(dlg, msg, wParam, lParam, TRUE);
 }
 
-
 /* This function is called for old-school win32 dialogs that accept a proper
  * lpfnHook function for all messages, it doesn't use a timer. */
 UINT_PTR CALLBACK win32_dialog_hook_proc(HWND dlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	return win32_dialog_queue_main_window_redraw(dlg, msg, wParam, lParam, FALSE);
 }
-
 
 static wchar_t *get_file_filters(void)
 {
@@ -180,7 +173,6 @@ static wchar_t *get_file_filters(void)
 	return title;
 }
 
-
 static wchar_t *get_file_filter_all_files(void)
 {
 	guint len;
@@ -198,7 +190,6 @@ static wchar_t *get_file_filter_all_files(void)
 
 	return title;
 }
-
 
 static wchar_t *get_filters(gboolean project_files)
 {
@@ -227,7 +218,6 @@ static wchar_t *get_filters(gboolean project_files)
 	return title;
 }
 
-
 /* Converts the given UTF-8 filename or directory name into something usable for Windows and
  * returns the directory part of the given filename. */
 static wchar_t *get_dir_for_path(const gchar *utf8_filename)
@@ -247,7 +237,6 @@ static wchar_t *get_dir_for_path(const gchar *utf8_filename)
 
 	return w_dir;
 }
-
 
 /* Callback function for setting the initial directory of the folder open dialog. This could also
  * be done with BROWSEINFO.pidlRoot and SHParseDisplayName but SHParseDisplayName is not available
@@ -276,7 +265,6 @@ INT CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData)
 	}
 	return 0;
 }
-
 
 /* Shows a folder selection dialog.
  * initial_dir is expected in UTF-8
@@ -316,7 +304,6 @@ gchar *win32_show_folder_dialog(GtkWidget *parent, const gchar *title, const gch
 	}
 	return result;
 }
-
 
 /* Shows a file open dialog.
  * If allow_new_file is set, the file to be opened doesn't have to exist.
@@ -380,7 +367,6 @@ gchar *win32_show_project_open_dialog(GtkWidget *parent, const gchar *title,
 
 	return filename;
 }
-
 
 /* initial_dir can be NULL to use the current working directory.
  * Returns: TRUE if the dialog was not cancelled. */
@@ -465,7 +451,6 @@ gboolean win32_show_document_open_dialog(GtkWindow *parent, const gchar *title, 
 	return (retval != 0);
 }
 
-
 gchar *win32_show_document_save_as_dialog(GtkWindow *parent, const gchar *title,
 										  GeanyDocument *doc)
 {
@@ -527,7 +512,6 @@ gchar *win32_show_document_save_as_dialog(GtkWindow *parent, const gchar *title,
 	return g_strdup(tmp);
 }
 
-
 /* initial_dir can be NULL to use the current working directory.
  * Returns: the selected filename */
 gchar *win32_show_file_dialog(GtkWindow *parent, const gchar *title, const gchar *initial_file)
@@ -576,7 +560,6 @@ gchar *win32_show_file_dialog(GtkWindow *parent, const gchar *title, const gchar
 	return g_strdup(tmp);
 }
 
-
 void win32_show_font_dialog(void)
 {
 	gint retval;
@@ -603,7 +586,6 @@ void win32_show_font_dialog(void)
 		g_free(editorfont);
 	}
 }
-
 
 void win32_show_color_dialog(const gchar *colour)
 {
@@ -634,7 +616,6 @@ void win32_show_color_dialog(const gchar *colour)
 	}
 	g_free(hex);
 }
-
 
 void win32_show_pref_file_dialog(GtkEntry *item)
 {
@@ -708,7 +689,6 @@ void win32_show_pref_file_dialog(GtkEntry *item)
 	g_strfreev(field);
 }
 
-
 /* Creates a native Windows message box of the given type and returns always TRUE
  * or FALSE representing th pressed Yes or No button.
  * If type is not GTK_MESSAGE_QUESTION, it returns always TRUE. */
@@ -769,7 +749,6 @@ gboolean win32_message_dialog(GtkWidget *parent, GtkMessageType type, const gcha
 	return ret;
 }
 
-
 /* Little wrapper for _waccess(), returns errno or 0 if there was no error */
 gint win32_check_write_permission(const gchar *dir)
 {
@@ -780,7 +759,6 @@ gint win32_check_write_permission(const gchar *dir)
 	else
 		return 0;
 }
-
 
 /* Just a simple wrapper function to open a browser window */
 void win32_open_browser(const gchar *uri)
@@ -804,7 +782,6 @@ void win32_open_browser(const gchar *uri)
 		g_free(err);
 	}
 }
-
 
 static FILE *open_std_handle(DWORD handle, const char *mode)
 {
@@ -848,7 +825,6 @@ static FILE *open_std_handle(DWORD handle, const char *mode)
 	return fp;
 }
 
-
 static void debug_setup_console(void)
 {
 	static const WORD MAX_CONSOLE_LINES = 500;
@@ -879,7 +855,6 @@ static void debug_setup_console(void)
 		*stdin = *fp;
 }
 
-
 void win32_init_debug_code(void)
 {
 	if (app->debug_mode)
@@ -889,7 +864,6 @@ void win32_init_debug_code(void)
 		debug_setup_console();
 	}
 }
-
 
 /* expands environment placeholders in @str.  input and output is in UTF-8 */
 gchar *win32_expand_environment_variables(const gchar *str)
@@ -905,7 +879,6 @@ gchar *win32_expand_environment_variables(const gchar *str)
 
 	return expanded ? expanded : g_strdup(str);
 }
-
 
 /* From GDK (they got it from MS Knowledge Base article Q130698) */
 static gboolean resolve_link(HWND hWnd, wchar_t *link, gchar **lpszPath)
@@ -972,7 +945,6 @@ static gboolean resolve_link(HWND hWnd, wchar_t *link, gchar **lpszPath)
 	return SUCCEEDED(hres);
 }
 
-
 /* Checks whether file_name is a Windows shortcut. file_name is expected in UTF-8 encoding.
  * If file_name is a Windows shortcut, it returns the target in UTF-8 encoding.
  * If it is not a shortcut, it returns a newly allocated copy of file_name. */
@@ -998,18 +970,15 @@ gchar *win32_get_shortcut_target(const gchar *file_name)
 		return path;
 }
 
-
 void win32_set_working_directory(const gchar *dir)
 {
 	SetCurrentDirectory(dir);
 }
 
-
 gchar *win32_get_installation_dir(void)
 {
 	return g_win32_get_package_installation_directory_of_module(NULL);
 }
-
 
 gchar *win32_get_user_config_dir(void)
 {

@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_VTE_H
 #define GEANY_VTE_H 1
 
@@ -39,7 +38,6 @@ typedef struct
 } VteInfo;
 
 extern VteInfo vte_info;
-
 
 typedef struct
 {
@@ -64,7 +62,6 @@ typedef struct
 	GdkColor colour_back;
 } VteConfig;
 extern VteConfig *vc;
-
 
 void vte_init(void);
 

@@ -45,7 +45,6 @@
 #include <string.h>
 #include <glib/gstdio.h>
 
-
 GeanyToolbarPrefs toolbar_prefs;
 static GtkUIManager *uim;
 static GtkActionGroup *group;
@@ -85,7 +84,6 @@ static const GtkActionEntry ui_entries[] = {
 };
 static const guint ui_entries_n = G_N_ELEMENTS(ui_entries);
 
-
 /* fallback UI definition */
 static const gchar *toolbar_markup =
 "<ui>"
@@ -117,7 +115,6 @@ static const gchar *toolbar_markup =
 	"</toolbar>"
 "</ui>";
 
-
 /* Note: The returned widget pointer is only valid until the toolbar is reloaded. So, either
  * update the widget pointer in this case (i.e. request it again) or better use
  * toolbar_get_action_by_name() instead. The action objects will remain the same even when the
@@ -136,7 +133,6 @@ GtkWidget *toolbar_get_widget_by_name(const gchar *name)
 	return widget;
 }
 
-
 /* Note: The returned widget pointer is only valid until the toolbar is reloaded. See
  * toolbar_get_widget_by_name for details(). */
 GtkWidget *toolbar_get_widget_child_by_name(const gchar *name)
@@ -149,7 +145,6 @@ GtkWidget *toolbar_get_widget_child_by_name(const gchar *name)
 		return NULL;
 }
 
-
 GtkAction *toolbar_get_action_by_name(const gchar *name)
 {
 	g_return_val_if_fail(name != NULL, NULL);
@@ -157,12 +152,10 @@ GtkAction *toolbar_get_action_by_name(const gchar *name)
 	return gtk_action_group_get_action(group, name);
 }
 
-
 static void toolbar_item_destroy_cb(GtkWidget *widget, G_GNUC_UNUSED gpointer data)
 {
 	plugin_items = g_slist_remove(plugin_items, widget);
 }
-
 
 void toolbar_item_ref(GtkToolItem *item)
 {
@@ -171,7 +164,6 @@ void toolbar_item_ref(GtkToolItem *item)
 	plugin_items = g_slist_append(plugin_items, item);
 	g_signal_connect(item, "destroy", G_CALLBACK(toolbar_item_destroy_cb), NULL);
 }
-
 
 static GtkWidget *toolbar_reload(const gchar *markup)
 {
@@ -319,7 +311,6 @@ static GtkWidget *toolbar_reload(const gchar *markup)
 	return main_widgets.toolbar;
 }
 
-
 static void toolbar_notify_style_cb(GObject *object, GParamSpec *arg1, gpointer data)
 {
 	const gchar *arg_name = g_param_spec_get_name(arg1);
@@ -336,7 +327,6 @@ static void toolbar_notify_style_cb(GObject *object, GParamSpec *arg1, gpointer 
 		gtk_toolbar_set_icon_size(GTK_TOOLBAR(main_widgets.toolbar), value);
 	}
 }
-
 
 GtkWidget *toolbar_init(void)
 {
@@ -412,7 +402,6 @@ GtkWidget *toolbar_init(void)
 
 	return toolbar;
 }
-
 
 void toolbar_update_ui(void)
 {
@@ -491,7 +480,6 @@ void toolbar_update_ui(void)
 		! (toolbar_prefs.visible && toolbar_prefs.append_to_menu), TRUE, 0, GTK_PACK_START);
 }
 
-
 /*  Returns the position for adding new toolbar items. The returned position can be used
  *  to add new toolbar items with @c gtk_toolbar_insert(). The toolbar object can be accessed
  *  with @a geany->main_widgets->toolbar.
@@ -524,7 +512,6 @@ gint toolbar_get_insert_position(void)
 	return pos;
 }
 
-
 void toolbar_finalize(void)
 {
 	GeanyMenubuttonAction *open_action = GEANY_MENU_BUTTON_ACTION(toolbar_get_action_by_name("Open"));
@@ -538,7 +525,6 @@ void toolbar_finalize(void)
 	g_slist_free(plugin_items);
 }
 
-
 void toolbar_show_hide(void)
 {
 	ignore_callback = TRUE;
@@ -547,7 +533,6 @@ void toolbar_show_hide(void)
 	ui_widget_show_hide(main_widgets.toolbar, toolbar_prefs.visible);
 	ignore_callback = FALSE;
 }
-
 
 /* sets the icon style of the toolbar */
 static void toolbar_set_icon_style(void)
@@ -562,7 +547,6 @@ static void toolbar_set_icon_style(void)
 	gtk_toolbar_set_style(GTK_TOOLBAR(main_widgets.toolbar), icon_style);
 }
 
-
 /* sets the icon size of the toolbar */
 static void toolbar_set_icon_size(void)
 {
@@ -576,13 +560,11 @@ static void toolbar_set_icon_size(void)
 	gtk_toolbar_set_icon_size(GTK_TOOLBAR(main_widgets.toolbar), icon_size);
 }
 
-
 void toolbar_apply_settings(void)
 {
 	toolbar_set_icon_style();
 	toolbar_set_icon_size();
 }
-
 
 #define TB_EDITOR_SEPARATOR _("Separator")
 #define TB_EDITOR_SEPARATOR_LABEL _("--- Separator ---")
@@ -637,12 +619,10 @@ static void tb_editor_handler_start_element(GMarkupParseContext *context, const 
 	}
 }
 
-
 static const GMarkupParser tb_editor_xml_parser =
 {
 	tb_editor_handler_start_element, NULL, NULL, NULL, NULL
 };
-
 
 static GSList *tb_editor_parse_ui(const gchar *buffer, gssize length, GError **error)
 {
@@ -655,7 +635,6 @@ static GSList *tb_editor_parse_ui(const gchar *buffer, gssize length, GError **e
 
 	return list;
 }
-
 
 static void tb_editor_set_item_values(const gchar *name, GtkListStore *store, GtkTreeIter *iter)
 {
@@ -694,14 +673,12 @@ static void tb_editor_set_item_values(const gchar *name, GtkListStore *store, Gt
 	g_free(label_clean);
 }
 
-
 static void tb_editor_scroll_to_iter(GtkTreeView *treeview, GtkTreeIter *iter)
 {
 	GtkTreePath *path = gtk_tree_model_get_path(gtk_tree_view_get_model(treeview), iter);
 	gtk_tree_view_scroll_to_cell(treeview, path, NULL, TRUE, 0.5, 0.0);
 	gtk_tree_path_free(path);
 }
-
 
 static void tb_editor_free_path(TBEditorWidget *tbw)
 {
@@ -711,7 +688,6 @@ static void tb_editor_free_path(TBEditorWidget *tbw)
 		tbw->last_drag_path = NULL;
 	}
 }
-
 
 static void tb_editor_btn_remove_clicked_cb(GtkWidget *button, TBEditorWidget *tbw)
 {
@@ -737,7 +713,6 @@ static void tb_editor_btn_remove_clicked_cb(GtkWidget *button, TBEditorWidget *t
 		g_free(action_name);
 	}
 }
-
 
 static void tb_editor_btn_add_clicked_cb(GtkWidget *button, TBEditorWidget *tbw)
 {
@@ -770,7 +745,6 @@ static void tb_editor_btn_add_clicked_cb(GtkWidget *button, TBEditorWidget *tbw)
 	}
 }
 
-
 static gboolean tb_editor_drag_motion_cb(GtkWidget *widget, GdkDragContext *drag_context,
 										 gint x, gint y, guint ltime, TBEditorWidget *tbw)
 {
@@ -781,7 +755,6 @@ static gboolean tb_editor_drag_motion_cb(GtkWidget *widget, GdkDragContext *drag
 
 	return FALSE;
 }
-
 
 static void tb_editor_drag_data_get_cb(GtkWidget *widget, GdkDragContext *context,
 									   GtkSelectionData *data, guint info, guint ltime,
@@ -811,7 +784,6 @@ static void tb_editor_drag_data_get_cb(GtkWidget *widget, GdkDragContext *contex
 
 	tbw->drag_source = widget;
 }
-
 
 static void tb_editor_drag_data_rcvd_cb(GtkWidget *widget, GdkDragContext *context,
 										gint x, gint y, GtkSelectionData *data, guint info,
@@ -867,7 +839,6 @@ static void tb_editor_drag_data_rcvd_cb(GtkWidget *widget, GdkDragContext *conte
 	gtk_drag_finish(context, TRUE, del, ltime);
 }
 
-
 static gboolean tb_editor_foreach_used(GtkTreeModel *model, GtkTreePath *path,
 									   GtkTreeIter *iter, gpointer data)
 {
@@ -883,7 +854,6 @@ static gboolean tb_editor_foreach_used(GtkTreeModel *model, GtkTreePath *path,
 	g_free(action_name);
 	return FALSE;
 }
-
 
 static void tb_editor_write_markup(TBEditorWidget *tbw)
 {
@@ -915,20 +885,17 @@ at http://www.geany.org/manual/current/index.html#customizing-the-toolbar.\n-->\
 	g_string_free(str, TRUE);
 }
 
-
 static void tb_editor_available_items_changed_cb(GtkTreeModel *model, GtkTreePath *arg1,
 												 GtkTreeIter *arg2, TBEditorWidget *tbw)
 {
 	tb_editor_write_markup(tbw);
 }
 
-
 static void tb_editor_available_items_deleted_cb(GtkTreeModel *model, GtkTreePath *arg1,
 												 TBEditorWidget *tbw)
 {
 	tb_editor_write_markup(tbw);
 }
-
 
 static TBEditorWidget *tb_editor_create_dialog(GtkWindow *parent)
 {
@@ -1026,7 +993,6 @@ static TBEditorWidget *tb_editor_create_dialog(GtkWindow *parent)
 	g_signal_connect(tree_used, "drag-motion",
 		G_CALLBACK(tb_editor_drag_motion_cb), tbw);
 
-
 	button_add = ui_button_new_with_image(GTK_STOCK_GO_FORWARD, NULL);
 	button_remove = ui_button_new_with_image(GTK_STOCK_GO_BACK, NULL);
 	g_signal_connect(button_add, "clicked", G_CALLBACK(tb_editor_btn_add_clicked_cb), tbw);
@@ -1060,7 +1026,6 @@ static TBEditorWidget *tb_editor_create_dialog(GtkWindow *parent)
 
 	return tbw;
 }
-
 
 void toolbar_configure(GtkWindow *parent)
 {

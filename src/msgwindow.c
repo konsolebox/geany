@@ -52,7 +52,6 @@
 
 #include <gdk/gdkkeysyms.h>
 
-
 /* used for parse_file_line */
 typedef struct
 {
@@ -82,7 +81,6 @@ enum
 	COMPILER_COL_COUNT
 };
 
-
 static void prepare_msg_tree_view(void);
 static void prepare_status_tree_view(void);
 static void prepare_compiler_tree_view(void);
@@ -91,7 +89,6 @@ static gboolean on_msgwin_button_press_event(GtkWidget *widget, GdkEventButton *
 																			gpointer user_data);
 static void on_scribble_populate(GtkTextView *textview, GtkMenu *arg1, gpointer user_data);
 
-
 void msgwin_show_hide_tabs(void)
 {
 	ui_widget_show_hide(gtk_widget_get_parent(msgwindow.tree_status), interface_prefs.msgwin_status_visible);
@@ -99,7 +96,6 @@ void msgwin_show_hide_tabs(void)
 	ui_widget_show_hide(gtk_widget_get_parent(msgwindow.tree_msg), interface_prefs.msgwin_messages_visible);
 	ui_widget_show_hide(gtk_widget_get_parent(msgwindow.scribble), interface_prefs.msgwin_scribble_visible);
 }
-
 
 /** Sets the Messages path for opening any parsed filenames without absolute path
  * from message lines.
@@ -110,7 +106,6 @@ void msgwin_set_messages_dir(const gchar *messages_dir)
 	g_free(msgwindow.messages_dir);
 	msgwindow.messages_dir = g_strdup(messages_dir);
 }
-
 
 void msgwin_init(void)
 {
@@ -132,12 +127,10 @@ void msgwin_init(void)
 	g_signal_connect(msgwindow.scribble, "populate-popup", G_CALLBACK(on_scribble_populate), NULL);
 }
 
-
 void msgwin_finalize(void)
 {
 	g_free(msgwindow.messages_dir);
 }
-
 
 static gboolean on_msgwin_key_press_event(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
@@ -162,7 +155,6 @@ static gboolean on_msgwin_key_press_event(GtkWidget *widget, GdkEventKey *event,
 	return FALSE;
 }
 
-
 /* does some preparing things to the status message list widget */
 static void prepare_status_tree_view(void)
 {
@@ -184,7 +176,6 @@ static void prepare_status_tree_view(void)
 	g_signal_connect(msgwindow.tree_status, "button-press-event",
 				G_CALLBACK(on_msgwin_button_press_event), GINT_TO_POINTER(MSG_STATUS));
 }
-
 
 /* does some preparing things to the message list widget
  * (currently used for showing results of 'Find usage') */
@@ -225,7 +216,6 @@ static void prepare_msg_tree_view(void)
 	/*g_signal_connect(selection, "changed",G_CALLBACK(on_msg_tree_selection_changed), NULL);*/
 }
 
-
 /* does some preparing things to the compiler list widget */
 static void prepare_compiler_tree_view(void)
 {
@@ -262,7 +252,6 @@ static void prepare_compiler_tree_view(void)
 	/*g_signal_connect(selection, "changed", G_CALLBACK(on_msg_tree_selection_changed), NULL);*/
 }
 
-
 static const GdkColor color_error = {0, 65535, 0, 0};
 
 static const GdkColor *get_color(gint msg_color)
@@ -278,7 +267,6 @@ static const GdkColor *get_color(gint msg_color)
 		default: return NULL;
 	}
 }
-
 
 /**
  *  Adds a new message in the compiler tab treeview in the messages window.
@@ -299,7 +287,6 @@ void msgwin_compiler_add(gint msg_color, const gchar *format, ...)
 	msgwin_compiler_add_string(msg_color, string);
 	g_free(string);
 }
-
 
 void msgwin_compiler_add_string(gint msg_color, const gchar *msg)
 {
@@ -333,7 +320,6 @@ void msgwin_compiler_add_string(gint msg_color, const gchar *msg)
 		g_free(utf8_msg);
 }
 
-
 void msgwin_show_hide(gboolean show)
 {
 	ui_prefs.msgwindow_visible = show;
@@ -346,7 +332,6 @@ void msgwin_show_hide(gboolean show)
 	/* set the input focus back to the editor */
 	keybindings_send_command(GEANY_KEY_GROUP_FOCUS, GEANY_KEYS_FOCUS_EDITOR);
 }
-
 
 /**
  *  Adds a new message in the messages tab treeview in the messages window.
@@ -374,7 +359,6 @@ void msgwin_msg_add(gint msg_color, gint line, GeanyDocument *doc, const gchar *
 	msgwin_msg_add_string(msg_color, line, doc, string);
 	g_free(string);
 }
-
 
 /* adds string to the msg treeview */
 void msgwin_msg_add_string(gint msg_color, gint line, GeanyDocument *doc, const gchar *string)
@@ -411,7 +395,6 @@ void msgwin_msg_add_string(gint msg_color, gint line, GeanyDocument *doc, const 
 	if (utf8_msg != tmp)
 		g_free(utf8_msg);
 }
-
 
 /**
  *  Logs a status message *without* setting the status bar.
@@ -454,7 +437,6 @@ void msgwin_status_add(const gchar *format, ...)
 	}
 }
 
-
 static void
 on_message_treeview_clear_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
@@ -462,7 +444,6 @@ on_message_treeview_clear_activate(GtkMenuItem *menuitem, gpointer user_data)
 
 	msgwin_clear_tab(tabnum);
 }
-
 
 static void
 on_compiler_treeview_copy_activate(GtkMenuItem *menuitem, gpointer user_data)
@@ -504,7 +485,6 @@ on_compiler_treeview_copy_activate(GtkMenuItem *menuitem, gpointer user_data)
 		g_free(string);
 	}
 }
-
 
 static void on_compiler_treeview_copy_all_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
@@ -559,13 +539,11 @@ static void on_compiler_treeview_copy_all_activate(GtkMenuItem *menuitem, gpoint
 	g_string_free(str, TRUE);
 }
 
-
 static void
 on_hide_message_window(GtkMenuItem *menuitem, gpointer user_data)
 {
 	msgwin_show_hide(FALSE);
 }
-
 
 static GtkWidget *create_message_popup_menu(gint type)
 {
@@ -602,12 +580,10 @@ static GtkWidget *create_message_popup_menu(gint type)
 	return message_popup_menu;
 }
 
-
 static void on_scribble_populate(GtkTextView *textview, GtkMenu *arg1, gpointer user_data)
 {
 	msgwin_menu_add_common_items(arg1);
 }
-
 
 /* Menu items that should be on all message window popup menus */
 void msgwin_menu_add_common_items(GtkMenu *menu)
@@ -623,7 +599,6 @@ void msgwin_menu_add_common_items(GtkMenu *menu)
 	gtk_container_add(GTK_CONTAINER(menu), item);
 	g_signal_connect(item, "activate", G_CALLBACK(on_hide_message_window), NULL);
 }
-
 
 /* look back up from the current path and find the directory we came from */
 static gboolean
@@ -649,7 +624,6 @@ find_prev_build_dir(GtkTreePath *cur, GtkTreeModel *model, gchar **prefix)
 
 	return FALSE;
 }
-
 
 static gboolean goto_compiler_file_line(const gchar *fname, gint line, gboolean focus_editor)
 {
@@ -716,7 +690,6 @@ static gboolean goto_compiler_file_line(const gchar *fname, gint line, gboolean 
 	return ret;
 }
 
-
 gboolean msgwin_goto_compiler_file_line(gboolean focus_editor)
 {
 	GtkTreeIter iter;
@@ -761,7 +734,6 @@ gboolean msgwin_goto_compiler_file_line(gboolean focus_editor)
 	return FALSE;
 }
 
-
 static void make_absolute(gchar **filename, const gchar *dir)
 {
 	guint skip_dot_slash = 0;	/* number of characters to skip at the beginning of the filename */
@@ -778,7 +750,6 @@ static void make_absolute(gchar **filename, const gchar *dir)
 	if (! utils_is_absolute_path(*filename))
 		SETPTR(*filename, g_build_filename(dir, *filename + skip_dot_slash, NULL));
 }
-
 
 /* try to parse the file and line number where the error occurred described in line
  * and when something useful is found, it stores the line number in *line and the
@@ -827,7 +798,6 @@ static void parse_file_line(ParseData *data, gchar **filename, gint *line)
 	*filename = g_strdup(fields[data->file_idx]);
 	g_strfreev(fields);
 }
-
 
 static void parse_compiler_error_line(const gchar *string,
 		gchar **filename, gint *line)
@@ -1005,7 +975,6 @@ static void parse_compiler_error_line(const gchar *string,
 		parse_file_line(&data, filename, line);
 }
 
-
 /* try to parse the file and line number where the error occurred described in string
  * and when something useful is found, it stores the line number in *line and the
  * relevant file with the error in *filename.
@@ -1044,7 +1013,6 @@ void msgwin_parse_compiler_error_line(const gchar *string, const gchar *dir,
 	g_free(trimmed_string);
 	g_free(utf8_dir);
 }
-
 
 /* Tries to parse strings of the file:line style, allowing line field to be missing
  * * filename is filled with the filename, should be freed
@@ -1089,7 +1057,6 @@ static void msgwin_parse_generic_line(const gchar *string, gchar **filename, gin
 	}
 	g_strfreev(fields);
 }
-
 
 gboolean msgwin_goto_messages_file_line(gboolean focus_editor)
 {
@@ -1149,7 +1116,6 @@ gboolean msgwin_goto_messages_file_line(gboolean focus_editor)
 	return ret;
 }
 
-
 static gboolean on_msgwin_button_press_event(GtkWidget *widget, GdkEventButton *event,
 											 gpointer user_data)
 {
@@ -1201,7 +1167,6 @@ static gboolean on_msgwin_button_press_event(GtkWidget *widget, GdkEventButton *
 	return FALSE;
 }
 
-
 /**
  *  Switches to the given notebook tab of the messages window and shows the messages window
  *  if it was previously hidden and @a show is set to @c TRUE.
@@ -1237,7 +1202,6 @@ void msgwin_switch_tab(gint tabnum, gboolean show)
 	if (show && widget)
 		gtk_widget_grab_focus(widget);
 }
-
 
 /**
  *  Removes all messages from a tab specified by @a tabnum in the messages window.

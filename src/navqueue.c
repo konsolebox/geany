@@ -38,7 +38,6 @@
 
 #include "gtkcompat.h"
 
-
 /* for the navigation history queue */
 typedef struct
 {
@@ -50,8 +49,6 @@ static GQueue *navigation_queue;
 static guint nav_queue_pos;
 
 static GtkAction *navigation_buttons[2];
-
-
 
 void navqueue_init(void)
 {
@@ -65,7 +62,6 @@ void navqueue_init(void)
 	gtk_action_set_sensitive(navigation_buttons[1], FALSE);
 }
 
-
 void navqueue_free(void)
 {
 	while (! g_queue_is_empty(navigation_queue))
@@ -74,7 +70,6 @@ void navqueue_free(void)
 	}
 	g_queue_free(navigation_queue);
 }
-
 
 static void adjust_buttons(void)
 {
@@ -99,7 +94,6 @@ static void adjust_buttons(void)
 			gtk_action_set_sensitive(navigation_buttons[0], FALSE);
 }
 
-
 static gboolean
 queue_pos_matches(guint queue_pos, const gchar *fname, gint pos)
 {
@@ -111,7 +105,6 @@ queue_pos_matches(guint queue_pos, const gchar *fname, gint pos)
 	}
 	return FALSE;
 }
-
 
 static void add_new_position(const gchar *utf8_filename, gint pos)
 {
@@ -137,7 +130,6 @@ static void add_new_position(const gchar *utf8_filename, gint pos)
 	g_queue_push_head(navigation_queue, npos);
 	adjust_buttons();
 }
-
 
 /**
  *  Adds old file position and new file position to the navqueue, then goes to the new position.
@@ -177,7 +169,6 @@ gboolean navqueue_goto_line(GeanyDocument *old_doc, GeanyDocument *new_doc, gint
 	return editor_goto_pos(new_doc->editor, pos, TRUE);
 }
 
-
 static gboolean goto_file_pos(const gchar *file, gint pos)
 {
 	GeanyDocument *doc = document_find_by_filename(file);
@@ -187,7 +178,6 @@ static gboolean goto_file_pos(const gchar *file, gint pos)
 
 	return editor_goto_pos(doc->editor, pos, TRUE);
 }
-
 
 void navqueue_go_back(void)
 {
@@ -212,7 +202,6 @@ void navqueue_go_back(void)
 	adjust_buttons();
 }
 
-
 void navqueue_go_forward(void)
 {
 	filepos *fnext;
@@ -236,7 +225,6 @@ void navqueue_go_forward(void)
 	adjust_buttons();
 }
 
-
 static gint find_by_filename(gconstpointer a, gconstpointer b)
 {
 	if (utils_str_equal(((const filepos*)a)->file, (const gchar*) b))
@@ -244,7 +232,6 @@ static gint find_by_filename(gconstpointer a, gconstpointer b)
 	else
 		return 1;
 }
-
 
 /* Remove all elements with the given filename */
 void navqueue_remove_file(const gchar *filename)

@@ -25,12 +25,10 @@
 #include "parse.h"
 #include "read.h"
 
-
 typedef struct {
 	TMCtagsNewTagCallback tag_callback;
 	gpointer user_data;
 } CallbackUserData;
-
 
 void tm_ctags_init(void)
 {
@@ -38,14 +36,12 @@ void tm_ctags_init(void)
 	installLanguageMapDefaults();
 }
 
-
 static gboolean parse_callback(const tagEntryInfo *tag, gpointer user_data)
 {
 	CallbackUserData *callback_data = user_data;
 
 	return callback_data->tag_callback(tag, callback_data->user_data);
 }
-
 
 void tm_ctags_parse(guchar *buffer, gsize buffer_size,
 	const gchar *file_name, TMParserType lang, TMCtagsNewTagCallback tag_callback,
@@ -104,18 +100,15 @@ void tm_ctags_parse(guchar *buffer, gsize buffer_size,
 	}
 }
 
-
 const gchar *tm_ctags_get_lang_name(TMParserType lang)
 {
 	return getLanguageName(lang);
 }
 
-
 TMParserType tm_ctags_get_named_lang(const gchar *name)
 {
 	return getNamedLanguage(name);
 }
-
 
 const gchar *tm_ctags_get_lang_kinds(TMParserType lang)
 {
@@ -130,7 +123,6 @@ const gchar *tm_ctags_get_lang_kinds(TMParserType lang)
 	return kinds;
 }
 
-
 const gchar *tm_ctags_get_kind_name(gchar kind, TMParserType lang)
 {
 	guint i;
@@ -143,7 +135,6 @@ const gchar *tm_ctags_get_kind_name(gchar kind, TMParserType lang)
 	}
 	return "unknown";
 }
-
 
 gchar tm_ctags_get_kind_from_name(const gchar *name, TMParserType lang)
 {
@@ -158,12 +149,10 @@ gchar tm_ctags_get_kind_from_name(const gchar *name, TMParserType lang)
 	return '-';
 }
 
-
 gboolean tm_ctags_is_using_regex_parser(TMParserType lang)
 {
 	return LanguageTable[lang]->method & METHOD_REGEX;
 }
-
 
 guint tm_ctags_get_lang_count(void)
 {

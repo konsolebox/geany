@@ -83,7 +83,6 @@
 
 #include <stdlib.h> /* only for atoi() */
 
-
 /* GTK3 removed ComboBoxEntry, but we need a value to differentiate combo box with and
  * without entries, and it must not collide with other GTypes */
 #ifdef GTK_TYPE_COMBO_BOX_ENTRY
@@ -102,7 +101,6 @@ static GType get_combo_box_entry_type(void)
 	return type;
 }
 #endif /* !GTK_TYPE_COMBO_BOX_ENTRY */
-
 
 struct StashPref
 {
@@ -137,7 +135,6 @@ typedef struct EnumWidget
 }
 EnumWidget;
 
-
 typedef enum SettingAction
 {
 	SETTING_READ,
@@ -151,7 +148,6 @@ typedef enum PrefAction
 	PREF_UPDATE
 }
 PrefAction;
-
 
 static void handle_boolean_setting(StashGroup *group, StashPref *se,
 		GKeyFile *config, SettingAction action)
@@ -170,7 +166,6 @@ static void handle_boolean_setting(StashGroup *group, StashPref *se,
 	}
 }
 
-
 static void handle_integer_setting(StashGroup *group, StashPref *se,
 		GKeyFile *config, SettingAction action)
 {
@@ -187,7 +182,6 @@ static void handle_integer_setting(StashGroup *group, StashPref *se,
 			break;
 	}
 }
-
 
 static void handle_string_setting(StashGroup *group, StashPref *se,
 		GKeyFile *config, SettingAction action)
@@ -207,7 +201,6 @@ static void handle_string_setting(StashGroup *group, StashPref *se,
 			break;
 	}
 }
-
 
 static void handle_strv_setting(StashGroup *group, StashPref *se,
 		GKeyFile *config, SettingAction action)
@@ -236,7 +229,6 @@ static void handle_strv_setting(StashGroup *group, StashPref *se,
 		}
 	}
 }
-
 
 static void keyfile_action(SettingAction action, StashGroup *group, GKeyFile *keyfile)
 {
@@ -269,7 +261,6 @@ static void keyfile_action(SettingAction action, StashGroup *group, GKeyFile *ke
 	}
 }
 
-
 /** Reads key values from @a keyfile into the group settings.
  * @note You should still call this even if the keyfile couldn't be loaded from disk
  * so that all Stash settings are initialized to defaults.
@@ -281,7 +272,6 @@ void stash_group_load_from_key_file(StashGroup *group, GKeyFile *keyfile)
 	keyfile_action(SETTING_READ, group, keyfile);
 }
 
-
 /** Writes group settings into key values in @a keyfile.
  * @a keyfile is usually written to a configuration file afterwards.
  * @param group .
@@ -291,7 +281,6 @@ void stash_group_save_to_key_file(StashGroup *group, GKeyFile *keyfile)
 {
 	keyfile_action(SETTING_WRITE, group, keyfile);
 }
-
 
 /** Reads group settings from a configuration file using @c GKeyFile.
  * @note Stash settings will be initialized to defaults if the keyfile
@@ -315,7 +304,6 @@ gboolean stash_group_load_from_file(StashGroup *group, const gchar *filename)
 	g_key_file_free(keyfile);
 	return ret;
 }
-
 
 /** Writes group settings to a configuration file using @c GKeyFile.
  *
@@ -347,7 +335,6 @@ gint stash_group_save_to_file(StashGroup *group, const gchar *filename,
 	return ret;
 }
 
-
 static void free_stash_pref(StashPref *pref)
 {
 	if (pref->widget_type == GTK_TYPE_RADIO_BUTTON)
@@ -355,7 +342,6 @@ static void free_stash_pref(StashPref *pref)
 
 	g_slice_free(StashPref, pref);
 }
-
 
 /** Creates a new group.
  * @param name Name used for @c GKeyFile group.
@@ -371,7 +357,6 @@ StashGroup *stash_group_new(const gchar *name)
 	group->refcount = 1;
 	return group;
 }
-
 
 /** Frees the memory allocated for setting values in a group.
  * Useful e.g. to avoid freeing strings individually.
@@ -396,14 +381,12 @@ void stash_group_free_settings(StashGroup *group)
 	}
 }
 
-
 static StashGroup *stash_group_dup(StashGroup *src)
 {
 	g_atomic_int_inc(&src->refcount);
 
 	return src;
 }
-
 
 /** Frees a group.
  * @param group . */
@@ -417,7 +400,6 @@ void stash_group_free(StashGroup *group)
 	}
 }
 
-
 /** Gets the GBoxed-derived GType for StashGroup
  *
  * @return StashGroup type . */
@@ -426,14 +408,12 @@ GType stash_group_get_type(void);
 
 G_DEFINE_BOXED_TYPE(StashGroup, stash_group, stash_group_dup, stash_group_free);
 
-
 /* Used for selecting groups passed to stash_tree_setup().
  * @c FALSE by default. */
 void stash_group_set_various(StashGroup *group, gboolean various)
 {
 	group->various = various;
 }
-
 
 /* When @c FALSE, Stash doesn't change the setting if there is no keyfile entry, so it
  * remains whatever it was initialized/set to by user code.
@@ -442,7 +422,6 @@ void stash_group_set_use_defaults(StashGroup *group, gboolean use_defaults)
 {
 	group->use_defaults = use_defaults;
 }
-
 
 static StashPref *
 add_pref(StashGroup *group, GType type, gpointer setting,
@@ -463,7 +442,6 @@ add_pref(StashGroup *group, GType type, gpointer setting,
 	return entry;
 }
 
-
 /** Adds boolean setting.
  * @param group .
  * @param setting Address of setting variable.
@@ -476,7 +454,6 @@ void stash_group_add_boolean(StashGroup *group, gboolean *setting,
 	add_pref(group, G_TYPE_BOOLEAN, setting, key_name, GINT_TO_POINTER(default_value));
 }
 
-
 /** Adds integer setting.
  * @param group .
  * @param setting Address of setting variable.
@@ -488,7 +465,6 @@ void stash_group_add_integer(StashGroup *group, gint *setting,
 {
 	add_pref(group, G_TYPE_INT, setting, key_name, GINT_TO_POINTER(default_value));
 }
-
 
 /** Adds string setting.
  * The contents of @a setting will be initialized to @c NULL.
@@ -503,7 +479,6 @@ void stash_group_add_string(StashGroup *group, gchar **setting,
 	add_pref(group, G_TYPE_STRING, setting, key_name, (gpointer)default_value);
 }
 
-
 /** Adds string vector setting (array of strings).
  * The contents of @a setting will be initialized to @c NULL.
  * @param group .
@@ -516,7 +491,6 @@ void stash_group_add_string_vector(StashGroup *group, gchar ***setting,
 {
 	add_pref(group, G_TYPE_STRV, setting, key_name, (gpointer)default_value);
 }
-
 
 /* *** GTK-related functions *** */
 
@@ -533,7 +507,6 @@ static void handle_toggle_button(GtkWidget *widget, gboolean *setting,
 			break;
 	}
 }
-
 
 static void handle_spin_button(GtkWidget *widget, StashPref *entry,
 		PrefAction action)
@@ -555,7 +528,6 @@ static void handle_spin_button(GtkWidget *widget, StashPref *entry,
 	}
 }
 
-
 static void handle_combo_box(GtkWidget *widget, StashPref *entry,
 		PrefAction action)
 {
@@ -571,7 +543,6 @@ static void handle_combo_box(GtkWidget *widget, StashPref *entry,
 			break;
 	}
 }
-
 
 static void handle_entry(GtkWidget *widget, StashPref *entry,
 		PrefAction action)
@@ -590,14 +561,12 @@ static void handle_entry(GtkWidget *widget, StashPref *entry,
 	}
 }
 
-
 static void handle_combo_box_entry(GtkWidget *widget, StashPref *entry,
 		PrefAction action)
 {
 	widget = gtk_bin_get_child(GTK_BIN(widget));
 	handle_entry(widget, entry, action);
 }
-
 
 /* taken from Glade 2.x generated support.c */
 static GtkWidget*
@@ -627,7 +596,6 @@ lookup_widget(GtkWidget *widget, const gchar *widget_name)
 	return found_widget;
 }
 
-
 static GtkWidget *
 get_widget(GtkWidget *owner, StashWidgetID widget_id)
 {
@@ -646,7 +614,6 @@ get_widget(GtkWidget *owner, StashWidgetID widget_id)
 	return widget;
 }
 
-
 static void handle_radio_button(GtkWidget *widget, gint enum_id, gboolean *setting,
 		PrefAction action)
 {
@@ -662,7 +629,6 @@ static void handle_radio_button(GtkWidget *widget, gint enum_id, gboolean *setti
 			break;
 	}
 }
-
 
 static void handle_radio_buttons(GtkWidget *owner, StashPref *entry,
 		PrefAction action)
@@ -687,7 +653,6 @@ static void handle_radio_buttons(GtkWidget *owner, StashPref *entry,
 	if (g_slist_length(gtk_radio_button_get_group(GTK_RADIO_BUTTON(widget))) != count)
 		g_warning("Missing/invalid radio button widget IDs found!");
 }
-
 
 static void handle_widget_property(GtkWidget *widget, StashPref *entry,
 		PrefAction action)
@@ -722,7 +687,6 @@ static void handle_widget_property(GtkWidget *widget, StashPref *entry,
 			break;
 	}
 }
-
 
 static void pref_action(PrefAction action, StashGroup *group, GtkWidget *owner)
 {
@@ -771,7 +735,6 @@ static void pref_action(PrefAction action, StashGroup *group, GtkWidget *owner)
 	}
 }
 
-
 /** Applies Stash settings to widgets, usually called before displaying the widgets.
  * The @a owner argument depends on which type you use for @ref StashWidgetID.
  * @param group .
@@ -783,7 +746,6 @@ void stash_group_display(StashGroup *group, GtkWidget *owner)
 {
 	pref_action(PREF_DISPLAY, group, owner);
 }
-
 
 /** Applies widget values to Stash settings, usually called after displaying the widgets.
  * The @a owner argument depends on which type you use for @ref StashWidgetID.
@@ -797,7 +759,6 @@ void stash_group_update(StashGroup *group, GtkWidget *owner)
 	pref_action(PREF_UPDATE, group, owner);
 }
 
-
 static StashPref *
 add_widget_pref(StashGroup *group, GType setting_type, gpointer setting,
 		const gchar *key_name, gpointer default_value,
@@ -810,7 +771,6 @@ add_widget_pref(StashGroup *group, GType setting_type, gpointer setting,
 	entry->widget_id = widget_id;
 	return entry;
 }
-
 
 /** Adds a @c GtkToggleButton (or @c GtkCheckButton) widget pref.
  * @param group .
@@ -826,7 +786,6 @@ void stash_group_add_toggle_button(StashGroup *group, gboolean *setting,
 	add_widget_pref(group, G_TYPE_BOOLEAN, setting, key_name, GINT_TO_POINTER(default_value),
 		GTK_TYPE_TOGGLE_BUTTON, widget_id);
 }
-
 
 /** Adds a @c GtkRadioButton widget group pref.
  * @param group .
@@ -886,7 +845,6 @@ void stash_group_add_radio_buttons(StashGroup *group, gint *setting,
 	va_end(args);
 }
 
-
 /** Adds a @c GtkSpinButton widget pref.
  * @param group .
  * @param setting Address of setting variable.
@@ -900,7 +858,6 @@ void stash_group_add_spin_button_integer(StashGroup *group, gint *setting,
 	add_widget_pref(group, G_TYPE_INT, setting, key_name, GINT_TO_POINTER(default_value),
 		GTK_TYPE_SPIN_BUTTON, widget_id);
 }
-
 
 /** Adds a @c GtkComboBox widget pref.
  * @param group .
@@ -916,7 +873,6 @@ void stash_group_add_combo_box(StashGroup *group, gint *setting,
 	add_widget_pref(group, G_TYPE_INT, setting, key_name, GINT_TO_POINTER(default_value),
 		GTK_TYPE_COMBO_BOX, widget_id);
 }
-
 
 /** Adds a @c GtkComboBoxEntry widget pref.
  * @param group .
@@ -934,7 +890,6 @@ void stash_group_add_combo_box_entry(StashGroup *group, gchar **setting,
 		TYPE_COMBO_BOX_ENTRY, widget_id);
 }
 
-
 /** Adds a @c GtkEntry widget pref.
  * @param group .
  * @param setting Address of setting variable.
@@ -949,7 +904,6 @@ void stash_group_add_entry(StashGroup *group, gchar **setting,
 		GTK_TYPE_ENTRY, widget_id);
 }
 
-
 static GType object_get_property_type(GObject *object, const gchar *property_name)
 {
 	GObjectClass *klass = G_OBJECT_GET_CLASS(object);
@@ -958,7 +912,6 @@ static GType object_get_property_type(GObject *object, const gchar *property_nam
 	ps = g_object_class_find_property(klass, property_name);
 	return ps->value_type;
 }
-
 
 /** Adds a widget's read/write property to the stash group.
  * The property will be set when calling
@@ -986,14 +939,12 @@ void stash_group_add_widget_property(StashGroup *group, gpointer setting,
 		G_TYPE_PARAM, widget_id)->extra.property_name = property_name;
 }
 
-
 enum
 {
 	STASH_TREE_NAME,
 	STASH_TREE_VALUE,
 	STASH_TREE_COUNT
 };
-
 
 struct StashTreeValue
 {
@@ -1007,7 +958,6 @@ struct StashTreeValue
 };
 
 typedef struct StashTreeValue StashTreeValue;
-
 
 static void stash_tree_renderer_set_data(GtkCellLayout *cell_layout, GtkCellRenderer *cell,
 	GtkTreeModel *model, GtkTreeIter *iter, gpointer user_data)
@@ -1044,7 +994,6 @@ static void stash_tree_renderer_set_data(GtkCellLayout *cell_layout, GtkCellRend
 	}
 }
 
-
 static void stash_tree_renderer_edited(gchar *path_str, gchar *new_text, GtkTreeModel *model)
 {
 	GtkTreePath *path;
@@ -1074,20 +1023,17 @@ static void stash_tree_renderer_edited(gchar *path_str, gchar *new_text, GtkTree
 	gtk_tree_path_free(path);
 }
 
-
 static void stash_tree_boolean_toggled(GtkCellRendererToggle *cell, gchar *path_str,
 	GtkTreeModel *model)
 {
 	stash_tree_renderer_edited(path_str, NULL, model);
 }
 
-
 static void stash_tree_string_edited(GtkCellRenderer *cell, gchar *path_str, gchar *new_text,
 	GtkTreeModel *model)
 {
 	stash_tree_renderer_edited(path_str, new_text, model);
 }
-
 
 static gboolean stash_tree_discard_value(GtkTreeModel *model, GtkTreePath *path,
 	GtkTreeIter *iter, gpointer user_data)
@@ -1102,13 +1048,11 @@ static gboolean stash_tree_discard_value(GtkTreeModel *model, GtkTreePath *path,
 	return FALSE;
 }
 
-
 static void stash_tree_destroy_cb(GtkWidget *widget, gpointer user_data)
 {
 	GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
 	gtk_tree_model_foreach(model, stash_tree_discard_value, NULL);
 }
-
 
 static void stash_tree_append_pref(StashGroup *group, StashPref *entry, GtkListStore *store,
 	PrefAction action)
@@ -1126,7 +1070,6 @@ static void stash_tree_append_pref(StashGroup *group, StashPref *entry, GtkListS
 		STASH_TREE_VALUE, value, -1);
 }
 
-
 static void stash_tree_append_prefs(GPtrArray *group_array,
 	GtkListStore *store, PrefAction action)
 {
@@ -1143,7 +1086,6 @@ static void stash_tree_append_prefs(GPtrArray *group_array,
 		}
 	}
 }
-
 
 /* Setups a simple editor for stash preferences based on the widget arguments.
  * group_array - Array of groups which's settings will be edited.
@@ -1199,7 +1141,6 @@ void stash_tree_setup(GPtrArray *group_array, GtkTreeView *tree)
 		stash_tree_renderer_set_data, GSIZE_TO_POINTER(G_TYPE_INT), NULL);
 }
 
-
 static void stash_tree_display_pref(StashTreeValue *value, StashPref *entry)
 {
 	switch (entry->setting_type)
@@ -1218,7 +1159,6 @@ static void stash_tree_display_pref(StashTreeValue *value, StashPref *entry)
 				entry->key_name, G_STRFUNC);
 	}
 }
-
 
 static void stash_tree_update_pref(StashTreeValue *value, StashPref *entry)
 {
@@ -1241,7 +1181,6 @@ static void stash_tree_update_pref(StashTreeValue *value, StashPref *entry)
 				entry->key_name, G_STRFUNC);
 	}
 }
-
 
 static void stash_tree_action(GtkTreeModel *model, PrefAction action)
 {
@@ -1266,12 +1205,10 @@ static void stash_tree_action(GtkTreeModel *model, PrefAction action)
 	}
 }
 
-
 void stash_tree_display(GtkTreeView *tree)
 {
 	stash_tree_action(gtk_tree_view_get_model(tree), PREF_DISPLAY);
 }
-
 
 void stash_tree_update(GtkTreeView *tree)
 {

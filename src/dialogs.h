@@ -24,7 +24,6 @@
  *  File related dialogs, miscellaneous dialogs, font dialog.
  **/
 
-
 #ifndef GEANY_DIALOGS_H
 #define GEANY_DIALOGS_H 1
 
@@ -46,11 +45,9 @@ gboolean dialogs_show_input_numeric(const gchar *title, const gchar *label_text,
 gchar *dialogs_show_input(const gchar *title, GtkWindow *parent,
 	const gchar *label_text, const gchar *default_text);
 
-
 #ifdef GEANY_PRIVATE
 
 typedef void (*GeanyInputCallback)(const gchar *text, gpointer data);
-
 
 void dialogs_show_open_file(gboolean recursive, const gchar *utf8_initial_dir);
 

@@ -58,14 +58,12 @@
 /* gstdio.h also includes sys/stat.h */
 #include <glib/gstdio.h>
 
-
 enum
 {
 	GEANY_RESPONSE_RENAME,
 	GEANY_RESPONSE_VIEW,
 	GEANY_RESPONSE_OPEN_RECURSIVELY
 };
-
 
 static struct FileSelState
 {
@@ -88,9 +86,7 @@ filesel_state = {
 	}
 };
 
-
 static gint filetype_combo_box_get_active_filetype(GtkComboBox *combo);
-
 
 /* gets the ID of the current file filter */
 static guint file_chooser_get_filter_idx(GtkFileChooser *chooser)
@@ -111,7 +107,6 @@ static guint file_chooser_get_filter_idx(GtkFileChooser *chooser)
 	return idx;
 }
 
-
 /* sets the current file filter from its ID */
 static void file_chooser_set_filter_idx(GtkFileChooser *chooser, guint idx)
 {
@@ -124,14 +119,12 @@ static void file_chooser_set_filter_idx(GtkFileChooser *chooser, guint idx)
 	gtk_file_chooser_set_filter(chooser, current);
 }
 
-
 static void on_cancellable_status_window_key_press(GtkWidget *widget, GdkEventKey *event,
 		gpointer data)
 {
 	if (event->keyval == GDK_KEY_Escape)
 		gtk_widget_destroy(widget);
 }
-
 
 void dialogs_create_cancellable_status_window(GtkWidget **window_ptr, GtkWidget **label_ptr,
 		const gchar *title, const gchar *initial_label_text, gboolean show)
@@ -176,7 +169,6 @@ void dialogs_create_cancellable_status_window(GtkWidget **window_ptr, GtkWidget 
 		gtk_widget_show_all(window);
 }
 
-
 static gboolean on_recursive_open_iterate(const char *file_path, GtkWidget **window_ptr,
 		GtkLabel *label)
 {
@@ -202,7 +194,6 @@ static gboolean on_recursive_open_iterate(const char *file_path, GtkWidget **win
 
 	return FALSE;
 }
-
 
 static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint response,
 		gboolean recursive)
@@ -328,7 +319,6 @@ static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint respons
 	return ret;
 }
 
-
 static void on_file_open_show_hidden_notify(GObject *filechooser,
 	GParamSpec *pspec, gpointer data)
 {
@@ -340,14 +330,12 @@ static void on_file_open_show_hidden_notify(GObject *filechooser,
 		gtk_file_chooser_get_show_hidden(GTK_FILE_CHOOSER(filechooser)));
 }
 
-
 static void
 on_file_open_check_hidden_toggled(GtkToggleButton *togglebutton, GtkWidget *dialog)
 {
 	filesel_state.open.show_hidden = gtk_toggle_button_get_active(togglebutton);
 	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(dialog), filesel_state.open.show_hidden);
 }
-
 
 static void filetype_combo_cell_data_func(GtkCellLayout *cell_layout, GtkCellRenderer *cell,
 		GtkTreeModel *tree_model, GtkTreeIter *iter, gpointer data)
@@ -359,7 +347,6 @@ static void filetype_combo_cell_data_func(GtkCellLayout *cell_layout, GtkCellRen
 	g_object_set(cell, "sensitive", sensitive, "text", text, NULL);
 	g_free(text);
 }
-
 
 static GtkWidget *create_filetype_combo_box(void)
 {
@@ -413,7 +400,6 @@ static GtkWidget *create_filetype_combo_box(void)
 	return combo;
 }
 
-
 /* the filetype, or -1 for auto-detect */
 static gint filetype_combo_box_get_active_filetype(GtkComboBox *combo)
 {
@@ -427,7 +413,6 @@ static gint filetype_combo_box_get_active_filetype(GtkComboBox *combo)
 	}
 	return id;
 }
-
 
 static gboolean filetype_combo_box_set_active_filetype(GtkComboBox *combo, const gint id)
 {
@@ -450,7 +435,6 @@ static gboolean filetype_combo_box_set_active_filetype(GtkComboBox *combo, const
 	}
 	return FALSE;
 }
-
 
 static GtkWidget *add_file_open_extra_widget(GtkWidget *dialog)
 {
@@ -519,7 +503,6 @@ static GtkWidget *add_file_open_extra_widget(GtkWidget *dialog)
 
 	return expander;
 }
-
 
 static GtkWidget *create_open_file_dialog(gboolean recursive)
 {
@@ -590,7 +573,6 @@ static GtkWidget *create_open_file_dialog(gboolean recursive)
 	return dialog;
 }
 
-
 static void open_file_dialog_apply_settings(GtkWidget *dialog)
 {
 	static gboolean initialized = FALSE;
@@ -615,7 +597,6 @@ static void open_file_dialog_apply_settings(GtkWidget *dialog)
 	ui_encodings_combo_box_set_active_encoding(GTK_COMBO_BOX(encoding_combo), filesel_state.open.encoding_idx);
 	filetype_combo_box_set_active_filetype(GTK_COMBO_BOX(filetype_combo), filesel_state.open.filetype_idx);
 }
-
 
 /* This shows the file selection dialog to open a file. */
 void dialogs_show_open_file(gboolean recursive, const gchar *utf8_initial_dir)
@@ -663,7 +644,6 @@ void dialogs_show_open_file(gboolean recursive, const gchar *utf8_initial_dir)
 	g_free(initdir);
 }
 
-
 static gboolean save_as_dialog_handle_response(GtkWidget *dialog, gint response)
 {
 	if (response == GTK_RESPONSE_DELETE_EVENT || response == GTK_RESPONSE_CANCEL)
@@ -689,7 +669,6 @@ static gboolean save_as_dialog_handle_response(GtkWidget *dialog, gint response)
 	g_free(new_filename);
 	return success;
 }
-
 
 static GtkWidget *create_save_file_dialog(GeanyDocument *doc)
 {
@@ -728,7 +707,6 @@ static GtkWidget *create_save_file_dialog(GeanyDocument *doc)
 	}
 	return dialog;
 }
-
 
 static gboolean show_save_as_gtk(GeanyDocument *doc)
 {
@@ -792,7 +770,6 @@ static gboolean show_save_as_gtk(GeanyDocument *doc)
 	return (resp == GTK_RESPONSE_ACCEPT);
 }
 
-
 /**
  *  Shows the Save As dialog for the current notebook page.
  *
@@ -823,7 +800,6 @@ gboolean dialogs_show_save_as(void)
 	return result;
 }
 
-
 #ifndef G_OS_WIN32
 static void show_msgbox_dialog(GtkWidget *dialog, GtkMessageType type, GtkWindow *parent)
 {
@@ -851,7 +827,6 @@ static void show_msgbox_dialog(GtkWidget *dialog, GtkMessageType type, GtkWindow
 	gtk_widget_destroy(dialog);
 }
 #endif
-
 
 /**
  *  Shows a message box of the type @a type with @a text.
@@ -887,7 +862,6 @@ void dialogs_show_msgbox(GtkMessageType type, const gchar *text, ...)
 	g_free(string);
 }
 
-
 void dialogs_show_msgbox_with_secondary(GtkMessageType type, const gchar *text, const gchar *secondary)
 {
 	GtkWindow *parent = (main_status.main_window_realized) ? GTK_WINDOW(main_widgets.window) : NULL;
@@ -904,7 +878,6 @@ void dialogs_show_msgbox_with_secondary(GtkMessageType type, const gchar *text, 
 	show_msgbox_dialog(dialog, type, parent);
 #endif
 }
-
 
 static gint run_unsaved_dialog(const gchar *msg, const gchar *msg2)
 {
@@ -930,7 +903,6 @@ static gint run_unsaved_dialog(const gchar *msg, const gchar *msg2)
 
 	return ret;
 }
-
 
 gboolean dialogs_show_unsaved_file(GeanyDocument *doc)
 {
@@ -967,7 +939,6 @@ gboolean dialogs_show_unsaved_file(GeanyDocument *doc)
 			return FALSE;
 	}
 }
-
 
 /* Use GtkFontChooserDialog on GTK3.2 for consistency, and because
  * GtkFontSelectionDialog is somewhat broken on 3.4 */
@@ -1008,7 +979,6 @@ on_font_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 	if (close)
 		gtk_widget_hide(ui_widgets.open_fontsel);
 }
-
 
 /* This shows the font selection dialog to choose a font. */
 void dialogs_show_open_font(void)
@@ -1051,13 +1021,11 @@ void dialogs_show_open_font(void)
 	gtk_window_present(GTK_WINDOW(ui_widgets.open_fontsel));
 }
 
-
 static void
 on_input_dialog_show(GtkDialog *dialog, GtkWidget *entry)
 {
 	gtk_widget_grab_focus(entry);
 }
-
 
 static void
 on_input_entry_activate(GtkEntry *entry, GtkDialog *dialog)
@@ -1065,13 +1033,11 @@ on_input_entry_activate(GtkEntry *entry, GtkDialog *dialog)
 	gtk_dialog_response(dialog, GTK_RESPONSE_ACCEPT);
 }
 
-
 static void
 on_input_numeric_activate(GtkEntry *entry, GtkDialog *dialog)
 {
 	gtk_dialog_response(dialog, GTK_RESPONSE_ACCEPT);
 }
-
 
 typedef struct
 {
@@ -1082,7 +1048,6 @@ typedef struct
 	gpointer data;
 }
 InputDialogData;
-
 
 static void
 on_input_dialog_response(GtkDialog *dialog, gint response, InputDialogData *data)
@@ -1098,7 +1063,6 @@ on_input_dialog_response(GtkDialog *dialog, gint response, InputDialogData *data
 	}
 	gtk_widget_hide(GTK_WIDGET(dialog));
 }
-
 
 /* Create and display an input dialog.
  * persistent: whether to remember previous entry text in a combo box;
@@ -1174,7 +1138,6 @@ dialogs_show_input_full(const gchar *title, GtkWindow *parent,
 	return NULL;
 }
 
-
 /* Remember previous entry text in a combo box.
  * Returns: the dialog widget. */
 GtkWidget *
@@ -1185,13 +1148,11 @@ dialogs_show_input_persistent(const gchar *title, GtkWindow *parent,
 	return dialogs_show_input_full(title, parent, label_text, default_text, TRUE, input_cb, input_cb_data, NULL, NULL);
 }
 
-
 static void on_dialog_input(const gchar *str, gpointer data)
 {
 	gchar **dialog_input = data;
 	*dialog_input = g_strdup(str);
 }
-
 
 /** Asks the user for text input.
  * @param title Dialog title.
@@ -1210,7 +1171,6 @@ gchar *dialogs_show_input(const gchar *title, GtkWindow *parent, const gchar *la
 	return dialog_input;
 }
 
-
 /* Note: could be changed to dialogs_show_validated_input with argument for callback. */
 /* Returns: newly allocated copy of the entry text or NULL on cancel.
  * Specialised variant for Goto Line dialog. */
@@ -1223,7 +1183,6 @@ gchar *dialogs_show_input_goto_line(const gchar *title, GtkWindow *parent, const
 		G_CALLBACK(ui_editable_insert_text_callback), NULL);
 	return dialog_input;
 }
-
 
 /**
  *  Shows an input box to enter a numerical value using a GtkSpinButton.
@@ -1283,7 +1242,6 @@ gboolean dialogs_show_input_numeric(const gchar *title, const gchar *label_text,
 	return res;
 }
 
-
 void dialogs_show_file_properties(GeanyDocument *doc)
 {
 	GtkWidget *dialog, *label, *image, *check;
@@ -1322,7 +1280,6 @@ void dialogs_show_file_properties(GeanyDocument *doc)
 		_("An error occurred or file information could not be retrieved (e.g. from a new file)."));
 		return;
 	}
-
 
 #ifdef HAVE_SYS_TYPES_H
 	locale_filename = utils_get_locale_from_utf8(doc->file_name);
@@ -1424,7 +1381,6 @@ void dialogs_show_file_properties(GeanyDocument *doc)
 	gtk_widget_show(dialog);
 }
 
-
 /* extra_text can be NULL; otherwise it is displayed below main_text.
  * if parent is NULL, main_widgets.window will be used
  * btn_1, btn_2, btn_3 can be NULL.
@@ -1493,7 +1449,6 @@ static gint show_prompt(GtkWidget *parent,
 	return ret;
 }
 
-
 /**
  *  Shows a question message box with @a text and Yes/No buttons.
  *  On Unix-like systems a GTK message dialog box is shown, on Win32 systems a native Windows
@@ -1524,7 +1479,6 @@ gboolean dialogs_show_question(const gchar *text, ...)
 	return (result == GTK_RESPONSE_YES);
 }
 
-
 /* extra_text can be NULL; otherwise it is displayed below main_text.
  * if parent is NULL, main_widgets.window will be used
  * yes_btn, no_btn can be NULL. */
@@ -1546,7 +1500,6 @@ gboolean dialogs_show_question_full(GtkWidget *parent, const gchar *yes_btn, con
 	g_free(string);
 	return (result == GTK_RESPONSE_YES);
 }
-
 
 /* extra_text can be NULL; otherwise it is displayed below main_text.
  * if parent is NULL, main_widgets.window will be used

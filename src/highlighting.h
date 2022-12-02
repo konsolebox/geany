@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_HIGHLIGHTING_H
 #define GEANY_HIGHLIGHTING_H 1
 
@@ -28,7 +27,6 @@
 #include "gtkcompat.h" /* Needed by ScintillaWidget.h */
 #include "Scintilla.h" /* Needed by ScintillaWidget.h */
 #include "ScintillaWidget.h" /* for ScintillaObject */
-
 
 #include <glib.h>
 
@@ -45,7 +43,6 @@ typedef struct GeanyLexerStyle
 }
 GeanyLexerStyle;
 
-
 const GeanyLexerStyle *highlighting_get_style(gint ft_id, gint style_id);
 
 void highlighting_set_styles(ScintillaObject *sci, GeanyFiletype *ft);
@@ -53,7 +50,6 @@ void highlighting_set_styles(ScintillaObject *sci, GeanyFiletype *ft);
 gboolean highlighting_is_string_style(gint lexer, gint style);
 gboolean highlighting_is_comment_style(gint lexer, gint style);
 gboolean highlighting_is_code_style(gint lexer, gint style);
-
 
 #ifdef GEANY_PRIVATE
 

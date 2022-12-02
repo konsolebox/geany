@@ -27,7 +27,6 @@
 #include "Scintilla.h" /* Needed by ScintillaWidget.h */
 #include "ScintillaWidget.h" /* for ScintillaObject */
 
-
 G_BEGIN_DECLS
 
 void 				sci_set_text				(ScintillaObject *sci,  const gchar *text);

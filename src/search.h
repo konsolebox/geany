@@ -24,12 +24,10 @@
  * Search (prefs).
  **/
 
-
 #ifndef GEANY_SEARCH_H
 #define GEANY_SEARCH_H 1
 
 #include <glib.h>
-
 
 G_BEGIN_DECLS
 
@@ -82,13 +80,11 @@ GeanyMatchInfo;
 
 void search_show_find_in_files_dialog(const gchar *dir);
 
-
 #ifdef GEANY_PRIVATE
 
 struct GeanyDocument; /* document.h includes this header */
 struct _ScintillaObject;
 struct Sci_TextToFind;
-
 
 /* the flags given in the search dialog for "find next", also used by the search bar */
 typedef struct GeanySearchData
@@ -107,7 +103,6 @@ GeanySearchData;
 extern GeanySearchData search_data;
 
 extern GeanySearchPrefs search_prefs;
-
 
 void search_init(void);
 

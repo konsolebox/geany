@@ -48,7 +48,6 @@
 #include <time.h>
 #include <string.h>
 
-
 GeanyTemplatePrefs template_prefs;
 
 static GtkWidget *new_with_template_menu = NULL;
@@ -57,7 +56,6 @@ static GtkWidget *new_with_template_toolbar_menu = NULL;
 /* TODO: implement custom insertion templates instead? */
 static gchar *templates[GEANY_MAX_TEMPLATES];
 
-
 static void replace_static_values(GString *text);
 static gchar *get_template_fileheader(GeanyFiletype *ft);
 
@@ -65,7 +63,6 @@ static gchar *get_template_fileheader(GeanyFiletype *ft);
 static void templates_replace_default_dates(GString *text);
 static void templates_replace_command(GString *text, const gchar *file_name,
 	const gchar *file_type, const gchar *func_name);
-
 
 static gchar *read_file(const gchar *locale_fname)
 {
@@ -94,7 +91,6 @@ static gchar *read_file(const gchar *locale_fname)
 	return g_string_free(str, FALSE);
 }
 
-
 static void read_template(const gchar *name, gint id)
 {
 	gchar *fname = g_build_path(G_DIR_SEPARATOR_S, app->configdir,
@@ -108,7 +104,6 @@ static void read_template(const gchar *name, gint id)
 	templates[id] = read_file(fname);
 	g_free(fname);
 }
-
 
 /* called when inserting templates into an existing document */
 static void convert_eol_characters(GString *template, GeanyDocument *doc)
@@ -126,7 +121,6 @@ static void convert_eol_characters(GString *template, GeanyDocument *doc)
 	utils_ensure_same_eol_characters(template, doc_eol_mode);
 }
 
-
 static void init_general_templates(void)
 {
 	/* read the contents */
@@ -136,7 +130,6 @@ static void init_general_templates(void)
 	read_template("function", GEANY_TEMPLATE_FUNCTION);
 	read_template("changelog", GEANY_TEMPLATE_CHANGELOG);
 }
-
 
 void templates_replace_common(GString *tmpl, const gchar *fname,
 							  GeanyFiletype *ft, const gchar *func_name)
@@ -170,7 +163,6 @@ void templates_replace_common(GString *tmpl, const gchar *fname,
 		NULL);
 }
 
-
 static gchar *get_template_from_file(const gchar *locale_fname, const gchar *doc_filename,
 									 GeanyFiletype *ft)
 {
@@ -194,7 +186,6 @@ static gchar *get_template_from_file(const gchar *locale_fname, const gchar *doc
 	}
 	return NULL;
 }
-
 
 static void
 on_new_with_file_template(GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer user_data)
@@ -237,7 +228,6 @@ on_new_with_file_template(GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer user_dat
 	g_free(fname);
 }
 
-
 static void add_file_item(const gchar *fname, GtkWidget *menu)
 {
 	GtkWidget *tmp_button;
@@ -256,7 +246,6 @@ static void add_file_item(const gchar *fname, GtkWidget *menu)
 	g_free(label);
 }
 
-
 static void populate_file_template_menu(GtkWidget *menu)
 {
 	GSList *list = utils_get_config_files(GEANY_TEMPLATES_SUBDIR G_DIR_SEPARATOR_S "files");
@@ -272,7 +261,6 @@ static void populate_file_template_menu(GtkWidget *menu)
 	g_slist_free(list);
 }
 
-
 static void create_file_template_menu(void)
 {
 	GtkWidget *item;
@@ -283,10 +271,9 @@ static void create_file_template_menu(void)
 
 	new_with_template_toolbar_menu = gtk_menu_new();
 	g_object_ref(new_with_template_toolbar_menu);
-	geany_menu_button_action_set_menu(GEANY_MENU_BUTTON_ACTION(toolbar_get_action_by_name("New")), 
+	geany_menu_button_action_set_menu(GEANY_MENU_BUTTON_ACTION(toolbar_get_action_by_name("New")),
 		new_with_template_toolbar_menu);
 }
-
 
 /* reload templates if any file in the templates path is saved */
 static void on_document_save(G_GNUC_UNUSED GObject *object, GeanyDocument *doc)
@@ -305,7 +292,6 @@ static void on_document_save(G_GNUC_UNUSED GObject *object, GeanyDocument *doc)
 	g_free(path);
 }
 
-
 /* warning: also called when reloading template settings */
 void templates_init(void)
 {
@@ -323,7 +309,6 @@ void templates_init(void)
 	populate_file_template_menu(new_with_template_menu);
 	populate_file_template_menu(new_with_template_toolbar_menu);
 }
-
 
 /* indent is used to make some whitespace between comment char and real start of the line
  * e.g. indent = 8 prints " *     here comes the text of the line"
@@ -417,7 +402,6 @@ static void make_comment_block(GString *comment_text, gint filetype_idx, guint i
 	g_strfreev(lines);
 }
 
-
 gchar *templates_get_template_licence(GeanyDocument *doc, gint licence_type)
 {
 	GString *template;
@@ -436,7 +420,6 @@ gchar *templates_get_template_licence(GeanyDocument *doc, gint licence_type)
 	return g_string_free(template, FALSE);
 }
 
-
 static gchar *get_template_fileheader(GeanyFiletype *ft)
 {
 	GString *template = g_string_new(templates[GEANY_TEMPLATE_FILEHEADER]);
@@ -453,7 +436,6 @@ static gchar *get_template_fileheader(GeanyFiletype *ft)
 	return g_string_free(template, FALSE);
 }
 
-
 /* TODO change the signature to take a GeanyDocument? this would break plugin API/ABI */
 GEANY_API_SYMBOL
 gchar *templates_get_template_fileheader(gint filetype_idx, const gchar *fname)
@@ -467,7 +449,6 @@ gchar *templates_get_template_fileheader(gint filetype_idx, const gchar *fname)
 	convert_eol_characters(template, NULL);
 	return g_string_free(template, FALSE);
 }
-
 
 gchar *templates_get_template_function(GeanyDocument *doc, const gchar *func_name)
 {
@@ -486,7 +467,6 @@ gchar *templates_get_template_function(GeanyDocument *doc, const gchar *func_nam
 	return g_string_free(text, FALSE);
 }
 
-
 gchar *templates_get_template_changelog(GeanyDocument *doc)
 {
 	GString *result;
@@ -504,7 +484,6 @@ gchar *templates_get_template_changelog(GeanyDocument *doc)
 	return g_string_free(result, FALSE);
 }
 
-
 static void free_template_menu_items(GtkWidget *menu)
 {
 	GList *children, *item;
@@ -514,7 +493,6 @@ static void free_template_menu_items(GtkWidget *menu)
 		gtk_widget_destroy(GTK_WIDGET(item->data));
 	g_list_free(children);
 }
-
 
 void templates_free_templates(void)
 {
@@ -526,7 +504,6 @@ void templates_free_templates(void)
 	free_template_menu_items(new_with_template_toolbar_menu);
 }
 
-
 static void replace_static_values(GString *text)
 {
 	utils_string_replace_all(text, "{version}", template_prefs.version);
@@ -537,7 +514,6 @@ static void replace_static_values(GString *text)
 	utils_string_replace_all(text, "{untitled}", GEANY_STRING_UNTITLED);
 	utils_string_replace_all(text, "{geanyversion}", "Geany " VERSION);
 }
-
 
 /* Replaces all static template wildcards (version, mail, company, name, ...)
  * plus those wildcard, value pairs which are passed, e.g.
@@ -572,7 +548,6 @@ void templates_replace_valist(GString *text, const gchar *first_wildcard, ...)
 	replace_static_values(text);
 }
 
-
 static void templates_replace_default_dates(GString *text)
 {
 	gchar *year = utils_get_date_time(template_prefs.year_format, NULL);
@@ -589,7 +564,6 @@ static void templates_replace_default_dates(GString *text)
 
 	utils_free_pointers(3, year, date, datetime, NULL);
 }
-
 
 static gchar *run_command(const gchar *command, const gchar *file_name,
 						  const gchar *file_type, const gchar *func_name)
@@ -624,7 +598,6 @@ static gchar *run_command(const gchar *command, const gchar *file_name,
 	g_strfreev(env);
 	return result;
 }
-
 
 static void templates_replace_command(GString *text, const gchar *file_name,
 							   const gchar *file_type, const gchar *func_name)

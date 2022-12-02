@@ -41,7 +41,6 @@ G_BEGIN_DECLS
 	g_object_set_data_full(G_OBJECT(owner), widget_name, \
 		g_object_ref(widget), (GDestroyNotify)g_object_unref);
 
-
 /** Interface preferences */
 typedef struct GeanyInterfacePrefs
 {
@@ -75,7 +74,6 @@ typedef struct GeanyInterfacePrefs
 }
 GeanyInterfacePrefs;
 
-
 /** Important widgets in the main window.
  * Accessed by @c geany->main_widgets. */
 typedef struct GeanyMainWidgets
@@ -95,11 +93,9 @@ typedef struct GeanyMainWidgets
 }
 GeanyMainWidgets;
 
-
 #define GEANY_STOCK_SAVE_ALL "geany-save-all"
 #define GEANY_STOCK_CLOSE_ALL "geany-close-all"
 #define GEANY_STOCK_BUILD "geany-build"
-
 
 GtkWidget *ui_dialog_vbox_new(GtkDialog *dialog);
 
@@ -141,20 +137,17 @@ const gchar *ui_lookup_stock_label(const gchar *stock_id);
 
 void ui_tree_view_set_tooltip_text_column(GtkTreeView *tree_view, gint column);
 
-
 #ifndef GEANY_DISABLE_DEPRECATED
 GtkWidget *ui_frame_new_with_alignment(const gchar *label_text, GtkWidget **alignment) GEANY_DEPRECATED;
 
 void ui_widget_set_tooltip_text(GtkWidget *widget, const gchar *text) GEANY_DEPRECATED_FOR(gtk_widget_set_tooltip_text);
 #endif	/* GEANY_DISABLE_DEPRECATED */
 
-
 #ifdef GEANY_PRIVATE
 
 extern GeanyInterfacePrefs interface_prefs;
 
 extern GeanyMainWidgets main_widgets;
-
 
 /* User Interface settings not shown in the Prefs dialog. */
 typedef struct UIPrefs
@@ -179,7 +172,6 @@ typedef struct UIPrefs
 UIPrefs;
 
 extern UIPrefs ui_prefs;
-
 
 /* Less commonly used widgets */
 typedef struct UIWidgets
@@ -207,7 +199,6 @@ UIWidgets;
 
 extern UIWidgets ui_widgets;
 
-
 /* The following block of types & functions are more generic and closely related to
  * certain GTK+ widgets. */
 
@@ -219,7 +210,6 @@ typedef struct GeanyAutoSeparator
 }
 GeanyAutoSeparator;
 
-
 typedef enum
 {
 	GEANY_EDITOR_SHOW_MARKERS_MARGIN,
@@ -229,7 +219,6 @@ typedef enum
 	GEANY_EDITOR_SHOW_LINE_ENDINGS
 }
 GeanyUIEditorFeatures;
-
 
 void ui_widget_show_hide(GtkWidget *widget, gboolean show);
 
@@ -285,7 +274,6 @@ void ui_add_config_file_menu_item(const gchar *real_path, const gchar *label,
 
 void ui_update_statusbar(GeanyDocument *doc, gint pos);
 
-
 /* This sets the window title according to the current filename. */
 void ui_set_window_title(GeanyDocument *doc);
 
@@ -293,13 +281,11 @@ void ui_set_editor_font(const gchar *font_name);
 
 void ui_set_fullscreen(void);
 
-
 void ui_update_popup_reundo_items(GeanyDocument *doc);
 
 void ui_update_popup_copy_items(GeanyDocument *doc);
 
 void ui_update_popup_goto_items(gboolean enable);
-
 
 void ui_update_menu_copy_items(GeanyDocument *doc);
 
@@ -307,23 +293,19 @@ void ui_update_insert_include_item(GeanyDocument *doc, gint item);
 
 void ui_update_fold_items(void);
 
-
 void ui_create_insert_menu_items(void);
 
 void ui_create_insert_date_menu_items(void);
 
-
 void ui_save_buttons_toggle(gboolean enable);
 
 void ui_document_buttons_update(void);
-
 
 void ui_sidebar_show_hide(void);
 
 void ui_document_show_hide(GeanyDocument *doc);
 
 void ui_set_search_entry_background(GtkWidget *widget, gboolean success);
-
 
 void ui_create_recent_menus(void);
 
@@ -333,9 +315,7 @@ void ui_add_recent_project_file(const gchar *utf8_filename);
 
 void ui_update_recent_project_menu(void);
 
-
 void ui_update_tab_status(GeanyDocument *doc);
-
 
 typedef gboolean TVMatchCallback(gboolean);
 

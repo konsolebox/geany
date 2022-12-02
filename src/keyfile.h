@@ -19,7 +19,6 @@
  *      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef GEANY_KEYFILE_H
 #define GEANY_KEYFILE_H 1
 
@@ -28,7 +27,6 @@
 G_BEGIN_DECLS
 
 extern GPtrArray *pref_groups;
-
 
 void configuration_init(void);
 

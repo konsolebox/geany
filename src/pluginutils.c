@@ -43,14 +43,12 @@
 #include "ui_utils.h"
 #include "utils.h"
 
-
 typedef struct
 {
 	gpointer data;
 	GDestroyNotify free_func;
 }
 PluginDocDataProxy;
-
 
 /** Inserts a toolbar item before the Quit button, or after the previous plugin toolbar item.
  * A separator is added on the first call to this function, and will be shown when @a item is
@@ -93,7 +91,6 @@ void plugin_add_toolbar_item(GeanyPlugin *plugin, GtkToolItem *item)
 	ui_auto_separator_add_ref(autosep, GTK_WIDGET(item));
 }
 
-
 /** Ensures that a plugin's module (*.so) will never be unloaded.
  *  This is necessary if you register new GTypes in your plugin, e.g. when using own classes
  *  using the GObject system.
@@ -108,7 +105,6 @@ void plugin_module_make_resident(GeanyPlugin *plugin)
 	g_return_if_fail(plugin);
 	plugin_make_resident(plugin->priv);
 }
-
 
 /** @girskip
  * Connects a signal which will be disconnected on unloading the plugin, to prevent a possible segfault.
@@ -168,7 +164,6 @@ void plugin_signal_connect(GeanyPlugin *plugin,
 	plugin_watch_object(plugin->priv, object);
 }
 
-
 typedef struct PluginSourceData
 {
 	Plugin		*plugin;
@@ -176,7 +171,6 @@ typedef struct PluginSourceData
 	GSourceFunc	function;
 	gpointer	user_data;
 } PluginSourceData;
-
 
 /* prepend psd->list_link to psd->plugin->sources */
 static void psd_register(PluginSourceData *psd, GSource *source)
@@ -189,7 +183,6 @@ static void psd_register(PluginSourceData *psd, GSource *source)
 	psd->plugin->sources = &psd->list_link;
 }
 
-
 /* removes psd->list_link from psd->plugin->sources */
 static void psd_unregister(PluginSourceData *psd)
 {
@@ -201,7 +194,6 @@ static void psd_unregister(PluginSourceData *psd)
 		psd->plugin->sources = psd->list_link.next;
 }
 
-
 static void on_plugin_source_destroy(gpointer data)
 {
 	PluginSourceData *psd = data;
@@ -210,14 +202,12 @@ static void on_plugin_source_destroy(gpointer data)
 	g_slice_free1(sizeof *psd, psd);
 }
 
-
 static gboolean on_plugin_source_callback(gpointer data)
 {
 	PluginSourceData *psd = data;
 
 	return psd->function(psd->user_data);
 }
-
 
 /* adds the given source to the default GMainContext and to the list of sources to remove at plugin
  * unloading time */
@@ -238,7 +228,6 @@ static guint plugin_source_add(GeanyPlugin *plugin, GSource *source, GSourceFunc
 	return id;
 }
 
-
 /** @girskip
  * Adds a GLib main loop timeout callback that will be removed when unloading the plugin,
  * preventing it to run after the plugin has been unloaded (which may lead to a segfault).
@@ -258,7 +247,6 @@ guint plugin_timeout_add(GeanyPlugin *plugin, guint interval, GSourceFunc functi
 {
 	return plugin_source_add(plugin, g_timeout_source_new(interval), function, data);
 }
-
 
 /** @girskip
  * Adds a GLib main loop timeout callback that will be removed when unloading the plugin,
@@ -281,7 +269,6 @@ guint plugin_timeout_add_seconds(GeanyPlugin *plugin, guint interval, GSourceFun
 	return plugin_source_add(plugin, g_timeout_source_new_seconds(interval), function, data);
 }
 
-
 /** @girskip
  * Adds a GLib main loop IDLE callback that will be removed when unloading the plugin, preventing
  * it to run after the plugin has been unloaded (which may lead to a segfault).
@@ -300,7 +287,6 @@ guint plugin_idle_add(GeanyPlugin *plugin, GSourceFunc function, gpointer data)
 {
 	return plugin_source_add(plugin, g_idle_source_new(), function, data);
 }
-
 
 /** @girskip
  * Sets up or resizes a keybinding group for the plugin.
@@ -354,12 +340,10 @@ GeanyKeyGroup *plugin_set_key_group_full(GeanyPlugin *plugin,
 	return group;
 }
 
-
 static void on_pref_btn_clicked(gpointer btn, Plugin *p)
 {
 	p->configure_single(main_widgets.window);
 }
-
 
 static GtkWidget *create_pref_page(Plugin *p, GtkWidget *dialog)
 {
@@ -398,7 +382,6 @@ static GtkWidget *create_pref_page(Plugin *p, GtkWidget *dialog)
 	}
 	return page;
 }
-
 
 /* multiple plugin configure dialog
  * current_plugin can be NULL */
@@ -449,7 +432,6 @@ static void configure_plugins(Plugin *current_plugin)
 	gtk_widget_destroy(dialog);
 }
 
-
 /** Shows the plugin's configure dialog.
  * The plugin must implement one of the plugin_configure() or plugin_configure_single() symbols.
  * @param plugin Must be @ref geany_plugin.
@@ -476,13 +458,11 @@ void plugin_show_configure(GeanyPlugin *plugin)
 	}
 }
 
-
 struct BuilderConnectData
 {
 	gpointer user_data;
 	GeanyPlugin *plugin;
 };
-
 
 static void connect_plugin_signals(GtkBuilder *builder, GObject *object,
 	const gchar *signal_name, const gchar *handler_name,
@@ -496,7 +476,6 @@ static void connect_plugin_signals(GtkBuilder *builder, GObject *object,
 	plugin_signal_connect(data->plugin, object, signal_name, FALSE,
 		G_CALLBACK(symbol) /*ub?*/, data->user_data);
 }
-
 
 /**
  * Allows auto-connecting Glade/GtkBuilder signals in plugins.
@@ -553,7 +532,6 @@ void plugin_builder_connect_signals(GeanyPlugin *plugin,
 	gtk_builder_connect_signals_full(builder, connect_plugin_signals, &data);
 }
 
-
 /** Add additional data that corresponds to the plugin.
  *
  * @p pdata is the pointer going to be passed to the individual plugin callbacks
@@ -606,7 +584,6 @@ void geany_plugin_set_data(GeanyPlugin *plugin, gpointer pdata, GDestroyNotify f
 	p->cb_data_destroy = free_func;
 }
 
-
 static void plugin_doc_data_proxy_free(gpointer pdata)
 {
 	PluginDocDataProxy *prox = pdata;
@@ -617,7 +594,6 @@ static void plugin_doc_data_proxy_free(gpointer pdata)
 		g_slice_free(PluginDocDataProxy, prox);
 	}
 }
-
 
 /**
  * Retrieve plugin-specific data attached to a document.
@@ -650,7 +626,6 @@ gpointer plugin_get_document_data(struct GeanyPlugin *plugin,
 	return (data != NULL) ? data->data : NULL;
 }
 
-
 /**
  * Attach plugin-specific data to a document.
  *
@@ -668,7 +643,6 @@ void plugin_set_document_data(struct GeanyPlugin *plugin, struct GeanyDocument *
 {
 	plugin_set_document_data_full(plugin, doc, key, data, NULL);
 }
-
 
 /**
  * Attach plugin-specific data and a free function to a document.
@@ -750,6 +724,5 @@ void plugin_set_document_data_full(struct GeanyPlugin *plugin,
 		g_free(real_key);
 	}
 }
-
 
 #endif

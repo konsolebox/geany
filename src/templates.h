@@ -24,7 +24,6 @@
  * Templates (prefs).
  **/
 
-
 #ifndef GEANY_TEMPLATES_H
 #define GEANY_TEMPLATES_H 1
 
@@ -49,9 +48,7 @@ typedef struct GeanyTemplatePrefs
 }
 GeanyTemplatePrefs;
 
-
 gchar *templates_get_template_fileheader(gint filetype_idx, const gchar *fname);
-
 
 #ifdef GEANY_PRIVATE
 
@@ -72,9 +69,7 @@ enum
 	GEANY_MAX_TEMPLATES
 };
 
-
 extern GeanyTemplatePrefs template_prefs;
-
 
 void templates_init(void);
 

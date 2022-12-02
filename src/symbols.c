@@ -63,14 +63,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-
 typedef struct
 {
 	gint found_line; /* return: the nearest line found */
 	gint line;       /* input: the line to look for */
 	gboolean lower   /* input: search only for lines with lower number than @line */;
 } TreeSearchData;
-
 
 static GPtrArray *top_level_iter_names = NULL;
 
@@ -140,12 +138,10 @@ static void load_c_ignore_tags(void)
 	g_free(path);
 }
 
-
 void symbols_reload_config_files(void)
 {
 	load_c_ignore_tags();
 }
-
 
 static gsize get_tag_count(void)
 {
@@ -154,7 +150,6 @@ static gsize get_tag_count(void)
 
 	return count;
 }
-
 
 /* wrapper for tm_workspace_load_global_tags().
  * note that the tag count only counts new global tags added - if a tag has the same name,
@@ -172,7 +167,6 @@ static gboolean symbols_load_global_tags(const gchar *tags_file, GeanyFiletype *
 	}
 	return result;
 }
-
 
 /* Ensure that the global tags file(s) for the file_type_idx filetype is loaded.
  * This provides autocompletion, calltips, etc. */
@@ -203,7 +197,6 @@ void symbols_global_tags_loaded(guint file_type_idx)
 			break;
 	}
 }
-
 
 GString *symbols_find_typenames_as_string(TMParserType lang, gboolean global)
 {
@@ -241,7 +234,6 @@ GString *symbols_find_typenames_as_string(TMParserType lang, gboolean global)
 	return s;
 }
 
-
 /** Gets the context separator used by the tag manager for a particular file
  * type.
  * @param ft_id File type identifier.
@@ -257,7 +249,6 @@ const gchar *symbols_get_context_separator(gint ft_id)
 {
 	return tm_tag_context_separator(filetypes[ft_id]->lang);
 }
-
 
 /* sort by name, then line */
 static gint compare_symbol(const TMTag *tag_a, const TMTag *tag_b)
@@ -281,7 +272,6 @@ static gint compare_symbol(const TMTag *tag_a, const TMTag *tag_b)
 	return ret;
 }
 
-
 /* sort by line, then scope */
 static gint compare_symbol_lines(gconstpointer a, gconstpointer b)
 {
@@ -304,7 +294,6 @@ static gint compare_symbol_lines(gconstpointer a, gconstpointer b)
 	}
 	return ret;
 }
-
 
 static GList *get_tag_list(GeanyDocument *doc, TMTagType tag_types)
 {
@@ -332,7 +321,6 @@ static GList *get_tag_list(GeanyDocument *doc, TMTagType tag_types)
 	return tag_names;
 }
 
-
 /* amount of types in the symbol list (currently max. 8 are used) */
 #define MAX_SYMBOL_TYPES	(sizeof(tv_iters) / sizeof(GtkTreeIter))
 
@@ -351,7 +339,6 @@ struct TreeviewSymbols
 	GtkTreeIter		 tag_other;
 } tv_iters;
 
-
 static void init_tag_iters(void)
 {
 	/* init all GtkTreeIters with -1 to make them invalid to avoid crashes when switching between
@@ -369,7 +356,6 @@ static void init_tag_iters(void)
 	tv_iters.tag_other.stamp = -1;
 }
 
-
 static GdkPixbuf *get_tag_icon(const gchar *icon_name)
 {
 	static GtkIconTheme *icon_theme = NULL;
@@ -383,7 +369,6 @@ static GdkPixbuf *get_tag_icon(const gchar *icon_name)
 	}
 	return gtk_icon_theme_load_icon(icon_theme, icon_name, x, 0, NULL);
 }
-
 
 static gboolean find_toplevel_iter(GtkTreeStore *store, GtkTreeIter *iter, const gchar *title)
 {
@@ -410,7 +395,6 @@ static gboolean find_toplevel_iter(GtkTreeStore *store, GtkTreeIter *iter, const
 
 	return FALSE;
 }
-
 
 /* Adds symbol list groups in (iter*, title) pairs.
  * The list must be ended with NULL. */
@@ -444,7 +428,6 @@ tag_list_add_groups(GtkTreeStore *tree_store, ...)
 	}
 	va_end(args);
 }
-
 
 static void add_top_level_items(GeanyDocument *doc)
 {
@@ -833,7 +816,6 @@ static void add_top_level_items(GeanyDocument *doc)
 	}
 }
 
-
 /* removes toplevel items that have no children */
 static void hide_empty_rows(GtkTreeStore *store)
 {
@@ -851,7 +833,6 @@ static void hide_empty_rows(GtkTreeStore *store)
 			cont = gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter);
 	}
 }
-
 
 static const gchar *get_symbol_name(GeanyDocument *doc, const TMTag *tag, gboolean found_parent)
 {
@@ -902,7 +883,6 @@ static const gchar *get_symbol_name(GeanyDocument *doc, const TMTag *tag, gboole
 	return buffer->str;
 }
 
-
 static gchar *get_symbol_tooltip(GeanyDocument *doc, const TMTag *tag)
 {
 	gchar *utf8_name = editor_get_calltip_text(doc->editor, tag);
@@ -919,7 +899,6 @@ static gchar *get_symbol_tooltip(GeanyDocument *doc, const TMTag *tag)
 
 	return utf8_name;
 }
-
 
 /* find the last word in "foo::bar::blah", e.g. "blah" */
 static const gchar *get_parent_name(const TMTag *tag, GeanyFiletypeID ft_id)
@@ -946,7 +925,6 @@ static const gchar *get_parent_name(const TMTag *tag, GeanyFiletypeID ft_id)
 
 	return !EMPTY(str) ? str : NULL;
 }
-
 
 static GtkTreeIter *get_tag_type_iter(TMTagType tag_type)
 {
@@ -1020,7 +998,6 @@ static GtkTreeIter *get_tag_type_iter(TMTagType tag_type)
 		return NULL;
 }
 
-
 static GdkPixbuf *get_child_icon(GtkTreeStore *tree_store, GtkTreeIter *parent)
 {
 	GdkPixbuf *icon = NULL;
@@ -1035,7 +1012,6 @@ static GdkPixbuf *get_child_icon(GtkTreeStore *tree_store, GtkTreeIter *parent)
 	return icon;
 }
 
-
 static gboolean tag_equal(gconstpointer v1, gconstpointer v2)
 {
 	const TMTag *t1 = v1;
@@ -1046,7 +1022,6 @@ static gboolean tag_equal(gconstpointer v1, gconstpointer v2)
 			/* include arglist in match to support e.g. C++ overloading */
 			utils_str_equal(t1->arglist, t2->arglist));
 }
-
 
 /* inspired from g_str_hash() */
 static guint tag_hash(gconstpointer v)
@@ -1073,7 +1048,6 @@ static guint tag_hash(gconstpointer v)
 	return h;
 }
 
-
 /* like gtk_tree_view_expand_to_path() but with an iter */
 static void tree_view_expand_to_iter(GtkTreeView *view, GtkTreeIter *iter)
 {
@@ -1083,7 +1057,6 @@ static void tree_view_expand_to_iter(GtkTreeView *view, GtkTreeIter *iter)
 	gtk_tree_view_expand_to_path(view, path);
 	gtk_tree_path_free(path);
 }
-
 
 /* like gtk_tree_store_remove() but finds the next iter at any level */
 static gboolean tree_store_remove_row(GtkTreeStore *store, GtkTreeIter *iter)
@@ -1103,7 +1076,6 @@ static gboolean tree_store_remove_row(GtkTreeStore *store, GtkTreeIter *iter)
 
 	return cont;
 }
-
 
 static gint tree_search_func(gconstpointer key, gpointer user_data)
 {
@@ -1132,18 +1104,15 @@ static gint tree_search_func(gconstpointer key, gpointer user_data)
 	return 0;
 }
 
-
 static gint tree_cmp(gconstpointer a, gconstpointer b, gpointer user_data)
 {
 	return GPOINTER_TO_INT(a) - GPOINTER_TO_INT(b);
 }
 
-
 static void parents_table_tree_value_free(gpointer data)
 {
 	g_slice_free(GtkTreeIter, data);
 }
-
 
 /* adds a new element in the parent table if its key is known. */
 static void update_parents_table(GHashTable *table, const TMTag *tag, const gchar *parent_name,
@@ -1162,7 +1131,6 @@ static void update_parents_table(GHashTable *table, const TMTag *tag, const gcha
 		g_tree_insert(tree, GINT_TO_POINTER(tag->line), g_slice_dup(GtkTreeIter, iter));
 	}
 }
-
 
 static GtkTreeIter *parents_table_lookup(GHashTable *table, const gchar *name, guint line)
 {
@@ -1183,14 +1151,12 @@ static GtkTreeIter *parents_table_lookup(GHashTable *table, const gchar *name, g
 	return parent_search;
 }
 
-
 static void parents_table_value_free(gpointer data)
 {
 	GTree *tree = data;
 	if (tree)
 		g_tree_destroy(tree);
 }
-
 
 /* inserts a @data in @table on key @tag.
  * previous data is not overwritten if the key is duplicated, but rather the
@@ -1209,7 +1175,6 @@ static void tags_table_insert(GHashTable *table, TMTag *tag, GList *data)
 	list = g_list_prepend(list, data);
 	g_tree_insert(tree, GINT_TO_POINTER(tag->line), list);
 }
-
 
 /* looks up the entry in @table that best matches @tag.
  * if there is more than one candidate, the one that has closest line position to @tag is chosen */
@@ -1231,7 +1196,6 @@ static GList *tags_table_lookup(GHashTable *table, TMTag *tag)
 	}
 	return NULL;
 }
-
 
 /* removes the element at @tag from @table.
  * @tag must be the exact pointer used at insertion time */
@@ -1260,14 +1224,12 @@ static void tags_table_remove(GHashTable *table, TMTag *tag)
 	}
 }
 
-
 static gboolean tags_table_tree_value_free(gpointer key, gpointer value, gpointer data)
 {
 	GList *list = value;
 	g_list_free(list);
 	return FALSE;
 }
-
 
 static void tags_table_value_free(gpointer data)
 {
@@ -1281,7 +1243,6 @@ static void tags_table_value_free(gpointer data)
 		g_tree_destroy(tree);
 	}
 }
-
 
 /*
  * Updates the tag tree for a document with the tags in *list.
@@ -1445,7 +1406,6 @@ static void update_tree_tags(GeanyDocument *doc, GList **tags)
 	g_hash_table_destroy(tags_table);
 }
 
-
 /* we don't want to sort 1st-level nodes, but we can't return 0 because the tree sort
  * is not stable, so the order is already lost. */
 static gint compare_top_level_names(const gchar *a, const gchar *b)
@@ -1469,7 +1429,6 @@ static gint compare_top_level_names(const gchar *a, const gchar *b)
 	return 0;
 }
 
-
 static gboolean tag_has_missing_parent(const TMTag *tag, GtkTreeStore *store,
 		GtkTreeIter *iter)
 {
@@ -1477,7 +1436,6 @@ static gboolean tag_has_missing_parent(const TMTag *tag, GtkTreeStore *store,
 	return !EMPTY(tag->scope) &&
 		gtk_tree_store_iter_depth(store, iter) == 1;
 }
-
 
 static gint tree_sort_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b,
 		gpointer user_data)
@@ -1537,7 +1495,6 @@ static gint tree_sort_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b,
 	return cmp;
 }
 
-
 static void sort_tree(GtkTreeStore *store, gboolean sort_by_name)
 {
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(store), SYMBOLS_COLUMN_NAME, tree_sort_func,
@@ -1545,7 +1502,6 @@ static void sort_tree(GtkTreeStore *store, gboolean sort_by_name)
 
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(store), SYMBOLS_COLUMN_NAME, GTK_SORT_ASCENDING);
 }
-
 
 gboolean symbols_recreate_tag_list(GeanyDocument *doc, gint sort_mode)
 {
@@ -1580,7 +1536,6 @@ gboolean symbols_recreate_tag_list(GeanyDocument *doc, gint sort_mode)
 	return TRUE;
 }
 
-
 /* Detects a global tags filetype from the *.lang.* language extension.
  * Returns NULL if there was no matching TM language. */
 static GeanyFiletype *detect_global_tags_filetype(const gchar *utf8_filename)
@@ -1599,7 +1554,6 @@ static GeanyFiletype *detect_global_tags_filetype(const gchar *utf8_filename)
 	}
 	return NULL;
 }
-
 
 /* Adapted from anjuta-2.0.2/global-tags/tm_global_tags.c, thanks.
  * Needs full paths for filenames, except for C/C++ tag files, when CFLAGS includes
@@ -1668,7 +1622,6 @@ int symbols_generate_global_tags(int argc, char **argv, gboolean want_preprocess
 	return 0;
 }
 
-
 void symbols_show_load_tags_dialog(void)
 {
 	GtkWidget *dialog;
@@ -1714,7 +1667,6 @@ void symbols_show_load_tags_dialog(void)
 	gtk_widget_destroy(dialog);
 }
 
-
 static void init_user_tags(void)
 {
 	GSList *file_list = NULL, *list = NULL;
@@ -1756,7 +1708,6 @@ static void init_user_tags(void)
 	g_slist_free(file_list);
 }
 
-
 static void load_user_tags(GeanyFiletypeID ft_id)
 {
 	static guchar *tags_loaded = NULL;
@@ -1786,7 +1737,6 @@ static void load_user_tags(GeanyFiletypeID ft_id)
 	}
 }
 
-
 static void on_goto_popup_item_activate(GtkMenuItem *item, TMTag *tag)
 {
 	GeanyDocument *new_doc, *old_doc;
@@ -1799,7 +1749,6 @@ static void on_goto_popup_item_activate(GtkMenuItem *item, TMTag *tag)
 	if (new_doc)
 		navqueue_goto_line(old_doc, new_doc, tag->line);
 }
-
 
 /* FIXME: use the same icons as in the symbols tree defined in add_top_level_items() */
 static guint get_tag_class(const TMTag *tag)
@@ -1834,7 +1783,6 @@ static guint get_tag_class(const TMTag *tag)
 	}
 	return ICON_STRUCT;
 }
-
 
 /* positions a popup at the caret from the ScintillaObject in @p data */
 static void goto_popup_position_func(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer data)
@@ -1917,7 +1865,6 @@ static void goto_popup_position_func(GtkMenu *menu, gint *x, gint *y, gboolean *
 	*push_in = FALSE;
 }
 
-
 static void show_goto_popup(GeanyDocument *doc, GPtrArray *tags, gboolean have_best)
 {
 	GtkWidget *first = NULL;
@@ -1975,7 +1922,6 @@ static void show_goto_popup(GeanyDocument *doc, GPtrArray *tags, gboolean have_b
 				   button_event ? button_event->button : 0, gtk_get_current_event_time ());
 }
 
-
 static gint compare_tags_by_name_line(gconstpointer ptr1, gconstpointer ptr2)
 {
 	gint res;
@@ -1987,7 +1933,6 @@ static gint compare_tags_by_name_line(gconstpointer ptr1, gconstpointer ptr2)
 		return res;
 	return t1->line - t2->line;
 }
-
 
 static TMTag *find_best_goto_tag(GeanyDocument *doc, GPtrArray *tags)
 {
@@ -2029,7 +1974,6 @@ static TMTag *find_best_goto_tag(GeanyDocument *doc, GPtrArray *tags)
 	return NULL;
 }
 
-
 static GPtrArray *filter_tags(GPtrArray *tags, TMTag *current_tag, gboolean definition)
 {
 	const TMTagType forward_types = tm_tag_prototype_t | tm_tag_externvar_t;
@@ -2060,7 +2004,6 @@ static GPtrArray *filter_tags(GPtrArray *tags, TMTag *current_tag, gboolean defi
 
 	return filtered_tags;
 }
-
 
 static gboolean goto_tag(const gchar *name, gboolean definition)
 {
@@ -2141,7 +2084,6 @@ static gboolean goto_tag(const gchar *name, gboolean definition)
 	return found;
 }
 
-
 gboolean symbols_goto_tag(const gchar *name, gboolean definition)
 {
 	if (goto_tag(name, definition))
@@ -2157,7 +2099,6 @@ gboolean symbols_goto_tag(const gchar *name, gboolean definition)
 	return FALSE;
 }
 
-
 /* This could perhaps be improved to check for #if, class etc. */
 static gint get_function_fold_number(GeanyDocument *doc)
 {
@@ -2167,7 +2108,6 @@ static gint get_function_fold_number(GeanyDocument *doc)
 	else
 		return SC_FOLDLEVELBASE;
 }
-
 
 /* Should be used only with get_current_tag_cached.
  * tag_types caching might trigger recomputation too often but this isn't used differently often
@@ -2205,7 +2145,6 @@ static gboolean current_tag_changed(GeanyDocument *doc, gint cur_line, gint fold
 	return ret;
 }
 
-
 /* Parse the function name up to 2 lines before tag_line.
  * C++ like syntax should be parsed by parse_cpp_function_at_line, otherwise the return
  * type or argument names can be confused with the function name. */
@@ -2233,7 +2172,6 @@ static gchar *parse_function_at_line(ScintillaObject *sci, gint tag_line)
 		return NULL;
 	return sci_get_contents_range(sci, start, end);
 }
-
 
 /* Parse the function name */
 static gchar *parse_cpp_function_at_line(ScintillaObject *sci, gint tag_line)
@@ -2274,7 +2212,6 @@ static gchar *parse_cpp_function_at_line(ScintillaObject *sci, gint tag_line)
 	return sci_get_contents_range(sci, start, end + 1);
 }
 
-
 static gint get_fold_header_after(ScintillaObject *sci, gint line)
 {
 	gint line_count = sci_get_line_count(sci);
@@ -2287,7 +2224,6 @@ static gint get_fold_header_after(ScintillaObject *sci, gint line)
 
 	return -1;
 }
-
 
 static gint get_current_tag_name(GeanyDocument *doc, gchar **tagname, TMTagType tag_types)
 {
@@ -2365,7 +2301,6 @@ static gint get_current_tag_name(GeanyDocument *doc, gchar **tagname, TMTagType 
 	return -1;
 }
 
-
 static gint get_current_tag_name_cached(GeanyDocument *doc, const gchar **tagname, TMTagType tag_types)
 {
 	static gint tag_line = -1;
@@ -2398,7 +2333,6 @@ static gint get_current_tag_name_cached(GeanyDocument *doc, const gchar **tagnam
 	return tag_line;
 }
 
-
 /* Sets *tagname to point at the current function or tag name.
  * If doc is NULL, reset the cached current tag data to ensure it will be reparsed on the next
  * call to this function.
@@ -2407,7 +2341,6 @@ gint symbols_get_current_function(GeanyDocument *doc, const gchar **tagname)
 {
 	return get_current_tag_name_cached(doc, tagname, tm_tag_function_t | tm_tag_method_t);
 }
-
 
 /* same as symbols_get_current_function() but finds class, namespaces and more */
 gint symbols_get_current_scope(GeanyDocument *doc, const gchar **tagname)
@@ -2422,7 +2355,6 @@ gint symbols_get_current_scope(GeanyDocument *doc, const gchar **tagname)
 	return get_current_tag_name_cached(doc, tagname, tag_types);
 }
 
-
 static void on_symbol_tree_sort_clicked(GtkMenuItem *menuitem, gpointer user_data)
 {
 	gint sort_mode = GPOINTER_TO_INT(user_data);
@@ -2434,7 +2366,6 @@ static void on_symbol_tree_sort_clicked(GtkMenuItem *menuitem, gpointer user_dat
 	if (doc != NULL)
 		doc->has_tags = symbols_recreate_tag_list(doc, sort_mode);
 }
-
 
 static void on_symbol_tree_menu_show(GtkWidget *widget,
 		gpointer user_data)
@@ -2463,7 +2394,6 @@ static void on_symbol_tree_menu_show(GtkWidget *widget,
 	ignore_callback = FALSE;
 }
 
-
 static void on_expand_collapse(GtkWidget *widget, gpointer user_data)
 {
 	gboolean expand = GPOINTER_TO_INT(user_data);
@@ -2479,7 +2409,6 @@ static void on_expand_collapse(GtkWidget *widget, gpointer user_data)
 	else
 		gtk_tree_view_collapse_all(GTK_TREE_VIEW(doc->priv->tag_tree));
 }
-
 
 static void on_find_usage(GtkWidget *widget, G_GNUC_UNUSED gpointer unused)
 {
@@ -2507,7 +2436,6 @@ static void on_find_usage(GtkWidget *widget, G_GNUC_UNUSED gpointer unused)
 		tm_tag_unref(tag);
 	}
 }
-
 
 static void create_taglist_popup_menu(void)
 {
@@ -2567,7 +2495,6 @@ static void create_taglist_popup_menu(void)
 	sidebar_add_common_menu_items(GTK_MENU(menu));
 }
 
-
 static void on_document_save(G_GNUC_UNUSED GObject *object, GeanyDocument *doc)
 {
 	gchar *f;
@@ -2580,7 +2507,6 @@ static void on_document_save(G_GNUC_UNUSED GObject *object, GeanyDocument *doc)
 
 	g_free(f);
 }
-
 
 void symbols_init(void)
 {
@@ -2598,7 +2524,6 @@ void symbols_init(void)
 	for (i = 0; i < G_N_ELEMENTS(symbols_icons); i++)
 		symbols_icons[i].pixbuf = get_tag_icon(symbols_icons[i].icon_name);
 }
-
 
 void symbols_finalize(void)
 {

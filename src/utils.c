@@ -60,7 +60,6 @@
 #include <glib/gstdio.h>
 #include <gio/gio.h>
 
-
 /**
  *  Tries to open the given URI in a browser.
  *  On Windows, the system's default browser is opened.
@@ -96,7 +95,6 @@ void utils_open_browser(const gchar *uri)
 	}
 #endif
 }
-
 
 /* taken from anjuta, to determine the EOL mode of the file */
 gint utils_get_line_endings(const gchar* buffer, gsize size)
@@ -155,7 +153,6 @@ gint utils_get_line_endings(const gchar* buffer, gsize size)
 	return mode;
 }
 
-
 gboolean utils_isbrace(gchar c, gboolean include_angles)
 {
 	switch (c)
@@ -174,7 +171,6 @@ gboolean utils_isbrace(gchar c, gboolean include_angles)
 	}
 }
 
-
 gboolean utils_is_opening_brace(gchar c, gboolean include_angles)
 {
 	switch (c)
@@ -188,7 +184,6 @@ gboolean utils_is_opening_brace(gchar c, gboolean include_angles)
 		default:  return FALSE;
 	}
 }
-
 
 /**
  * Writes @a text into a file named @a filename.
@@ -259,7 +254,6 @@ gint utils_write_file(const gchar *filename, const gchar *text)
 	return 0;
 }
 
-
 /** Searches backward through @a size bytes looking for a '<'.
  * @param sel .
  * @param size .
@@ -283,7 +277,6 @@ gchar *utils_find_open_xml_tag(const gchar sel[], gint size)
 	len = (gsize)(cur - begin);
 	return len ? g_strndup(begin, len) : NULL;
 }
-
 
 /** Searches backward through @a size bytes looking for a '<'.
  * @param sel .
@@ -333,7 +326,6 @@ const gchar *utils_find_open_xml_tag_pos(const gchar sel[], gint size)
 	return NULL;
 }
 
-
 /* Returns true if tag_name is a self-closing tag */
 gboolean utils_is_short_html_tag(const gchar *tag_name)
 {
@@ -367,7 +359,6 @@ gboolean utils_is_short_html_tag(const gchar *tag_name)
 	return FALSE;
 }
 
-
 const gchar *utils_get_eol_name(gint eol_mode)
 {
 	switch (eol_mode)
@@ -377,7 +368,6 @@ const gchar *utils_get_eol_name(gint eol_mode)
 		default: return _("Unix (LF)"); break;
 	}
 }
-
 
 const gchar *utils_get_eol_short_name(gint eol_mode)
 {
@@ -389,7 +379,6 @@ const gchar *utils_get_eol_short_name(gint eol_mode)
 	}
 }
 
-
 const gchar *utils_get_eol_char(gint eol_mode)
 {
 	switch (eol_mode)
@@ -399,7 +388,6 @@ const gchar *utils_get_eol_char(gint eol_mode)
 		default: return "\n"; break;
 	}
 }
-
 
 /* Converts line endings to @a target_eol_mode. */
 void utils_ensure_same_eol_characters(GString *string, gint target_eol_mode)
@@ -417,7 +405,6 @@ void utils_ensure_same_eol_characters(GString *string, gint target_eol_mode)
 	utils_string_replace_all(string, "\n", eol_str);
 }
 
-
 gboolean utils_atob(const gchar *str)
 {
 	if (G_UNLIKELY(str == NULL))
@@ -427,7 +414,6 @@ gboolean utils_atob(const gchar *str)
 	return FALSE;
 }
 
-
 /* NULL-safe version of g_path_is_absolute(). */
 gboolean utils_is_absolute_path(const gchar *path)
 {
@@ -436,7 +422,6 @@ gboolean utils_is_absolute_path(const gchar *path)
 
 	return g_path_is_absolute(path);
 }
-
 
 /* Skips root if path is absolute, do nothing otherwise.
  * This is a relative-safe version of g_path_skip_root().
@@ -450,7 +435,6 @@ const gchar *utils_path_skip_root(const gchar *path)
 	return (path_relative != NULL) ? path_relative : path;
 }
 
-
 gdouble utils_scale_round(gdouble val, gdouble factor)
 {
 	/*val = floor(val * factor + 0.5);*/
@@ -460,7 +444,6 @@ gdouble utils_scale_round(gdouble val, gdouble factor)
 
 	return val;
 }
-
 
 /* like g_utf8_strdown() but if @str is not valid UTF8, convert it from locale first.
  * returns NULL on charset conversion failure */
@@ -479,7 +462,6 @@ static gchar *utf8_strdown(const gchar *str)
 
 	return down;
 }
-
 
 /**
  *  A replacement function for g_strncasecmp() to compare strings case-insensitive.
@@ -525,7 +507,6 @@ gint utils_str_casecmp(const gchar *s1, const gchar *s2)
 	g_free(tmp2);
 	return result;
 }
-
 
 /**
  *  Truncates the input string to a given length.
@@ -581,7 +562,6 @@ gchar *utils_str_middle_truncate(const gchar *string, guint truncate_length)
 	return g_string_free(truncated, FALSE);
 }
 
-
 /**
  *  @c NULL-safe string comparison. Returns @c TRUE if both @a a and @a b are @c NULL
  *  or if @a a and @a b refer to valid strings which are equal.
@@ -600,7 +580,6 @@ gboolean utils_str_equal(const gchar *a, const gchar *b)
 
 	return strcmp(a, b) == 0;
 }
-
 
 /**
  *  Removes the extension from @a filename and return the result in a newly allocated string.
@@ -630,7 +609,6 @@ gchar *utils_remove_ext_from_filename(const gchar *filename)
 	return result;
 }
 
-
 gchar utils_brace_opposite(gchar ch)
 {
 	switch (ch)
@@ -646,7 +624,6 @@ gchar utils_brace_opposite(gchar ch)
 		default: return '\0';
 	}
 }
-
 
 /* Checks whether the given file can be written. locale_filename is expected in locale encoding.
  * Returns 0 if it can be written, otherwise it returns errno */
@@ -678,7 +655,6 @@ gint utils_is_file_writable(const gchar *locale_filename)
 	return ret;
 }
 
-
 /* Replaces all occurrences of needle in haystack with replacement.
  * Warning: *haystack must be a heap address; it may be freed and reassigned.
  * Note: utils_string_replace_all() will always be faster when @a replacement is longer
@@ -699,7 +675,6 @@ void utils_str_replace_all(gchar **haystack, const gchar *needle, const gchar *r
 	*haystack = g_string_free(str, FALSE);
 }
 
-
 gint utils_strpos(const gchar *haystack, const gchar *needle)
 {
 	const gchar *sub;
@@ -713,7 +688,6 @@ gint utils_strpos(const gchar *haystack, const gchar *needle)
 
 	return sub - haystack;
 }
-
 
 /**
  *  Retrieves a formatted date/time string from strftime().
@@ -766,7 +740,6 @@ gchar *utils_get_date_time(const gchar *format, time_t *time_to_use)
 		return g_strdup(date);
 }
 
-
 gchar *utils_get_initials(const gchar *name)
 {
 	gint i = 1, j = 1;
@@ -783,7 +756,6 @@ gchar *utils_get_initials(const gchar *name)
 	}
 	return initials;
 }
-
 
 /**
  *  Wraps g_key_file_get_integer() to add a default value argument.
@@ -815,7 +787,6 @@ gint utils_get_setting_integer(GKeyFile *config, const gchar *section, const gch
 	return tmp;
 }
 
-
 /**
  *  Wraps g_key_file_get_boolean() to add a default value argument.
  *
@@ -846,7 +817,6 @@ gboolean utils_get_setting_boolean(GKeyFile *config, const gchar *section, const
 	return tmp;
 }
 
-
 /**
  *  Wraps g_key_file_get_string() to add a default value argument.
  *
@@ -875,7 +845,6 @@ gchar *utils_get_setting_string(GKeyFile *config, const gchar *section, const gc
 	return tmp;
 }
 
-
 gchar *utils_get_hex_from_color(GdkColor *color)
 {
 	g_return_val_if_fail(color != NULL, NULL);
@@ -885,7 +854,6 @@ gchar *utils_get_hex_from_color(GdkColor *color)
 		(guint) (utils_scale_round(color->green / 256, 255)),
 		(guint) (utils_scale_round(color->blue / 256, 255)));
 }
-
 
 /* Get directory from current file in the notebook.
  * Returns dir string that should be freed or NULL, depending on whether current file is valid.
@@ -909,14 +877,12 @@ gchar *utils_get_current_file_dir_utf8(void)
 	return NULL; /* no file open */
 }
 
-
 /* very simple convenience function */
 void utils_beep(void)
 {
 	if (prefs.beep_on_errors)
 		gdk_beep();
 }
-
 
 /* taken from busybox, thanks */
 gchar *utils_make_human_readable_str(guint64 size, gulong block_size,
@@ -966,7 +932,6 @@ gchar *utils_make_human_readable_str(guint64 size, gulong block_size,
 	return g_strdup_printf(f, val, frac, *u, 'b');
 }
 
-
 /* converts a color representation using gdk_color_parse(), with additional
  * support of the "0x" prefix as a synonym for "#" */
 gboolean utils_parse_color(const gchar *spec, GdkColor *color)
@@ -986,7 +951,6 @@ gboolean utils_parse_color(const gchar *spec, GdkColor *color)
 	return gdk_color_parse(spec, color);
 }
 
-
 /* converts a GdkColor to the packed 24 bits BGR format, as understood by Scintilla
  * returns a 24 bits BGR color, or -1 on failure */
 gint utils_color_to_bgr(const GdkColor *c)
@@ -994,7 +958,6 @@ gint utils_color_to_bgr(const GdkColor *c)
 	g_return_val_if_fail(c != NULL, -1);
 	return (c->red / 256) | ((c->green / 256) << 8) | ((c->blue / 256) << 16);
 }
-
 
 /* parses @p spec using utils_parse_color() and convert it to 24 bits BGR using
  * utils_color_to_bgr() */
@@ -1007,7 +970,6 @@ gint utils_parse_color_to_bgr(const gchar *spec)
 		return -1;
 }
 
-
 /* Returns: newly allocated string with the current time formatted HH:MM:SS. */
 gchar *utils_get_current_time_string(void)
 {
@@ -1019,7 +981,6 @@ gchar *utils_get_current_time_string(void)
 	result[8] = '\0';
 	return result;
 }
-
 
 GIOChannel *utils_set_up_io_channel(
 				gint fd, GIOCondition cond, gboolean nblock, GIOFunc func, gpointer data)
@@ -1058,7 +1019,6 @@ GIOChannel *utils_set_up_io_channel(
 
 	return ioc;
 }
-
 
 /* Contributed by Stefan Oltmanns, thanks.
  * Replaces \\, \r, \n, \t and \uXXX by their real counterparts.
@@ -1201,7 +1161,6 @@ gboolean utils_str_replace_escape(gchar *string, gboolean keep_backslash)
 	return TRUE;
 }
 
-
 /* Wraps a string in place, replacing a space with a newline character.
  * wrapstart is the minimum position to start wrapping or -1 for default */
 gboolean utils_wrap_string(gchar *string, gint wrapstart)
@@ -1223,7 +1182,6 @@ gboolean utils_wrap_string(gchar *string, gint wrapstart)
 	}
 	return ret;
 }
-
 
 /**
  *  Converts the given UTF-8 encoded string into locale encoding.
@@ -1253,7 +1211,6 @@ gchar *utils_get_locale_from_utf8(const gchar *utf8_text)
 #endif
 }
 
-
 /**
  *  Converts the given string (in locale encoding) into UTF-8 encoding.
  *  On Windows platforms, it does nothing and instead it just returns a copy of the input string.
@@ -1282,7 +1239,6 @@ gchar *utils_get_utf8_from_locale(const gchar *locale_text)
 #endif
 }
 
-
 /* Pass pointers to free after arg_count.
  * The last argument must be NULL as an extra check that arg_count is correct. */
 void utils_free_pointers(gsize arg_count, ...)
@@ -1302,7 +1258,6 @@ void utils_free_pointers(gsize arg_count, ...)
 		g_warning("Wrong arg_count!");
 	va_end(a);
 }
-
 
 /* currently unused */
 #if 0
@@ -1341,7 +1296,6 @@ gchar **utils_strv_new(const gchar *first, ...)
 }
 #endif
 
-
 /**
  *  Creates a directory if it doesn't already exist.
  *  Creates intermediate parent directories as needed, too.
@@ -1367,7 +1321,6 @@ gint utils_mkdir(const gchar *path, gboolean create_parent_dirs)
 		return errno;
 	return 0;
 }
-
 
 /**
  * Gets a list of files from the specified directory.
@@ -1417,7 +1370,6 @@ GSList *utils_get_file_list_full(const gchar *path, gboolean full_path, gboolean
 	return list;
 }
 
-
 /**
  * Gets a sorted list of files from the specified directory.
  * Locale encoding is expected for @a path and used for the file list. The list and the data
@@ -1445,7 +1397,6 @@ GSList *utils_get_file_list(const gchar *path, guint *length, GError **error)
 	return list;
 }
 
-
 /* returns TRUE if any letter in str is a capital, FALSE otherwise. Should be Unicode safe. */
 gboolean utils_str_has_upper(const gchar *str)
 {
@@ -1465,7 +1416,6 @@ gboolean utils_str_has_upper(const gchar *str)
 	}
 	return FALSE;
 }
-
 
 /* end can be -1 for haystack->len.
  * returns: position of found text or -1. */
@@ -1496,7 +1446,6 @@ gint utils_string_find(GString *haystack, gint start, gint end, const gchar *nee
 	return pos;
 }
 
-
 /* Replaces @len characters from offset @a pos.
  * len can be -1 to replace the remainder of @a str.
  * returns: pos + strlen(replace). */
@@ -1510,7 +1459,6 @@ gint utils_string_replace(GString *str, gint pos, gint len, const gchar *replace
 	}
 	return pos;
 }
-
 
 /**
  * Replaces all occurrences of @a needle in @a haystack with @a replace.
@@ -1543,7 +1491,6 @@ guint utils_string_replace_all(GString *haystack, const gchar *needle, const gch
 	return count;
 }
 
-
 /**
  * Replaces only the first occurrence of @a needle in @a haystack
  * with @a replace.
@@ -1568,7 +1515,6 @@ guint utils_string_replace_first(GString *haystack, const gchar *needle, const g
 	utils_string_replace(haystack, pos, strlen(needle), replace);
 	return 1;
 }
-
 
 /* Similar to g_regex_replace but allows matching a subgroup.
  * match_num: which match to replace, 0 for whole match.
@@ -1608,7 +1554,6 @@ guint utils_string_regex_replace_all(GString *haystack, GRegex *regex,
 	return ret;
 }
 
-
 /* Get project or default startup directory (if set), or NULL. */
 const gchar *utils_get_default_dir_utf8(void)
 {
@@ -1623,7 +1568,6 @@ const gchar *utils_get_default_dir_utf8(void)
 	}
 	return NULL;
 }
-
 
 /**
  *  Wraps @c spawn_sync(), which see.
@@ -1659,7 +1603,6 @@ gboolean utils_spawn_sync(const gchar *dir, gchar **argv, gchar **env, GSpawnFla
 	return result;
 }
 
-
 /**
  *  Wraps @c spawn_async(), which see.
  *
@@ -1681,7 +1624,6 @@ gboolean utils_spawn_async(const gchar *dir, gchar **argv, gchar **env, GSpawnFl
 {
 	return spawn_async(dir, NULL, argv, env, child_pid, error);
 }
-
 
 /* Retrieves the path for the given URI.
  * It returns:
@@ -1715,14 +1657,12 @@ gchar *utils_get_path_from_uri(const gchar *uri)
 	return locale_filename;
 }
 
-
 gboolean utils_is_uri(const gchar *uri)
 {
 	g_return_val_if_fail(uri != NULL, FALSE);
 
 	return (strstr(uri, "://") != NULL);
 }
-
 
 /* path should be in locale encoding */
 gboolean utils_is_remote_path(const gchar *path)
@@ -1753,7 +1693,6 @@ gboolean utils_is_remote_path(const gchar *path)
 
 	return FALSE;
 }
-
 
 /* Remove all relative and untidy elements from the path of @a filename.
  * @param filename must be a valid absolute path.
@@ -1818,7 +1757,6 @@ void utils_tidy_path(gchar *filename)
 	g_string_free(str, TRUE);
 }
 
-
 /**
  *  Removes characters from a string, in place.
  *
@@ -1848,7 +1786,6 @@ gchar *utils_str_remove_chars(gchar *string, const gchar *chars)
 	*w = 0x0;
 	return string;
 }
-
 
 /* Gets list of sorted filenames with no path and no duplicates from user and system config */
 GSList *utils_get_config_files(const gchar *subdir)
@@ -1883,7 +1820,6 @@ GSList *utils_get_config_files(const gchar *subdir)
 	return list;
 }
 
-
 /* Suffix can be NULL or a string which should be appended to the Help URL like
  * an anchor link, e.g. "#some_anchor". */
 gchar *utils_get_help_url(const gchar *suffix)
@@ -1914,7 +1850,6 @@ gchar *utils_get_help_url(const gchar *suffix)
 	return uri;
 }
 
-
 static gboolean str_in_array(const gchar **haystack, const gchar *needle)
 {
 	const gchar **p;
@@ -1926,7 +1861,6 @@ static gboolean str_in_array(const gchar **haystack, const gchar *needle)
 	}
 	return FALSE;
 }
-
 
 /**
  * Copies the current environment into a new array.
@@ -2005,7 +1939,6 @@ gchar **utils_copy_environment(const gchar **exclude_vars, const gchar *first_va
 	return result;
 }
 
-
 /* Joins @a first and @a second into a new string vector, freeing the originals.
  * The original contents are reused. */
 gchar **utils_strv_join(gchar **first, gchar **second)
@@ -2031,7 +1964,6 @@ gchar **utils_strv_join(gchar **first, gchar **second)
 	return strv;
 }
 
-
 /* Try to parse a date using g_date_set_parse(). It doesn't take any format hint,
  * obviously g_date_set_parse() uses some magic.
  * The returned GDate object must be freed. */
@@ -2048,7 +1980,6 @@ GDate *utils_parse_date(const gchar *input)
 	return NULL;
 }
 
-
 gchar *utils_parse_and_format_build_date(const gchar *input)
 {
 	gchar date_buf[255];
@@ -2064,7 +1995,6 @@ gchar *utils_parse_and_format_build_date(const gchar *input)
 	return g_strdup(input);
 }
 
-
 gchar *utils_get_user_config_dir(void)
 {
 #ifdef G_OS_WIN32
@@ -2073,7 +2003,6 @@ gchar *utils_get_user_config_dir(void)
 	return g_build_filename(g_get_user_config_dir(), "geany", NULL);
 #endif
 }
-
 
 static gboolean is_osx_bundle(void)
 {
@@ -2087,7 +2016,6 @@ static gboolean is_osx_bundle(void)
 #endif
 	return FALSE;
 }
-
 
 const gchar *utils_resource_dir(GeanyResourceDirType type)
 {
@@ -2110,7 +2038,7 @@ const gchar *utils_resource_dir(GeanyResourceDirType type)
 		{
 # ifdef MAC_INTEGRATION
 			gchar *prefix = gtkosx_application_get_resource_path();
-			
+
 			resdirs[RESOURCE_DIR_DATA] = g_build_filename(prefix, "share", "geany", NULL);
 			resdirs[RESOURCE_DIR_ICON] = g_build_filename(prefix, "share", "icons", NULL);
 			resdirs[RESOURCE_DIR_DOC] = g_build_filename(prefix, "share", "doc", "geany", "html", NULL);
@@ -2134,7 +2062,6 @@ const gchar *utils_resource_dir(GeanyResourceDirType type)
 
 	return resdirs[type];
 }
-
 
 void utils_start_new_geany_instance(const gchar *doc_path)
 {

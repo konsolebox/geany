@@ -23,13 +23,11 @@
 
 #include <string.h>
 
-
 typedef struct
 {
     const gchar kind;
     TMTagType type;
 } TMParserMapEntry;
-
 
 static TMParserMapEntry map_C[] = {
 	{'c', tm_tag_class_t},
@@ -488,7 +486,6 @@ static TMParserMapEntry map_POWERSHELL[] = {
 	{'v', tm_tag_variable_t},
 };
 
-
 typedef struct
 {
     TMParserMapEntry *entries;
@@ -554,7 +551,6 @@ static TMParserMap parser_map[] = {
 /* make sure the parser map is consistent and complete */
 G_STATIC_ASSERT(G_N_ELEMENTS(parser_map) == TM_PARSER_COUNT);
 
-
 TMTagType tm_parser_get_tag_type(gchar kind, TMParserType lang)
 {
 	TMParserMap *map = &parser_map[lang];
@@ -570,7 +566,6 @@ TMTagType tm_parser_get_tag_type(gchar kind, TMParserType lang)
 	return tm_tag_undef_t;
 }
 
-
 gchar tm_parser_get_tag_kind(TMTagType type, TMParserType lang)
 {
 	TMParserMap *map = &parser_map[lang];
@@ -585,7 +580,6 @@ gchar tm_parser_get_tag_kind(TMTagType type, TMParserType lang)
 	}
 	return '\0';
 }
-
 
 void tm_parser_verify_type_mappings(void)
 {

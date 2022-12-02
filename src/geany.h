@@ -33,9 +33,7 @@
 
 #include <glib.h>
 
-
 G_BEGIN_DECLS
-
 
 /* for detailed description look in the documentation, things are not
  * listed in the documentation should not be changed */
@@ -68,7 +66,6 @@ G_BEGIN_DECLS
 #ifndef GEANY
 # define GEANY(symbol_name) symbol_name
 #endif
-
 
 #ifdef GEANY_PRIVATE
 

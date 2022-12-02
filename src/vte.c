@@ -55,7 +55,6 @@
 #include <string.h>
 #include <errno.h>
 
-
 VteInfo vte_info = { FALSE, FALSE, FALSE, NULL, NULL };
 VteConfig *vc;
 
@@ -70,7 +69,6 @@ static guint terminal_label_update_source = 0;
 /* use vte wordchars to select paths */
 static const gchar VTE_WORDCHARS[] = "-A-Za-z0-9,./?%&#:_";
 static const gchar VTE_ADDITIONAL_WORDCHARS[] = "-,./?%&#:_";
-
 
 /* Incomplete VteTerminal struct from vte/vte.h. */
 typedef struct _VteTerminal VteTerminal;
@@ -93,7 +91,6 @@ typedef enum {
 	/* we don't care for the other possible values */
 	VTE_PTY_DEFAULT = 0
 } VtePtyFlags;
-
 
 /* Holds function pointers we need to access the VTE API. */
 struct VteFunctions
@@ -142,7 +139,6 @@ struct VteFunctions
 #endif
 };
 
-
 static void create_vte(void);
 static void vte_start(GtkWidget *widget);
 static void vte_restart(GtkWidget *widget);
@@ -155,7 +151,6 @@ static GtkWidget *vte_create_popup_menu(void);
 static void vte_commit_cb(VteTerminal *vte, gchar *arg1, guint arg2, gpointer user_data);
 static void vte_drag_data_received(GtkWidget *widget, GdkDragContext *drag_context,
 								   gint x, gint y, GtkSelectionData *data, guint info, guint ltime);
-
 
 enum
 {
@@ -181,7 +176,6 @@ static const GtkTargetEntry dnd_targets[] =
   { "text/plain", 0, TARGET_TEXT_PLAIN },
 };
 
-
 /* replacement for vte_terminal_get_adjustment() when it's not available */
 static GtkAdjustment *default_vte_terminal_get_adjustment(VteTerminal *vte)
 {
@@ -192,7 +186,6 @@ static GtkAdjustment *default_vte_terminal_get_adjustment(VteTerminal *vte)
 	/* this is only valid in < 0.38, 0.38 broke ABI */
 	return vte->adjustment;
 }
-
 
 #if GTK_CHECK_VERSION(3, 0, 0)
 /* Wrap VTE 2.91 API using GdkRGBA with GdkColor so we use a single API on our side */
@@ -220,14 +213,12 @@ WRAP_RGBA_SETTER(vte_terminal_set_color_foreground)
 #	undef WRAP_RGBA_SETTER
 #endif
 
-
 static gchar **vte_get_child_environment(void)
 {
 	const gchar *exclude_vars[] = {"COLUMNS", "LINES", "TERM", "TERM_PROGRAM", NULL};
 
 	return utils_copy_environment(exclude_vars, "TERM", "xterm", NULL);
 }
-
 
 static void override_menu_key(void)
 {
@@ -243,7 +234,6 @@ static void override_menu_key(void)
 			"gtk-menu-bar-accel", gtk_menu_key_accel, "Geany");
 }
 
-
 static void on_startup_complete(G_GNUC_UNUSED GObject *dummy)
 {
 	GeanyDocument *doc = document_get_current();
@@ -251,7 +241,6 @@ static void on_startup_complete(G_GNUC_UNUSED GObject *dummy)
 	if (doc)
 		vte_cwd((doc->real_path != NULL) ? doc->real_path : doc->file_name, FALSE);
 }
-
 
 void vte_init(void)
 {
@@ -322,7 +311,6 @@ void vte_init(void)
 	g_signal_connect(geany_object, "geany-startup-complete", G_CALLBACK(on_startup_complete), NULL);
 }
 
-
 static void on_vte_realize(void)
 {
 	/* the vte widget has to be realised before color changes take effect */
@@ -332,13 +320,11 @@ static void on_vte_realize(void)
 		vf->vte_terminal_im_append_menuitems(VTE_TERMINAL(vc->vte), GTK_MENU_SHELL(vc->im_submenu));
 }
 
-
 static gboolean vte_start_idle(G_GNUC_UNUSED gpointer user_data)
 {
 	vte_start(vc->vte);
 	return FALSE;
 }
-
 
 static void create_vte(void)
 {
@@ -388,7 +374,6 @@ static void create_vte(void)
 	g_signal_connect_after(vte, "realize", G_CALLBACK(on_vte_realize), NULL);
 }
 
-
 void vte_close(void)
 {
 	g_free(vf);
@@ -408,14 +393,12 @@ void vte_close(void)
 	/*g_module_close(module); */
 }
 
-
 static gboolean set_dirty_idle(gpointer user_data)
 {
 	gtk_widget_set_name(terminal_label, "geany-terminal-dirty");
 	terminal_label_update_source = 0;
 	return FALSE;
 }
-
 
 static void set_clean(gboolean value)
 {
@@ -437,7 +420,6 @@ static void set_clean(gboolean value)
 	}
 }
 
-
 static gboolean vte_keyrelease_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
 	if (ui_is_keyval_enter_or_return(event->keyval) ||
@@ -448,7 +430,6 @@ static gboolean vte_keyrelease_cb(GtkWidget *widget, GdkEventKey *event, gpointe
 	}
 	return FALSE;
 }
-
 
 static gboolean vte_keypress_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
@@ -471,12 +452,10 @@ static gboolean vte_keypress_cb(GtkWidget *widget, GdkEventKey *event, gpointer 
 	return FALSE;
 }
 
-
 static void vte_commit_cb(VteTerminal *vte, gchar *arg1, guint arg2, gpointer user_data)
 {
 	set_clean(FALSE);
 }
-
 
 static void vte_start(GtkWidget *widget)
 {
@@ -510,7 +489,6 @@ static void vte_start(GtkWidget *widget)
 	set_clean(TRUE);
 }
 
-
 static void vte_restart(GtkWidget *widget)
 {
 	vte_get_working_directory(); /* try to keep the working directory when restarting the VTE */
@@ -522,7 +500,6 @@ static void vte_restart(GtkWidget *widget)
 	vf->vte_terminal_reset(VTE_TERMINAL(widget), TRUE, TRUE);
 	set_clean(TRUE);
 }
-
 
 static gboolean vte_button_pressed(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
@@ -538,7 +515,6 @@ static gboolean vte_button_pressed(GtkWidget *widget, GdkEventButton *event, gpo
 	return FALSE;
 }
 
-
 static void vte_set_cursor_blink_mode(void)
 {
 	if (vf->vte_terminal_set_cursor_blink_mode != NULL)
@@ -549,7 +525,6 @@ static void vte_set_cursor_blink_mode(void)
 		/* vte < 0.17.1 */
 		vf->vte_terminal_set_cursor_blinks(VTE_TERMINAL(vc->vte), vc->cursor_blinks);
 }
-
 
 #if GTK_CHECK_VERSION(3, 0, 0)
 static gboolean vte_is_2_91(void)
@@ -563,7 +538,6 @@ static gboolean vte_is_2_91(void)
 	        vf->vte_terminal_spawn_sync != NULL);
 }
 #endif
-
 
 static gboolean vte_register_symbols(GModule *mod)
 {
@@ -645,7 +619,6 @@ static gboolean vte_register_symbols(GModule *mod)
 	return TRUE;
 }
 
-
 void vte_apply_user_settings(void)
 {
 	PangoFontDescription *font_desc;
@@ -668,7 +641,6 @@ void vte_apply_user_settings(void)
 
 	override_menu_key();
 }
-
 
 static void vte_popup_menu_clicked(GtkMenuItem *menuitem, gpointer user_data)
 {
@@ -718,7 +690,6 @@ static void vte_popup_menu_clicked(GtkMenuItem *menuitem, gpointer user_data)
 		}
 	}
 }
-
 
 static GtkWidget *vte_create_popup_menu(void)
 {
@@ -807,7 +778,6 @@ static GtkWidget *vte_create_popup_menu(void)
 	return menu;
 }
 
-
 /* If the command could be executed, TRUE is returned, FALSE otherwise (i.e. there was some text
  * on the prompt). */
 gboolean vte_send_cmd(const gchar *cmd)
@@ -821,7 +791,6 @@ gboolean vte_send_cmd(const gchar *cmd)
 	else
 		return FALSE;
 }
-
 
 /* Taken from Terminal by os-cillation: terminal_screen_get_working_directory, thanks.
  * Determines the working directory using various OS-specific mechanisms and stores the determined
@@ -862,7 +831,6 @@ const gchar *vte_get_working_directory(void)
 	return vte_info.dir;
 }
 
-
 /* Changes the current working directory of the VTE to the path of the given filename.
  * filename is expected to be in UTF-8 encoding.
  * filename can also be a path, then it is used directly.
@@ -899,7 +867,6 @@ void vte_cwd(const gchar *filename, gboolean force)
 	}
 }
 
-
 static void vte_drag_data_received(GtkWidget *widget, GdkDragContext *drag_context,
 								   gint x, gint y, GtkSelectionData *data, guint info, guint ltime)
 {
@@ -920,13 +887,11 @@ static void vte_drag_data_received(GtkWidget *widget, GdkDragContext *drag_conte
 	gtk_drag_finish(drag_context, TRUE, FALSE, ltime);
 }
 
-
 static void on_check_run_in_vte_toggled(GtkToggleButton *togglebutton, GtkWidget *user_data)
 {
 	g_return_if_fail(GTK_IS_WIDGET(user_data));
 	gtk_widget_set_sensitive(user_data, gtk_toggle_button_get_active(togglebutton));
 }
-
 
 static void on_term_font_set(GtkFontButton *widget, gpointer user_data)
 {
@@ -939,18 +904,15 @@ static void on_term_font_set(GtkFontButton *widget, gpointer user_data)
 	}
 }
 
-
 static void on_term_fg_color_set(GtkColorButton *widget, gpointer user_data)
 {
 	gtk_color_button_get_color(widget, &vc->colour_fore);
 }
 
-
 static void on_term_bg_color_set(GtkColorButton *widget, gpointer user_data)
 {
 	gtk_color_button_get_color(widget, &vc->colour_back);
 }
-
 
 void vte_append_preferences_tab(void)
 {
@@ -986,13 +948,11 @@ void vte_append_preferences_tab(void)
 	}
 }
 
-
 void vte_select_all(void)
 {
 	if (vf->vte_terminal_select_all != NULL)
 		vf->vte_terminal_select_all(VTE_TERMINAL(vc->vte));
 }
-
 
 void vte_send_selection_to_vte(void)
 {
@@ -1042,6 +1002,5 @@ void vte_send_selection_to_vte(void)
 
 	g_free(text);
 }
-
 
 #endif
