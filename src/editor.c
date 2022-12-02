@@ -4772,15 +4772,22 @@ static gboolean editor_check_colourise(GeanyEditor *editor)
 }
 
 
-/* We only want to colourise just before drawing, to save startup time and
- * prevent unnecessary recolouring other documents after one is saved.
- * Really we want a "draw" signal but there doesn't seem to be one (expose is too late,
- * and "show" doesn't work). */
 static gboolean on_editor_focus_in(GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
 {
 	GeanyEditor *editor = user_data;
+	g_return_val_if_fail(editor != NULL, FALSE);
 
+	/* We only want to colourise just before drawing, to save startup time and
+	 * prevent unnecessary recolouring other documents after one is saved.
+	 * Really we want a "draw" signal but there doesn't seem to be one (expose is too late,
+	 * and "show" doesn't work). */
 	editor_check_colourise(editor);
+
+	/* Always check changes in document every time editor regains focus. */
+	GeanyDocument *doc = editor->document;
+	if (doc && doc->is_valid && doc->real_path)
+		document_check_disk_status(doc, TRUE);
+
 	return FALSE;
 }
 
@@ -4921,7 +4928,7 @@ static ScintillaObject *create_new_sci(GeanyEditor *editor)
 
 	/* virtual space */
 	SSM(sci, SCI_SETVIRTUALSPACEOPTIONS, editor_prefs.show_virtual_space, 0);
-	
+
 #ifdef GDK_WINDOWING_QUARTZ
 # if ! GTK_CHECK_VERSION(3,16,0)
 	/* "retina" (HiDPI) display support on OS X - requires disabling buffered draw
