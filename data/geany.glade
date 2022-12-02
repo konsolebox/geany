@@ -7326,7 +7326,6 @@
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">_Search</property>
                     <property name="use_underline">True</property>
-                    <signal name="activate" handler="on_search1_activate" swapped="no"/>
                     <child type="submenu">
                       <object class="GtkMenu" id="search1_menu">
                         <property name="can_focus">False</property>
@@ -7394,6 +7393,77 @@
                           </object>
                         </child>
                         <child>
+                          <object class="GtkMenuItem" id="find_nextsel1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Find Next _Selection</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_find_nextsel1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkMenuItem" id="find_prevsel1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Find Pre_vious Selection</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_find_prevsel1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorMenuItem" id="separator33">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkMenuItem" id="find_usage1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Find _Usage</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_find_usage1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkMenuItem" id="find_document_usage1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Find _Document Usage</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_find_document_usage1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorMenuItem" id="separator55">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkMenuItem" id="mark_all1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">_Mark All</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_mark_all1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkMenuItem" id="goto1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">_Go To</property>
+                    <property name="use_underline">True</property>
+                    <signal name="activate" handler="on_goto1_activate" swapped="no"/>
+                    <child type="submenu">
+                      <object class="GtkMenu" id="goto1_menu">
+                        <property name="can_focus">False</property>
+                        <child>
                           <object class="GtkImageMenuItem" id="go_to_line1">
                             <property name="label" translatable="yes">_Go to Line</property>
                             <property name="visible">True</property>
@@ -7414,7 +7484,7 @@
                           <object class="GtkImageMenuItem" id="go_to_next_location1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Go to Next _Location</property>
+                            <property name="label" translatable="yes">Go to N_ext Location</property>
                             <property name="use_underline">True</property>
                             <property name="image">image_next_location</property>
                             <property name="use_stock">False</property>
@@ -7425,7 +7495,7 @@
                           <object class="GtkImageMenuItem" id="go_to_previous_location1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Go to Previ_ous Location</property>
+                            <property name="label" translatable="yes">Go to Pre_vious Location</property>
                             <property name="use_underline">True</property>
                             <property name="image">image_previous_location</property>
                             <property name="use_stock">False</property>
@@ -7442,7 +7512,7 @@
                           <object class="GtkMenuItem" id="go_to_next_marker1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Go to Ne_xt Marker</property>
+                            <property name="label" translatable="yes">Go to Next M_arker</property>
                             <property name="use_underline">True</property>
                             <signal name="activate" handler="on_go_to_next_marker1_activate" swapped="no"/>
                           </object>
@@ -7451,7 +7521,7 @@
                           <object class="GtkMenuItem" id="go_to_previous_marker1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Go to Pre_vious Marker</property>
+                            <property name="label" translatable="yes">Go to Previous Ma_rker</property>
                             <property name="use_underline">True</property>
                             <signal name="activate" handler="on_go_to_previous_marker1_activate" swapped="no"/>
                           </object>
@@ -7464,7 +7534,7 @@
                         </child>
                         <child>
                           <object class="GtkImageMenuItem" id="next_message1">
-                            <property name="label" translatable="yes">Go to Next Me_ssage</property>
+                            <property name="label" translatable="yes">Go to Ne_xt Message</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="use_underline">True</property>
@@ -7475,7 +7545,8 @@
                         </child>
                         <child>
                           <object class="GtkImageMenuItem" id="previous_message1">
-                            <property name="label" translatable="yes">Go to Pr_evious Message</property>
+                            <property name="label" translatable="yes">Go to Previous M_essage</property>
+                            <property name="label" translatable="yes">Go to Previou_s Message</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="use_underline">True</property>
@@ -7491,97 +7562,21 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkMenuItem" id="more1">
+                          <object class="GtkMenuItem" id="goto_tag_definition1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">_More</property>
+                            <property name="label" translatable="yes">Go to Symbol De_finition</property>
                             <property name="use_underline">True</property>
-                            <child type="submenu">
-                              <object class="GtkMenu" id="more1_menu">
-                                <property name="can_focus">False</property>
-                                <child>
-                                  <object class="GtkMenuItem" id="find_nextsel1">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Find Next _Selection</property>
-                                    <property name="use_underline">True</property>
-                                    <signal name="activate" handler="on_find_nextsel1_activate" swapped="no"/>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkMenuItem" id="find_prevsel1">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Find Pre_vious Selection</property>
-                                    <property name="use_underline">True</property>
-                                    <signal name="activate" handler="on_find_prevsel1_activate" swapped="no"/>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkSeparatorMenuItem" id="separator33">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkMenuItem" id="find_usage1">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Find _Usage</property>
-                                    <property name="use_underline">True</property>
-                                    <signal name="activate" handler="on_find_usage1_activate" swapped="no"/>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkMenuItem" id="find_document_usage1">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Find _Document Usage</property>
-                                    <property name="use_underline">True</property>
-                                    <signal name="activate" handler="on_find_document_usage1_activate" swapped="no"/>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkSeparatorMenuItem" id="separator55">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkMenuItem" id="mark_all1">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">_Mark All</property>
-                                    <property name="use_underline">True</property>
-                                    <signal name="activate" handler="on_mark_all1_activate" swapped="no"/>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkSeparatorMenuItem" id="separator60">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkMenuItem" id="goto_tag_definition1">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Go to Symbol Defini_tion</property>
-                                    <property name="use_underline">True</property>
-                                    <signal name="activate" handler="on_goto_tag_definition1" swapped="no"/>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkMenuItem" id="goto_tag_declaration1">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Go to Symbol Decl_aration</property>
-                                    <property name="use_underline">True</property>
-                                    <signal name="activate" handler="on_goto_tag_declaration1" swapped="no"/>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
+                            <signal name="activate" handler="on_goto_tag_definition1" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkMenuItem" id="goto_tag_declaration1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Go to Symbol De_claration</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_goto_tag_declaration1" swapped="no"/>
                           </object>
                         </child>
                       </object>

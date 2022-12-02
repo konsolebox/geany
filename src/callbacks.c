@@ -1561,16 +1561,21 @@ void on_replace_spaces_activate(GtkMenuItem *menuitem, gpointer user_data)
 	editor_replace_spaces(doc->editor, FALSE);
 }
 
-static void on_search1_activate(GtkMenuItem *menuitem, gpointer user_data)
+static void on_goto1_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
+	GeanyDocument *doc = document_get_current();
+
+	GtkWidget *next_marker = ui_lookup_widget(main_widgets.window, "go_to_next_marker1");
+	GtkWidget *previous_marker = ui_lookup_widget(main_widgets.window, "go_to_previous_marker1");
+	gboolean have_line_makers = !!doc && doc->is_valid && !!doc->editor && !!doc->editor->sci &&
+			sci_marker_next(doc->editor->sci, 0, 1 << 1, FALSE) != -1;
+	gtk_widget_set_sensitive(next_marker, have_line_makers);
+	gtk_widget_set_sensitive(previous_marker, have_line_makers);
+
 	GtkWidget *next_message = ui_lookup_widget(main_widgets.window, "next_message1");
 	GtkWidget *previous_message = ui_lookup_widget(main_widgets.window, "previous_message1");
-	gboolean have_messages;
-
-	/* enable commands if the messages window has any items */
-	have_messages = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(msgwindow.store_msg),
-		NULL) > 0;
-
+	gboolean have_messages = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(msgwindow.store_msg),
+			NULL) > 0;
 	gtk_widget_set_sensitive(next_message, have_messages);
 	gtk_widget_set_sensitive(previous_message, have_messages);
 }

@@ -538,10 +538,6 @@ static void init_default_kb(void)
 	add_kb(group, GEANY_KEYS_SEARCH_FINDINFILES, NULL, GDK_f,
 		GEANY_PRIMARY_MOD_MASK | GDK_SHIFT_MASK, "menu_findinfiles", _("Find in Files"),
 		"find_in_files1");
-	add_kb(group, GEANY_KEYS_SEARCH_NEXTMESSAGE, NULL,
-		0, 0, "menu_nextmessage", _("Next Message"), "next_message1");
-	add_kb(group, GEANY_KEYS_SEARCH_PREVIOUSMESSAGE, NULL,
-		0, 0, "menu_previousmessage", _("Previous Message"), "previous_message1");
 	add_kb(group, GEANY_KEYS_SEARCH_FINDUSAGE, NULL,
 		GDK_e, GEANY_PRIMARY_MOD_MASK | GDK_SHIFT_MASK, "popup_findusage",
 		_("Find Usage"), "find_usage1");
@@ -573,6 +569,10 @@ static void init_default_kb(void)
 	add_kb(group, GEANY_KEYS_GOTO_PREVIOUSMARKER, NULL,
 		GDK_comma, GEANY_PRIMARY_MOD_MASK, "edit_gotopreviousmarker",
 		_("Go to Pre_vious Marker"), "go_to_previous_marker1");
+	add_kb(group, GEANY_KEYS_SEARCH_NEXTMESSAGE, NULL,
+		0, 0, "menu_nextmessage", _("Next Message"), "next_message1");
+	add_kb(group, GEANY_KEYS_SEARCH_PREVIOUSMESSAGE, NULL,
+		0, 0, "menu_previousmessage", _("Previous Message"), "previous_message1");
 	add_kb(group, GEANY_KEYS_GOTO_TAGDEFINITION, NULL,
 		GDK_t, GEANY_PRIMARY_MOD_MASK, "popup_gototagdefinition",
 		_("Go to Symbol Definition"), "goto_tag_definition1");
