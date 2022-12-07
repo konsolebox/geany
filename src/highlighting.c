@@ -629,10 +629,10 @@ static void styleset_common(ScintillaObject *sci, guint ft_id)
 		invert(common_style_set.styling[GCS_INDICATOR_ERROR].foreground));
 
 	/* Search indicator, used for 'Mark' matches */
-	SSM(sci, SCI_INDICSETSTYLE, GEANY_INDICATOR_SEARCH, INDIC_ROUNDBOX);
-	SSM(sci, SCI_INDICSETFORE, GEANY_INDICATOR_SEARCH,
+	SSM(sci, SCI_INDICSETSTYLE, GEANY_INDICATOR_USER, INDIC_ROUNDBOX);
+	SSM(sci, SCI_INDICSETFORE, GEANY_INDICATOR_USER,
 		invert(common_style_set.styling[GCS_MARKER_SEARCH].background));
-	SSM(sci, SCI_INDICSETALPHA, GEANY_INDICATOR_SEARCH, 60);
+	SSM(sci, SCI_INDICSETALPHA, GEANY_INDICATOR_USER, 60);
 
 	/* define marker symbols
 	 * 0 -> line marker */

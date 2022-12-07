@@ -883,12 +883,13 @@ static void init_document_widgets(void)
 	add_doc_widget("find_prevsel1");
 	add_doc_widget("find_usage1");
 	add_doc_widget("find_document_usage1");
-	add_doc_widget("mark_all1");
+	add_doc_widget("mark_highlight_all1");
 	add_doc_widget("go_to_line1");
 	add_doc_widget("goto_tag_definition1");
 	add_doc_widget("goto_tag_declaration1");
 	add_doc_widget("reset_indentation1");
 	add_doc_widget("goto1");
+	add_doc_widget("mark1");
 	add_doc_toolitem("Close");
 	add_doc_toolitem("CloseAll");
 	add_doc_toolitem("Search");

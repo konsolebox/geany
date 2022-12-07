@@ -109,6 +109,7 @@ enum GeanyKeyGroupID
 	GEANY_KEY_GROUP_INSERT,			/**< Group. */
 	GEANY_KEY_GROUP_SETTINGS,		/**< Group. */
 	GEANY_KEY_GROUP_SEARCH,			/**< Group. */
+	GEANY_KEY_GROUP_MARK,			/**< Group. */
 	GEANY_KEY_GROUP_GOTO,			/**< Group. */
 	GEANY_KEY_GROUP_VIEW,			/**< Group. */
 	GEANY_KEY_GROUP_FOCUS,			/**< Group. */
@@ -182,7 +183,14 @@ enum GeanyKeyBindingID
 	GEANY_KEYS_FILE_SAVE,						/**< Keybinding. */
 	GEANY_KEYS_FORMAT_INCREASEINDENTBYSPACE,	/**< Keybinding. */
 	GEANY_KEYS_SEARCH_FINDNEXT,					/**< Keybinding. */
-	GEANY_KEYS_GOTO_TOGGLEMARKER,				/**< Keybinding. */
+	GEANY_KEYS_MARK_LINE,						/**< Keybinding. */
+	GEANY_KEYS_MARK_HIGHLIGHT,					/**< Keybinding. */
+	GEANY_KEYS_MARK_HIGHLIGHTALL,				/**< Keybinding. */
+	GEANY_KEYS_MARK_REMOVELINEMARKERS,			/**< Keybinding. */
+	GEANY_KEYS_MARK_REMOVEHIGHLIGHTS,			/**< Keybinding. */
+	GEANY_KEYS_MARK_REMOVEYELLOWTAGMARKERS,		/**< Keybinding. */
+	GEANY_KEYS_MARK_REMOVEERRORINDICATORS,		/**< Keybinding. */
+	GEANY_KEYS_MARK_REMOVEALL,					/**< Keybinding. */
 	GEANY_KEYS_GOTO_TAGDEFINITION,				/**< Keybinding. */
 	GEANY_KEYS_SEARCH_NEXTMESSAGE,				/**< Keybinding. */
 	GEANY_KEYS_EDITOR_DELETELINETOEND,			/**< Keybinding. */
@@ -206,7 +214,6 @@ enum GeanyKeyBindingID
 	GEANY_KEYS_CLIPBOARD_COPYLINE,				/**< Keybinding. */
 	GEANY_KEYS_BUILD_MAKEOWNTARGET,				/**< Keybinding. */
 	GEANY_KEYS_FORMAT_SENDTOCMD2,				/**< Keybinding. */
-	GEANY_KEYS_SEARCH_MARKALL,					/**< Keybinding. */
 	GEANY_KEYS_BUILD_LINK,						/**< Keybinding. */
 	GEANY_KEYS_FILE_CLOSEALL,					/**< Keybinding. */
 	GEANY_KEYS_GOTO_FORWARD,					/**< Keybinding. */

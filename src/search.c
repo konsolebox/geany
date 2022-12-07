@@ -59,7 +59,7 @@ enum
 	GEANY_RESPONSE_FIND_PREVIOUS,
 	GEANY_RESPONSE_FIND_IN_FILE,
 	GEANY_RESPONSE_FIND_IN_SESSION,
-	GEANY_RESPONSE_MARK,
+	GEANY_RESPONSE_HIGHLIGHT,
 	GEANY_RESPONSE_REPLACE,
 	GEANY_RESPONSE_REPLACE_AND_FIND,
 	GEANY_RESPONSE_REPLACE_IN_SESSION,
@@ -496,12 +496,12 @@ static void create_find_dialog(void)
 
 	bbox = gtk_hbutton_box_new();
 
-	button = gtk_button_new_with_mnemonic(_("_Mark"));
+	button = gtk_button_new_with_mnemonic(_("_Highlight"));
 	gtk_widget_set_tooltip_text(button,
-			_("Mark all matches in the current document"));
+			_("Highlight all matches in the current document"));
 	gtk_container_add(GTK_CONTAINER(bbox), button);
 	g_signal_connect(button, "clicked", G_CALLBACK(send_find_dialog_response),
-		GINT_TO_POINTER(GEANY_RESPONSE_MARK));
+		GINT_TO_POINTER(GEANY_RESPONSE_HIGHLIGHT));
 
 	button = gtk_button_new_with_mnemonic(_("In Sessi_on"));
 	gtk_container_add(GTK_CONTAINER(bbox), button);
@@ -1189,39 +1189,85 @@ static GSList *find_range(ScintillaObject *sci, GeanyFindFlags flags, struct Sci
 	return g_slist_reverse(matches);
 }
 
-/* Clears markers if text is null/empty.
+/* Highlights or unhighlights matching texts
  * @return Number of matches marked. */
-gint search_mark_all(GeanyDocument *doc, const gchar *search_text, GeanyFindFlags flags)
+gint search_highlight_all(GeanyDocument *doc, const gchar *search_text, GeanyFindFlags flags,
+		void (*sci_indicator_fill_or_clear)(ScintillaObject *, gint, gint))
 {
-	gint count = 0;
-	struct Sci_TextToFind ttf;
-	GSList *match, *matches;
-
 	g_return_val_if_fail(DOC_VALID(doc), 0);
-
-	/* clear previous search indicators */
-	editor_indicator_clear(doc->editor, GEANY_INDICATOR_SEARCH);
 
 	if (G_UNLIKELY(EMPTY(search_text)))
 		return 0;
 
+	ScintillaObject *sci = doc->editor->sci;
+
+	struct Sci_TextToFind ttf;
 	ttf.chrg.cpMin = 0;
-	ttf.chrg.cpMax = sci_get_length(doc->editor->sci);
+	ttf.chrg.cpMax = sci_get_length(sci);
 	ttf.lpstrText = (gchar *)search_text;
+	GSList *matches = find_range(sci, flags, &ttf);
 
-	matches = find_range(doc->editor->sci, flags, &ttf);
-	foreach_slist (match, matches)
+	GeanyMatchInfo *info;
+	gboolean has_cleared = FALSE;
+	gint start, end, count = 0;
+	GSList *match;
+
+	sci_indicator_set(sci, GEANY_INDICATOR_USER);
+
+	if (sci_indicator_fill_or_clear)
 	{
-		GeanyMatchInfo *info = match->data;
+		foreach_slist (match, matches)
+		{
+			info = match->data;
 
-		if (info->end != info->start)
-			editor_indicator_set_on_range(doc->editor, GEANY_INDICATOR_SEARCH, info->start, info->end);
-		count++;
+			if (info->end != info->start)
+				sci_indicator_fill_or_clear(sci, info->start, info->end - info->start);
 
-		geany_match_info_free(info);
+			geany_match_info_free(info);
+			count++;
+		}
 	}
-	g_slist_free(matches);
+	else
+	{
+		foreach_slist (match, matches)
+		{
+			info = match->data;
 
+			if (info->end != info->start)
+			{
+				start = scintilla_send_message(sci, SCI_INDICATORSTART, GEANY_INDICATOR_USER,
+						info->start);
+
+				gint value = scintilla_send_message(sci, SCI_INDICATORVALUEAT, GEANY_INDICATOR_USER,
+						info->start);
+
+				if (start == info->start)
+				{
+					end = scintilla_send_message(sci, SCI_INDICATOREND, GEANY_INDICATOR_USER,
+							info->start);
+
+					if (end == info->end)
+					{
+						sci_indicator_clear(sci, start, end - start);
+						has_cleared = TRUE;
+					}
+				}
+			}
+		}
+
+		foreach_slist (match, matches)
+		{
+			info = match->data;
+
+			if (has_cleared == FALSE && info->end != info->start)
+				sci_indicator_fill(sci, info->start, info->end - info->start);
+
+			geany_match_info_free(info);
+			count++;
+		}
+	}
+
+	g_slist_free(matches);
 	return count;
 }
 
@@ -1321,9 +1367,9 @@ on_find_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 				search_find_usage(search_data.text, search_data.original_text, search_data.flags, TRUE);
 				break;
 
-			case GEANY_RESPONSE_MARK:
+			case GEANY_RESPONSE_HIGHLIGHT:
 			{
-				gint count = search_mark_all(doc, search_data.text, search_data.flags);
+				gint count = search_highlight_all(doc, search_data.text, search_data.flags, NULL);
 
 				if (count == 0)
 					ui_set_statusbar(FALSE, _("No matches found for \"%s\"."), search_data.original_text);

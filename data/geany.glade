@@ -7434,21 +7434,6 @@
                             <signal name="activate" handler="on_find_document_usage1_activate" swapped="no"/>
                           </object>
                         </child>
-                        <child>
-                          <object class="GtkSeparatorMenuItem" id="separator55">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkMenuItem" id="mark_all1">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">_Mark All</property>
-                            <property name="use_underline">True</property>
-                            <signal name="activate" handler="on_mark_all1_activate" swapped="no"/>
-                          </object>
-                        </child>
                       </object>
                     </child>
                   </object>
@@ -7577,6 +7562,108 @@
                             <property name="label" translatable="yes">Go to Symbol De_claration</property>
                             <property name="use_underline">True</property>
                             <signal name="activate" handler="on_goto_tag_declaration1" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkMenuItem" id="mark1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">_Mark</property>
+                    <property name="use_underline">True</property>
+                    <child type="submenu">
+                      <object class="GtkMenu" id="mark1_menu">
+                        <child>
+                          <object class="GtkMenuItem" id="mark_line1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">_Mark Line</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_mark_line1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorMenuItem" id="separator23">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkMenuItem" id="mark_highlight1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">_Highlight Word Or Selection</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_mark_highlight1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkMenuItem" id="mark_highlight_all1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Highlight _All Matching</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_mark_highlight_all1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorMenuItem" id="separator55">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkMenuItem" id="remove_line_markers1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Remove _Line Markers</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_remove_line_markers1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkMenuItem" id="remove_highlights1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Remove H_ighlights</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_remove_highlights1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkMenuItem" id="remove_yellow_tag_markers1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Remove _Yellow Tag Markers</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_remove_yellow_tag_markers1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkMenuItem" id="remove_error_indicators1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Remove _Error Indicators</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_remove_error_indicators1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorMenuItem" id="separator27">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkMenuItem" id="remove_all_markers_and_indicators1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">_Remove All Markers and Indicators</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_remove_all_markers_and_indicators1_activate" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -8142,30 +8229,6 @@
                             <property name="label" translatable="yes">_Unfold All</property>
                             <property name="use_underline">True</property>
                             <signal name="activate" handler="on_menu_unfold_all1_activate" swapped="no"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkSeparatorMenuItem" id="separator23">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkMenuItem" id="remove_markers1">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Remove _Markers</property>
-                            <property name="use_underline">True</property>
-                            <signal name="activate" handler="on_remove_markers1_activate" swapped="no"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkMenuItem" id="menu_remove_indicators1">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Remove Error _Indicators</property>
-                            <property name="use_underline">True</property>
-                            <signal name="activate" handler="on_menu_remove_indicators1_activate" swapped="no"/>
                           </object>
                         </child>
                       </object>

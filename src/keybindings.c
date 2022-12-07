@@ -84,6 +84,7 @@ static gboolean cb_func_select_action(guint key_id);
 static gboolean cb_func_format_action(guint key_id);
 static gboolean cb_func_insert_action(guint key_id);
 static gboolean cb_func_search_action(guint key_id);
+static gboolean cb_func_mark_action(guint key_id);
 static gboolean cb_func_goto_action(guint key_id);
 static gboolean cb_func_switch_action(guint key_id);
 static gboolean cb_func_clipboard_action(guint key_id);
@@ -303,6 +304,7 @@ static void init_default_kb(void)
 	ADD_KB_GROUP(GEANY_KEY_GROUP_INSERT, _("Insert"), cb_func_insert_action);
 	ADD_KB_GROUP(GEANY_KEY_GROUP_SETTINGS, _("Settings"), NULL);
 	ADD_KB_GROUP(GEANY_KEY_GROUP_SEARCH, _("Search"), cb_func_search_action);
+	ADD_KB_GROUP(GEANY_KEY_GROUP_MARK, _("Mark"), cb_func_mark_action);
 	ADD_KB_GROUP(GEANY_KEY_GROUP_GOTO, _("Go to"), cb_func_goto_action);
 	ADD_KB_GROUP(GEANY_KEY_GROUP_VIEW, _("View"), cb_func_view_action);
 	ADD_KB_GROUP(GEANY_KEY_GROUP_DOCUMENT, _("Document"), cb_func_document_action);
@@ -544,25 +546,39 @@ static void init_default_kb(void)
 	add_kb(group, GEANY_KEYS_SEARCH_FINDDOCUMENTUSAGE, NULL,
 		GDK_d, GEANY_PRIMARY_MOD_MASK | GDK_SHIFT_MASK, "popup_finddocumentusage",
 		_("Find Document Usage"), "find_document_usage1");
-	add_kb(group, GEANY_KEYS_SEARCH_MARKALL, NULL,
-		GDK_m, GEANY_PRIMARY_MOD_MASK | GDK_SHIFT_MASK, "find_markall", _("_Mark All"), "mark_all1");
+
+	group = keybindings_get_core_group(GEANY_KEY_GROUP_MARK);
+
+	add_kb(group, GEANY_KEYS_MARK_LINE, NULL,
+		GDK_m, GEANY_PRIMARY_MOD_MASK, "mark_line", _("Mark Line"), "mark_line1");
+	add_kb(group, GEANY_KEYS_MARK_HIGHLIGHT, NULL,
+		GDK_h, GEANY_PRIMARY_MOD_MASK | GDK_SHIFT_MASK, "highlight", _("Highlight Word Or Selection"), "mark_highlight1");
+	add_kb(group, GEANY_KEYS_MARK_HIGHLIGHTALL, NULL,
+		GDK_m, GEANY_PRIMARY_MOD_MASK | GDK_SHIFT_MASK, "highlight_all", _("Highlight All Matching"), "mark_highlight_all1");
+	add_kb(group, GEANY_KEYS_MARK_REMOVEHIGHLIGHTS, NULL,
+		0, 0, "remove_highlights", _("Remove Highlights"), "remove_highlights1");
+	add_kb(group, GEANY_KEYS_MARK_REMOVELINEMARKERS, NULL,
+		0, 0, "remove_line_markers", _("Remove Line Makers"), "remove_line_markers1");
+	add_kb(group, GEANY_KEYS_MARK_REMOVEYELLOWTAGMARKERS, NULL,
+		0, 0, "remove_yellow_tag_markers", _("Remove Yellow Tag Makers"), "remove_yellow_tag_markers1");
+	add_kb(group, GEANY_KEYS_MARK_REMOVEERRORINDICATORS, NULL,
+		0, 0, "remove_error_indicators", _("Remove Error Indicators"), "remove_error_indicators1");
+	add_kb(group, GEANY_KEYS_MARK_REMOVEALL, NULL,
+		0, 0, "remove_all_markers_and_indicators", _("Remove All Markers And Indicators"), "remove_all_markers_and_indicators1");
 
 	group = keybindings_get_core_group(GEANY_KEY_GROUP_GOTO);
 
+	add_kb(group, GEANY_KEYS_GOTO_LINE, NULL,
+		GDK_l, GEANY_PRIMARY_MOD_MASK, "menu_gotoline", _("Go to Line"), "go_to_line1");
 	add_kb(group, GEANY_KEYS_GOTO_BACK, NULL,
 		GDK_Left, GDK_MOD1_MASK, "nav_back", _("Navigate back a location"),
 		"go_to_previous_location1");
 	add_kb(group, GEANY_KEYS_GOTO_FORWARD, NULL,
 		GDK_Right, GDK_MOD1_MASK, "nav_forward", _("Navigate forward a location"),
 		"go_to_next_location1");
-	add_kb(group, GEANY_KEYS_GOTO_LINE, NULL,
-		GDK_l, GEANY_PRIMARY_MOD_MASK, "menu_gotoline", _("Go to Line"), "go_to_line1");
 	add_kb(group, GEANY_KEYS_GOTO_MATCHINGBRACE, NULL,
 		GDK_b, GEANY_PRIMARY_MOD_MASK, "edit_gotomatchingbrace",
 		_("Go to matching brace"), NULL);
-	add_kb(group, GEANY_KEYS_GOTO_TOGGLEMARKER, NULL,
-		GDK_m, GEANY_PRIMARY_MOD_MASK, "edit_togglemarker",
-		_("Toggle marker"), NULL);
 	add_kb(group, GEANY_KEYS_GOTO_NEXTMARKER, NULL,
 		GDK_period, GEANY_PRIMARY_MOD_MASK, "edit_gotonextmarker",
 		_("Go to Ne_xt Marker"), "go_to_next_marker1");
@@ -679,12 +695,6 @@ static void init_default_kb(void)
 		0, 0, "menu_unfoldall", _("Unfold all"), "menu_unfold_all1");
 	add_kb(group, GEANY_KEYS_DOCUMENT_RELOADTAGLIST, NULL,
 		GDK_r, GDK_SHIFT_MASK | GEANY_PRIMARY_MOD_MASK, "reloadtaglist", _("Reload symbol list"), NULL);
-	add_kb(group, GEANY_KEYS_DOCUMENT_REMOVE_MARKERS, NULL,
-		0, 0, "remove_markers", _("Remove Markers"), "remove_markers1");
-	add_kb(group, GEANY_KEYS_DOCUMENT_REMOVE_ERROR_INDICATORS, NULL,
-		0, 0, "remove_error_indicators", _("Remove Error Indicators"), "menu_remove_indicators1");
-	add_kb(group, GEANY_KEYS_DOCUMENT_REMOVE_MARKERS_INDICATORS, NULL,
-		0, 0, "remove_markers_and_indicators", _("Remove Markers and Error Indicators"), NULL);
 
 	group = keybindings_get_core_group(GEANY_KEY_GROUP_BUILD);
 
@@ -1534,28 +1544,6 @@ static gboolean cb_func_search_action(guint key_id)
 			on_find_usage1_activate(NULL, NULL); break;
 		case GEANY_KEYS_SEARCH_FINDDOCUMENTUSAGE:
 			on_find_document_usage1_activate(NULL, NULL); break;
-		case GEANY_KEYS_SEARCH_MARKALL:
-		{
-			gchar *text = NULL;
-			gint pos = sci_get_current_position(sci);
-
-			/* clear existing search indicators instead if next to cursor */
-			if (scintilla_send_message(sci, SCI_INDICATORVALUEAT,
-					GEANY_INDICATOR_SEARCH, pos) ||
-				scintilla_send_message(sci, SCI_INDICATORVALUEAT,
-					GEANY_INDICATOR_SEARCH, MAX(pos - 1, 0)))
-				text = NULL;
-			else
-				text = get_current_word_or_sel(doc, TRUE);
-
-			if (sci_has_selection(sci))
-				search_mark_all(doc, text, GEANY_FIND_MATCHCASE);
-			else
-				search_mark_all(doc, text, GEANY_FIND_MATCHCASE | GEANY_FIND_WHOLEWORD);
-
-			g_free(text);
-			break;
-		}
 	}
 	return TRUE;
 }
@@ -1980,6 +1968,124 @@ static void goto_tag(GeanyDocument *doc, gboolean definition)
 	g_free(text);
 }
 
+static void do_highlight(GeanyDocument *doc, gboolean all_mode)
+{
+	ScintillaObject *sci = doc->editor->sci;
+	sci_indicator_set(sci, GEANY_INDICATOR_USER);
+	gint start = sci_get_selection_start(sci);
+	gint end = sci_get_selection_end(sci);
+	gint all_mode_flags = GEANY_FIND_MATCHCASE;
+	gboolean clear_mode = FALSE;
+
+	if (end > start)
+	{
+		gint ind_start, ind_end, start_val, end_val;
+		ind_start = scintilla_send_message(sci, SCI_INDICATORSTART, GEANY_INDICATOR_USER, start);
+		ind_end = scintilla_send_message(sci, SCI_INDICATOREND, GEANY_INDICATOR_USER, start);
+		start_val = scintilla_send_message(sci, SCI_INDICATORVALUEAT, GEANY_INDICATOR_USER, start);
+		end_val = scintilla_send_message(sci, SCI_INDICATORVALUEAT, GEANY_INDICATOR_USER, end - 1);
+		clear_mode = !!start_val && !!end_val && ind_start <= start && ind_end >= end;
+	}
+	else
+	{
+		gint pos, ind_pos;
+		pos = ind_pos = sci_get_current_position(sci);
+		gboolean ind_exists = !!scintilla_send_message(sci, SCI_INDICATORVALUEAT,
+				GEANY_INDICATOR_USER, ind_pos);
+
+		if (!ind_exists && ind_pos > 0)
+			ind_exists = !!scintilla_send_message(sci, SCI_INDICATORVALUEAT, GEANY_INDICATOR_USER,
+					--ind_pos);
+
+		if (ind_exists)
+		{
+			start = scintilla_send_message(sci, SCI_INDICATORSTART, GEANY_INDICATOR_USER, ind_pos);
+			end = scintilla_send_message(sci, SCI_INDICATOREND, GEANY_INDICATOR_USER, ind_pos);
+			clear_mode = TRUE;
+		}
+		else
+		{
+			start = sci_word_start_position(sci, pos, TRUE);
+			end = sci_word_end_position(sci, pos, TRUE);
+			all_mode_flags |= GEANY_FIND_WHOLEWORD;
+
+			if (end == start)
+				return;
+		}
+	}
+
+	void (*fill_or_clear_func)(ScintillaObject *, gint, gint) = clear_mode ? sci_indicator_clear :
+			sci_indicator_fill;
+
+	if (all_mode)
+	{
+		gchar *text = sci_get_contents_range(sci, start, end);
+		search_highlight_all(doc, text, all_mode_flags, fill_or_clear_func);
+		g_free(text);
+	}
+	else
+		fill_or_clear_func(sci, start, end - start);
+}
+
+static gboolean cb_func_mark_action(guint key_id)
+{
+	GeanyDocument *doc = document_get_current();
+
+	if (doc == NULL)
+		return TRUE;
+
+	ScintillaObject *sci = doc->editor->sci;
+
+	switch (key_id)
+	{
+		case GEANY_KEYS_MARK_HIGHLIGHT:
+		{
+			do_highlight(doc, FALSE);
+			break;
+		}
+		case GEANY_KEYS_MARK_HIGHLIGHTALL:
+		{
+			do_highlight(doc, TRUE);
+			break;
+		}
+		case GEANY_KEYS_MARK_LINE:
+		{
+			gint cur_line = sci_get_current_line(doc->editor->sci);
+			sci_toggle_marker_at_line(doc->editor->sci, cur_line, 1);
+			break;
+		}
+		case GEANY_KEYS_MARK_REMOVEHIGHLIGHTS:
+		{
+			editor_indicator_clear(doc->editor, GEANY_INDICATOR_USER);
+			break;
+		}
+		case GEANY_KEYS_MARK_REMOVELINEMARKERS:
+		{
+			sci_marker_delete_all(sci, 1);
+			break;
+		}
+		case GEANY_KEYS_MARK_REMOVEYELLOWTAGMARKERS:
+		{
+			sci_marker_delete_all(sci, 0);
+			break;
+		}
+		case GEANY_KEYS_MARK_REMOVEERRORINDICATORS:
+		{
+			editor_indicator_clear(doc->editor, GEANY_INDICATOR_ERROR);
+			break;
+		}
+		case GEANY_KEYS_MARK_REMOVEALL:
+		{
+			sci_marker_delete_all(sci, 0);
+			sci_marker_delete_all(sci, 1);
+			editor_indicator_clear(doc->editor, GEANY_INDICATOR_USER);
+			editor_indicator_clear(doc->editor, GEANY_INDICATOR_ERROR);
+		}
+	}
+
+	return TRUE;
+}
+
 /* Common function for goto keybindings, useful even when sci doesn't have focus. */
 static gboolean cb_func_goto_action(guint key_id)
 {
@@ -2018,11 +2124,6 @@ static gboolean cb_func_goto_action(guint key_id)
 		case GEANY_KEYS_GOTO_MATCHINGBRACE:
 			goto_matching_brace(doc);
 			return TRUE;
-		case GEANY_KEYS_GOTO_TOGGLEMARKER:
-		{
-			sci_toggle_marker_at_line(doc->editor->sci, cur_line, 1);
-			return TRUE;
-		}
 		case GEANY_KEYS_GOTO_NEXTMARKER:
 		{
 			gint mline = sci_marker_next(doc->editor->sci, cur_line + 1, 1 << 1, TRUE);
@@ -2562,16 +2663,6 @@ static gboolean cb_func_document_action(guint key_id)
 				editor_toggle_fold(doc->editor, line, 0);
 				break;
 			}
-		case GEANY_KEYS_DOCUMENT_REMOVE_MARKERS:
-			on_remove_markers1_activate(NULL, NULL);
-			break;
-		case GEANY_KEYS_DOCUMENT_REMOVE_ERROR_INDICATORS:
-			on_menu_remove_indicators1_activate(NULL, NULL);
-			break;
-		case GEANY_KEYS_DOCUMENT_REMOVE_MARKERS_INDICATORS:
-			on_remove_markers1_activate(NULL, NULL);
-			on_menu_remove_indicators1_activate(NULL, NULL);
-			break;
 	}
 	return TRUE;
 }

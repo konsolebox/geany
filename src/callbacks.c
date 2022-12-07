@@ -1097,14 +1097,6 @@ void on_toolbutton_run_clicked(GtkAction *action, gpointer user_data)
 	keybindings_send_command(GEANY_KEY_GROUP_BUILD, GEANY_KEYS_BUILD_RUN);
 }
 
-void on_menu_remove_indicators1_activate(GtkMenuItem *menuitem, gpointer user_data)
-{
-	GeanyDocument *doc = document_get_current();
-	g_return_if_fail(doc != NULL);
-
-	editor_indicator_clear(doc->editor, GEANY_INDICATOR_ERROR);
-}
-
 void on_print1_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	GeanyDocument *doc = document_get_current();
@@ -1340,16 +1332,6 @@ void on_menu_open_selected_file1_activate(GtkMenuItem *menuitem, gpointer user_d
 		g_free(filename);
 		g_free(sel);
 	}
-}
-
-void on_remove_markers1_activate(GtkMenuItem *menuitem, gpointer user_data)
-{
-	GeanyDocument *doc = document_get_current();
-	g_return_if_fail(doc != NULL);
-
-	sci_marker_delete_all(doc->editor->sci, 0);	/* delete the yellow tag marker */
-	sci_marker_delete_all(doc->editor->sci, 1);	/* delete user markers */
-	editor_indicator_clear(doc->editor, GEANY_INDICATOR_SEARCH);
 }
 
 static void on_load_tags1_activate(GtkMenuItem *menuitem, gpointer user_data)
@@ -1792,9 +1774,44 @@ static void on_reset_indentation1_activate(GtkMenuItem *menuitem, gpointer user_
 	ui_document_show_hide(NULL);
 }
 
-static void on_mark_all1_activate(GtkMenuItem *menuitem, gpointer user_data)
+static void on_mark_line1_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
-	keybindings_send_command(GEANY_KEY_GROUP_SEARCH, GEANY_KEYS_SEARCH_MARKALL);
+	keybindings_send_command(GEANY_KEY_GROUP_MARK, GEANY_KEYS_MARK_LINE);
+}
+
+static void on_mark_highlight1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	keybindings_send_command(GEANY_KEY_GROUP_MARK, GEANY_KEYS_MARK_HIGHLIGHT);
+}
+
+static void on_mark_highlight_all1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	keybindings_send_command(GEANY_KEY_GROUP_MARK, GEANY_KEYS_MARK_HIGHLIGHTALL);
+}
+
+static void on_remove_line_markers1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	keybindings_send_command(GEANY_KEY_GROUP_MARK, GEANY_KEYS_MARK_REMOVELINEMARKERS);
+}
+
+static void on_remove_highlights1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	keybindings_send_command(GEANY_KEY_GROUP_MARK, GEANY_KEYS_MARK_REMOVEHIGHLIGHTS);
+}
+
+static void on_remove_yellow_tag_markers1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	keybindings_send_command(GEANY_KEY_GROUP_MARK, GEANY_KEYS_MARK_REMOVEYELLOWTAGMARKERS);
+}
+
+static void on_remove_error_indicators1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	keybindings_send_command(GEANY_KEY_GROUP_MARK, GEANY_KEYS_MARK_REMOVEERRORINDICATORS);
+}
+
+static void on_remove_all_markers_and_indicators1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	keybindings_send_command(GEANY_KEY_GROUP_MARK, GEANY_KEYS_MARK_REMOVEALL);
 }
 
 static void on_detect_type_from_file_activate(GtkMenuItem *menuitem, gpointer user_data)

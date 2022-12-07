@@ -119,8 +119,6 @@ void on_toolbutton_goto_clicked(GtkAction *action, gpointer user_data);
 
 void on_toolbutton_run_clicked(GtkAction *action, gpointer user_data);
 
-void on_menu_remove_indicators1_activate(GtkMenuItem *menuitem, gpointer user_data);
-
 void on_print1_activate(GtkMenuItem *menuitem, gpointer user_data);
 
 void on_file_properties_activate(GtkMenuItem *menuitem, gpointer user_data);
@@ -150,8 +148,6 @@ void on_project_close1_activate(GtkMenuItem *menuitem, gpointer user_data);
 void on_project_properties1_activate(GtkMenuItem *menuitem, gpointer user_data);
 
 void on_menu_open_selected_file1_activate(GtkMenuItem *menuitem, gpointer user_data);
-
-void on_remove_markers1_activate(GtkMenuItem *menuitem, gpointer user_data);
 
 void on_context_action1_activate(GtkMenuItem *menuitem, gpointer user_data);
 
