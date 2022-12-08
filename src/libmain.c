@@ -1179,14 +1179,20 @@ gint main_lib(gint argc, gchar **argv)
 	main_status.opening_session_files = FALSE;
 
 	/* open a new file if no other file was opened */
-	document_new_file_if_non_open();
+	if (prefs.auto_open_new_file)
+		document_new_file_if_non_open();
 
 	ui_document_buttons_update();
 	ui_save_buttons_toggle(FALSE);
 
 	doc = document_get_current();
-	sidebar_select_openfiles_item(doc);
-	build_menu_update(doc);
+
+	if (doc)
+	{
+		sidebar_select_openfiles_item(doc);
+		build_menu_update(doc);
+	}
+
 	sidebar_update_tag_list(doc, FALSE);
 
 #ifdef G_OS_WIN32
@@ -1197,7 +1203,8 @@ gint main_lib(gint argc, gchar **argv)
 	setup_window_position();
 
 	/* finally show the window */
-	document_grab_focus(doc);
+	if (doc)
+		document_grab_focus(doc);
 	gtk_widget_show(main_widgets.window);
 	main_status.main_window_realized = TRUE;
 
