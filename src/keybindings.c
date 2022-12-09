@@ -611,7 +611,7 @@ static void init_default_kb(void)
 	group = keybindings_get_core_group(GEANY_KEY_GROUP_VIEW);
 
 	add_kb(group, GEANY_KEYS_VIEW_TOGGLEALL, NULL,
-		0, 0, "menu_toggleall", _("Toggle All Additional Widgets"),
+		GDK_F12, 0, "menu_toggleall", _("Toggle All Additional Widgets"),
 		"menu_toggle_all_additional_widgets1");
 	add_kb(group, GEANY_KEYS_VIEW_FULLSCREEN, cb_func_menu_fullscreen,
 		GDK_F11, 0, "menu_fullscreen", _("Fullscreen"), "menu_fullscreen1");
