@@ -2515,8 +2515,8 @@ gboolean document_save_file(GeanyDocument *doc, gboolean force)
 	if (fp->strip_trailing_spaces)
 		editor_strip_trailing_spaces(doc->editor, TRUE);
 	/* ensure the file has a newline at the end */
-	if (fp->final_new_line)
-		editor_ensure_final_newline(doc->editor);
+	if (fp->final_new_line_unless_empty)
+		editor_ensure_final_newline_unless_empty(doc->editor);
 	/* ensure newlines are consistent */
 	if (fp->ensure_convert_new_lines)
 		sci_convert_eols(doc->editor->sci, sci_get_eol_mode(doc->editor->sci));

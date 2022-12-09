@@ -1260,8 +1260,8 @@ static void init_stash_prefs(void)
 		"indent_mode", GEANY_AUTOINDENT_CURRENTCHARS, "combo_auto_indent_mode_project");
 
 	group = stash_group_new("file_prefs");
-	stash_group_add_toggle_button(group, &priv.final_new_line,
-		"final_new_line", file_prefs.final_new_line, "check_new_line1");
+	stash_group_add_toggle_button(group, &priv.final_new_line_unless_empty,
+		"final_new_line_unless_empty", file_prefs.final_new_line_unless_empty, "check_new_line1");
 	stash_group_add_toggle_button(group, &priv.ensure_convert_new_lines,
 		"ensure_convert_new_lines", file_prefs.ensure_convert_new_lines, "check_ensure_convert_new_lines1");
 	stash_group_add_toggle_button(group, &priv.strip_trailing_spaces,
@@ -1292,7 +1292,7 @@ const GeanyFilePrefs *project_get_file_prefs(void)
 		return &file_prefs;
 
 	fp = file_prefs;
-	COPY_PREF(fp, final_new_line);
+	COPY_PREF(fp, final_new_line_unless_empty);
 	COPY_PREF(fp, ensure_convert_new_lines);
 	COPY_PREF(fp, strip_trailing_spaces);
 	COPY_PREF(fp, replace_tabs);

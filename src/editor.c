@@ -4436,21 +4436,16 @@ void editor_strip_trailing_spaces(GeanyEditor *editor, gboolean ignore_selection
 	sci_end_undo_action(editor->sci);
 }
 
-void editor_ensure_final_newline(GeanyEditor *editor)
+void editor_ensure_final_newline_unless_empty(GeanyEditor *editor)
 {
-	gint max_lines = sci_get_line_count(editor->sci);
-	gboolean append_newline = (max_lines == 1);
-	gint end_document = sci_get_position_from_line(editor->sci, max_lines);
-
-	if (max_lines > 1)
+	if (sci_get_length(editor->sci) > 0)
 	{
-		append_newline = end_document > sci_get_position_from_line(editor->sci, max_lines - 1);
-	}
-	if (append_newline)
-	{
-		const gchar *eol = editor_get_eol_char(editor);
+		gint max_lines = sci_get_line_count(editor->sci);
+		gint end_document = sci_get_position_from_line(editor->sci, max_lines);
 
-		sci_insert_text(editor->sci, end_document, eol);
+		if (max_lines == 1 || max_lines > 1 && end_document >
+				sci_get_position_from_line(editor->sci, max_lines - 1))
+			sci_insert_text(editor->sci, end_document, editor_get_eol_char(editor));
 	}
 }
 

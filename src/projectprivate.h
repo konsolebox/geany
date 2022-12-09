@@ -31,7 +31,7 @@ G_BEGIN_DECLS
 typedef struct GeanyProjectPrivate
 {
 	// file prefs
-	gboolean	final_new_line;
+	gboolean	final_new_line_unless_empty;
 	gboolean	strip_trailing_spaces;
 	gboolean	replace_tabs;
 	gboolean	ensure_convert_new_lines;

@@ -566,7 +566,7 @@ static void prefs_init_dialog(void)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), file_prefs.strip_trailing_spaces);
 
 	widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_new_line");
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), file_prefs.final_new_line);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), file_prefs.final_new_line_unless_empty);
 
 	widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_ensure_convert_new_lines");
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), file_prefs.ensure_convert_new_lines);
@@ -1027,7 +1027,7 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 		file_prefs.strip_trailing_spaces = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_new_line");
-		file_prefs.final_new_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+		file_prefs.final_new_line_unless_empty = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_ensure_convert_new_lines");
 		file_prefs.ensure_convert_new_lines = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));

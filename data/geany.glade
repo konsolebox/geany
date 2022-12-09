@@ -4701,7 +4701,7 @@
                             <property name="can_focus">False</property>
                             <child>
                               <object class="GtkCheckButton" id="check_new_line">
-                                <property name="label" translatable="yes">Ensure new line at file end</property>
+                                <property name="label" translatable="yes">Ensure new line at file end unless empty</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -9605,7 +9605,7 @@
                             <property name="can_focus">False</property>
                             <child>
                               <object class="GtkCheckButton" id="check_new_line1">
-                                <property name="label" translatable="yes">Ensure new line at file end</property>
+                                <property name="label" translatable="yes">Ensure new line at file end unless empty</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>

@@ -46,7 +46,7 @@ typedef struct GeanyFilePrefs
 {
 	gint			default_new_encoding;
 	gint			default_open_encoding;
-	gboolean		final_new_line;
+	gboolean		final_new_line_unless_empty;
 	gboolean		strip_trailing_spaces;
 	gboolean		replace_tabs;
 	gboolean		tab_order_ltr;

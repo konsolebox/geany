@@ -301,7 +301,7 @@ void editor_strip_line_trailing_spaces(GeanyEditor *editor, gint line);
 
 void editor_strip_trailing_spaces(GeanyEditor *editor, gboolean ignore_selection);
 
-void editor_ensure_final_newline(GeanyEditor *editor);
+void editor_ensure_final_newline_unless_empty(GeanyEditor *editor);
 
 void editor_insert_color(GeanyEditor *editor, const gchar *colour);
 
