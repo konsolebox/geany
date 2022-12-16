@@ -1027,7 +1027,7 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 
 			if (!dir || !g_path_is_absolute(dir))
 				if (app->project && !EMPTY(app->project->base_path))
-					dir = g_strdup(app->project->base_path);
+					SETPTR(dir, g_strdup(app->project->base_path));
 
 			if (dir && g_path_is_absolute(dir))
 				document_new_file_in_dir(dir, NULL, NULL, NULL, TRUE);
@@ -1053,9 +1053,7 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 			if (!dir || !g_path_is_absolute(dir))
 			{
 				const gchar *tmp = utils_get_default_dir_utf8();
-
-				if (tmp)
-					dir = g_strdup(tmp);
+				SETPTR(dir, tmp ? g_strdup(tmp) : NULL);
 			}
 
 			if (dir && g_path_is_absolute(dir))
@@ -1093,11 +1091,9 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 
 						if (short_name_b && g_ascii_strncasecmp(short_name_a, short_name_b, len) == 0 &&
 								(short_name_b[len] == '\0' || short_name_b[len] == G_DIR_SEPARATOR))
-						{
 							document_action_recursive(model, &iter, OPENFILES_ACTION_REMOVE);
-							g_free(short_name_b);
-						}
 
+						g_free(short_name_b);
 						--i;
 					}
 
