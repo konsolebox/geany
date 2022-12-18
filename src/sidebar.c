@@ -272,7 +272,7 @@ static gint documents_sort_func(GtkTreeModel *model, GtkTreeIter *iter_a,
 								GtkTreeIter *iter_b, gpointer data)
 {
 	gchar *key_a, *key_b;
-	gchar *name_a, *name_b;
+	gchar *name_a = NULL, *name_b = NULL;
 	gint cmp;
 
 	gtk_tree_model_get(model, iter_a, DOCUMENTS_SHORTNAME, &name_a, -1);
@@ -481,7 +481,7 @@ static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 
 	static GtkTreeIter parent;
 	GtkTreeModel *model = GTK_TREE_MODEL(store_openfiles);
-	gchar *path, *stored_path, *stored_folder;
+	gchar *path, *stored_path = NULL, *stored_folder = NULL;
 	gchar *folder = sidebar_get_doc_folder(doc, &path);
 	gboolean parent_found = FALSE;
 
@@ -489,6 +489,7 @@ static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 	{
 		do
 		{
+			stored_folder = stored_path = NULL;
 			gtk_tree_model_get(model, &parent, DOCUMENTS_FILENAME, &stored_path,
 					DOCUMENTS_SHORTNAME, &stored_folder, -1);
 
@@ -567,7 +568,7 @@ static void openfiles_remove(GeanyDocument *doc)
 void sidebar_openfiles_update(GeanyDocument *doc)
 {
 	GtkTreeIter *iter = &doc->priv->iter;
-	gchar *fname;
+	gchar *fname = NULL;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(store_openfiles), iter, DOCUMENTS_FILENAME, &fname, -1);
 
@@ -707,8 +708,8 @@ static void on_find_in_files(GtkMenuItem *menuitem, gpointer user_data)
 	GtkTreeSelection *treesel;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
-	GeanyDocument *doc;
-	gchar *dir;
+	GeanyDocument *doc = NULL;
+	gchar *dir = NULL;
 
 	treesel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
 	if (!gtk_tree_selection_get_selected(treesel, &model, &iter))
@@ -890,7 +891,7 @@ static void unfold_parent(GtkTreeIter *iter)
 static gboolean tree_model_find_node(GtkTreeModel *model, GtkTreePath *path,
 		GtkTreeIter *iter, gpointer data)
 {
-	GeanyDocument *doc;
+	GeanyDocument *doc = NULL;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(store_openfiles), iter, DOCUMENTS_DOCUMENT, &doc, -1);
 
@@ -995,6 +996,7 @@ static void document_action_recursive(GtkTreeModel *model, GtkTreeIter *parent, 
 
 	while (i >= 0 && gtk_tree_model_iter_nth_child(model, &child, parent, i))
 	{
+		doc = NULL;
 		gtk_tree_model_get(model, &child, DOCUMENTS_DOCUMENT, &doc, -1);
 		document_action(doc, action);
 		--i;
@@ -1006,7 +1008,7 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 	GtkTreeIter iter;
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
 	GtkTreeModel *model;
-	GeanyDocument *doc;
+	GeanyDocument *doc = NULL;
 	gint action = GPOINTER_TO_INT(user_data);
 
 	if (gtk_tree_selection_get_selected(selection, &model, &iter))
@@ -1077,7 +1079,7 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 			{
 				case OPENFILES_ACTION_REMOVE_RECURSIVE:
 				{
-					gchar *short_name_a, *short_name_b;
+					gchar *short_name_a = NULL;
 
 					gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name_a, -1);
 					g_return_if_fail(short_name_a);
@@ -1087,6 +1089,7 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 
 					while (i >= 0 && gtk_tree_model_iter_nth_child(model, &iter, NULL, i))
 					{
+						gchar *short_name_b = NULL;
 						gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name_b, -1);
 
 						if (short_name_b && g_ascii_strncasecmp(short_name_a, short_name_b, len) == 0 &&
@@ -1102,7 +1105,7 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 				}
 				case OPENFILES_ACTION_RELOAD:
 				{
-					gchar *short_name;
+					gchar *short_name = NULL;
 					gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name, -1);
 
 					if (short_name)
@@ -1163,7 +1166,7 @@ static gboolean taglist_go_to_selection(GtkTreeSelection *selection, guint keyva
 
 	if (gtk_tree_selection_get_selected(selection, &model, &iter))
 	{
-		TMTag *tag;
+		TMTag *tag = NULL;
 
 		gtk_tree_model_get(model, &iter, SYMBOLS_COLUMN_TAG, &tag, -1);
 		if (! tag)
@@ -1464,7 +1467,7 @@ void sidebar_rename_file_cb(G_GNUC_UNUSED guint key_id)
 	GtkTreeSelection *selection;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
-	GeanyDocument *doc;
+	GeanyDocument *doc = NULL;
 
 	if (ui_prefs.sidebar_visible && interface_prefs.sidebar_openfiles_visible)
 	{

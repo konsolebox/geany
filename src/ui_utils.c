@@ -1611,6 +1611,7 @@ static gboolean tree_model_find_text(GtkTreeModel *model,
 	{
 		do
 		{
+			combo_text = NULL;
 			gtk_tree_model_get(model, iter, 0, &combo_text, -1);
 			found = utils_str_equal(combo_text, text);
 			g_free(combo_text);

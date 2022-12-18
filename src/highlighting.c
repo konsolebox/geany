@@ -1155,7 +1155,7 @@ static void on_color_scheme_changed(GtkTreeSelection *treesel, gpointer dummy)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
-	gchar *fname;
+	gchar *fname = NULL;
 	gchar *path;
 
 	if (!gtk_tree_selection_get_selected(treesel, &model, &iter))

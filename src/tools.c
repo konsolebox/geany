@@ -450,8 +450,7 @@ static void cc_show_dialog_custom_commands(void)
 		{
 			do
 			{
-				gchar *cmd;
-				gchar *lbl;
+				gchar *cmd = NULL, *lbl = NULL;
 
 				gtk_tree_model_get(GTK_TREE_MODEL(cc.store), &iter, CC_COLUMN_CMD, &cmd, CC_COLUMN_LABEL, &lbl, -1);
 				if (!EMPTY(cmd))

@@ -474,7 +474,7 @@ on_compiler_treeview_copy_activate(GtkMenuItem *menuitem, gpointer user_data)
 
 	if (gtk_tree_selection_get_selected(selection, &model, &iter))
 	{
-		gchar *string;
+		gchar *string = NULL;
 
 		gtk_tree_model_get(model, &iter, str_idx, &string, -1);
 		if (!EMPTY(string))
@@ -515,7 +515,7 @@ static void on_compiler_treeview_copy_all_activate(GtkMenuItem *menuitem, gpoint
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter);
 	while (valid)
 	{
-		gchar *line;
+		gchar *line = NULL;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, str_idx, &line, -1);
 		if (!EMPTY(line))
@@ -611,7 +611,7 @@ find_prev_build_dir(GtkTreePath *cur, GtkTreeModel *model, gchar **prefix)
 	{
 		if (gtk_tree_model_get_iter(model, &iter, cur))
 		{
-			gchar *string;
+			gchar *string = NULL;
 			gtk_tree_model_get(model, &iter, COMPILER_COL_STRING, &string, -1);
 			if (string != NULL && build_parse_make_dir(string, prefix))
 			{
@@ -695,8 +695,8 @@ gboolean msgwin_goto_compiler_file_line(gboolean focus_editor)
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
-	gchar *string;
-	GdkColor *color;
+	gchar *string = NULL;
+	GdkColor *color = NULL;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(msgwindow.tree_compiler));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter))
@@ -1069,8 +1069,8 @@ gboolean msgwin_goto_messages_file_line(gboolean focus_editor)
 	if (gtk_tree_selection_get_selected(selection, &model, &iter))
 	{
 		gint line;
-		guint id;
-		gchar *string;
+		guint id = 0;
+		gchar *string = NULL;
 		GeanyDocument *doc;
 		GeanyDocument *old_doc = document_get_current();
 

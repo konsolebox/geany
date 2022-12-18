@@ -147,7 +147,7 @@ static void kb_tree_view_change_button_clicked_cb(GtkWidget *button, KbData *kbd
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GtkTreeSelection *selection;
-	gchar *name;
+	gchar *name = NULL;
 
 	selection = gtk_tree_view_get_selection(kbdata->tree);
 	if (gtk_tree_selection_get_selected(selection, &model, &iter))
@@ -308,7 +308,7 @@ static void kb_set_shortcut(GtkTreeStore *store, GtkTreeIter *iter,
 {
 	gchar *key_string = gtk_accelerator_name(key, mods);
 	GtkTreeIter parent;
-	guint kid, gid;
+	guint kid = 0, gid = 0;
 	GeanyKeyBinding *kb;
 	gboolean bold;
 
@@ -335,7 +335,7 @@ void prefs_kb_search_name(const gchar *search)
 	valid = gtk_tree_model_get_iter_first(model, &iter);
 	while (valid)
 	{
-		gchar *name;
+		gchar *name = NULL;
 
 		gtk_tree_model_get(model, &iter, KB_TREE_ACTION, &name, -1);
 		if (g_strcmp0(name, search) == 0)
@@ -823,8 +823,8 @@ static void kb_update(KbData *kbdata)
 		/* foreach child */
 		while (TRUE)
 		{
-			guint kid;
-			gchar *str;
+			guint kid = 0;
+			gchar *str = NULL;
 			guint key;
 			GdkModifierType mods;
 			GeanyKeyBinding *kb;
@@ -1418,7 +1418,7 @@ static gboolean kb_find_duplicate(GtkTreeStore *store, GtkWidget *parent, GtkTre
 {
 	GtkTreeModel *model = GTK_TREE_MODEL(store);
 	GtkTreeIter parent_iter;
-	gchar *kb_str;
+	gchar *kb_str = NULL;
 	guint kb_key;
 	GdkModifierType kb_mods;
 
@@ -1455,7 +1455,7 @@ static gboolean kb_find_duplicate(GtkTreeStore *store, GtkWidget *parent, GtkTre
 			/* search another item with the same key and modifiers */
 			if (kb_key == key && kb_mods == mods)
 			{
-				gchar *label;
+				gchar *label = NULL;
 				gint ret;
 
 				gtk_tree_model_get(model, &iter, KB_TREE_ACTION, &label, -1);

@@ -378,7 +378,7 @@ static gboolean find_toplevel_iter(GtkTreeStore *store, GtkTreeIter *iter, const
 		return FALSE;
 	do
 	{
-		gchar *candidate;
+		gchar *candidate = NULL;
 
 		gtk_tree_model_get(model, iter, SYMBOLS_COLUMN_NAME, &candidate, -1);
 		/* FIXME: what if 2 different items have the same name?
@@ -1297,7 +1297,7 @@ static void update_tree_tags(GeanyDocument *doc, GList **tags)
 	cont = gtk_tree_model_get_iter_first(model, &iter);
 	while (cont)
 	{
-		TMTag *tag;
+		TMTag *tag = NULL;
 
 		gtk_tree_model_get(model, &iter, SYMBOLS_COLUMN_TAG, &tag, -1);
 		if (! tag) /* most probably a toplevel, skip it */
@@ -1441,7 +1441,7 @@ static gint tree_sort_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b,
 		gpointer user_data)
 {
 	gboolean sort_by_name = GPOINTER_TO_INT(user_data);
-	TMTag *tag_a, *tag_b;
+	TMTag *tag_a = NULL, *tag_b = NULL;
 	gint cmp;
 
 	gtk_tree_model_get(model, a, SYMBOLS_COLUMN_TAG, &tag_a, -1);
@@ -1457,7 +1457,7 @@ static gint tree_sort_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b,
 	}
 	else
 	{
-		gchar *astr, *bstr;
+		gchar *astr = NULL, *bstr = NULL;
 
 		gtk_tree_model_get(model, a, SYMBOLS_COLUMN_NAME, &astr, -1);
 		gtk_tree_model_get(model, b, SYMBOLS_COLUMN_NAME, &bstr, -1);

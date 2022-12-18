@@ -963,7 +963,7 @@ static void stash_tree_renderer_set_data(GtkCellLayout *cell_layout, GtkCellRend
 	GtkTreeModel *model, GtkTreeIter *iter, gpointer user_data)
 {
 	GType cell_type = GPOINTER_TO_SIZE(user_data);
-	StashTreeValue *value;
+	StashTreeValue *value = NULL;
 	StashPref *pref;
 	gboolean matches_type;
 
@@ -998,7 +998,7 @@ static void stash_tree_renderer_edited(gchar *path_str, gchar *new_text, GtkTree
 {
 	GtkTreePath *path;
 	GtkTreeIter iter;
-	StashTreeValue *value;
+	StashTreeValue *value = NULL;
 	StashPref *pref;
 
 	path = gtk_tree_path_new_from_string(path_str);
@@ -1038,7 +1038,7 @@ static void stash_tree_string_edited(GtkCellRenderer *cell, gchar *path_str, gch
 static gboolean stash_tree_discard_value(GtkTreeModel *model, GtkTreePath *path,
 	GtkTreeIter *iter, gpointer user_data)
 {
-	StashTreeValue *value;
+	StashTreeValue *value = NULL;
 
 	gtk_tree_model_get(model, iter, STASH_TREE_VALUE, &value, -1);
 	/* don't access value->pref as it might already have been freed */
@@ -1186,7 +1186,7 @@ static void stash_tree_action(GtkTreeModel *model, PrefAction action)
 {
 	GtkTreeIter iter;
 	gboolean valid = gtk_tree_model_get_iter_first(model, &iter);
-	StashTreeValue *value;
+	StashTreeValue *value = NULL;
 
 	while (valid)
 	{

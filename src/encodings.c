@@ -480,8 +480,8 @@ static gint encoding_combo_store_sort_func(GtkTreeModel *model,
 {
 	gboolean a_has_child = gtk_tree_model_iter_has_child(model, a);
 	gboolean b_has_child = gtk_tree_model_iter_has_child(model, b);
-	gchar *a_string;
-	gchar *b_string;
+	gchar *a_string = NULL;
+	gchar *b_string = NULL;
 	gint cmp_res;
 
 	if (a_has_child != b_has_child)
@@ -553,7 +553,7 @@ GtkTreeStore *encodings_encoding_store_new(gboolean has_detect)
 
 gint encodings_encoding_store_get_encoding(GtkTreeStore *store, GtkTreeIter *iter)
 {
-	gint enc;
+	gint enc = -1;
 	gtk_tree_model_get(GTK_TREE_MODEL(store), iter, 0, &enc, -1);
 	return enc;
 }
@@ -579,7 +579,7 @@ void encodings_encoding_store_cell_data_func(GtkCellLayout *cell_layout,
 											 gpointer data)
 {
 	gboolean sensitive = !gtk_tree_model_iter_has_child(tree_model, iter);
-	gchar *text;
+	gchar *text = NULL;
 
 	gtk_tree_model_get(tree_model, iter, 1, &text, -1);
 	g_object_set(cell, "sensitive", sensitive, "text", text, NULL);

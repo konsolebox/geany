@@ -694,7 +694,7 @@ static void tb_editor_btn_remove_clicked_cb(GtkWidget *button, TBEditorWidget *t
 	GtkTreeModel *model_used;
 	GtkTreeSelection *selection_used;
 	GtkTreeIter iter_used, iter_new;
-	gchar *action_name;
+	gchar *action_name = NULL;
 
 	selection_used = gtk_tree_view_get_selection(tbw->tree_used);
 	if (gtk_tree_selection_get_selected(selection_used, &model_used, &iter_used))
@@ -719,7 +719,7 @@ static void tb_editor_btn_add_clicked_cb(GtkWidget *button, TBEditorWidget *tbw)
 	GtkTreeModel *model_available;
 	GtkTreeSelection *selection_available, *selection_used;
 	GtkTreeIter iter_available, iter_new, iter_selected;
-	gchar *action_name;
+	gchar *action_name = NULL;
 
 	selection_available = gtk_tree_view_get_selection(tbw->tree_available);
 	if (gtk_tree_selection_get_selected(selection_available, &model_available, &iter_available))
@@ -764,7 +764,7 @@ static void tb_editor_drag_data_get_cb(GtkWidget *widget, GdkDragContext *contex
 	GtkTreeSelection *selection;
 	GtkTreeModel *model;
 	GdkAtom atom;
-	gchar *name;
+	gchar *name = NULL;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
 	if (! gtk_tree_selection_get_selected(selection, &model, &iter))
@@ -842,7 +842,7 @@ static void tb_editor_drag_data_rcvd_cb(GtkWidget *widget, GdkDragContext *conte
 static gboolean tb_editor_foreach_used(GtkTreeModel *model, GtkTreePath *path,
 									   GtkTreeIter *iter, gpointer data)
 {
-	gchar *action_name;
+	gchar *action_name = NULL;
 
 	gtk_tree_model_get(model, iter, TB_EDITOR_COL_ACTION, &action_name, -1);
 

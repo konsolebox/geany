@@ -341,7 +341,7 @@ static void filetype_combo_cell_data_func(GtkCellLayout *cell_layout, GtkCellRen
 		GtkTreeModel *tree_model, GtkTreeIter *iter, gpointer data)
 {
 	gboolean sensitive = !gtk_tree_model_iter_has_child(tree_model, iter);
-	gchar *text;
+	gchar *text = NULL;
 
 	gtk_tree_model_get(tree_model, iter, 1, &text, -1);
 	g_object_set(cell, "sensitive", sensitive, "text", text, NULL);
@@ -423,7 +423,7 @@ static gboolean filetype_combo_box_set_active_filetype(GtkComboBox *combo, const
 	{
 		do
 		{
-			gint row_id;
+			gint row_id = -1;
 			gtk_tree_model_get(model, &iter, 0, &row_id, -1);
 			if (id == row_id)
 			{

@@ -1403,7 +1403,7 @@ static void pm_selection_changed(GtkTreeSelection *selection, gpointer user_data
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
-	Plugin *p;
+	Plugin *p = NULL;
 
 	if (gtk_tree_selection_get_selected(selection, &model, &iter))
 	{
@@ -1423,6 +1423,7 @@ static gboolean find_iter_for_plugin(Plugin *p, GtkTreeModel *model, GtkTreeIter
 	     valid;
 	     valid = gtk_tree_model_iter_next(model, iter))
 	{
+		pp = NULL;
 		gtk_tree_model_get(model, iter, PLUGIN_COLUMN_PLUGIN, &pp, -1);
 		if (p == pp)
 			return TRUE;
@@ -1441,7 +1442,7 @@ static void pm_plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer 
 	GtkTreeIter store_iter;
 	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
 	GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(pm_widgets.tree));
-	Plugin *p;
+	Plugin *p = NULL;
 	Plugin *proxy;
 	guint prev_num_proxies;
 
@@ -1619,7 +1620,7 @@ static gboolean pm_treeview_query_tooltip(GtkWidget *widget, gint x, gint y,
 static void pm_treeview_text_cell_data_func(GtkTreeViewColumn *column, GtkCellRenderer *cell,
 		GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
 {
-	Plugin *p;
+	Plugin *p = NULL;
 
 	gtk_tree_model_get(model, iter, PLUGIN_COLUMN_PLUGIN, &p, -1);
 
@@ -1648,7 +1649,7 @@ static gboolean pm_treeview_button_press_cb(GtkWidget *widget, GdkEventButton *e
 static gint pm_tree_sort_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b,
 		gpointer user_data)
 {
-	Plugin *pa, *pb;
+	Plugin *pa = NULL, *pb = NULL;
 
 	gtk_tree_model_get(model, a, PLUGIN_COLUMN_PLUGIN, &pa, -1);
 	gtk_tree_model_get(model, b, PLUGIN_COLUMN_PLUGIN, &pb, -1);
@@ -1702,7 +1703,7 @@ static gboolean pm_tree_search(const gchar *key, const gchar *haystack)
 
 static gboolean pm_tree_filter_func(GtkTreeModel *model, GtkTreeIter *iter, gpointer user_data)
 {
-	Plugin *plugin;
+	Plugin *plugin = NULL;
 	gboolean matched;
 	const gchar *key;
 	gchar *haystack, *filename;
@@ -1792,7 +1793,7 @@ static void pm_on_plugin_button_clicked(G_GNUC_UNUSED GtkButton *button, gpointe
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
 	GtkTreeIter iter;
-	Plugin *p;
+	Plugin *p = NULL;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(pm_widgets.tree));
 	if (gtk_tree_selection_get_selected(selection, &model, &iter))
