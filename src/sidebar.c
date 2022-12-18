@@ -958,11 +958,6 @@ static void document_action(GeanyDocument *doc, gint action)
 			dialogs_show_save_as();
 			break;
 		}
-		case OPENFILES_ACTION_RELOAD:
-		{
-			document_reload_prompt(doc, NULL);
-			break;
-		}
 		case OPENFILES_ACTION_RELOAD_NO_PROMPT:
 		{
 			if (doc->real_path)
@@ -1015,95 +1010,90 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 	{
 		gtk_tree_model_get(model, &iter, DOCUMENTS_DOCUMENT, &doc, -1);
 
-		if (action == OPENFILES_ACTION_NEW)
+		switch (action)
 		{
-			gchar *dir = NULL;
-
-			if (doc)
+			case OPENFILES_ACTION_NEW:
 			{
-				if (doc->file_name)
-					dir = g_path_get_dirname(doc->file_name);
-			}
-			else
-				gtk_tree_model_get(model, &iter, DOCUMENTS_FILENAME, &dir, -1);
+				gchar *dir = NULL;
 
-			if (!dir || !g_path_is_absolute(dir))
-				if (app->project && !EMPTY(app->project->base_path))
-					SETPTR(dir, g_strdup(app->project->base_path));
-
-			if (dir && g_path_is_absolute(dir))
-				document_new_file_in_dir(dir, NULL, NULL, NULL, TRUE);
-			else
-				document_new_file(NULL, NULL, NULL);
-
-			g_free(dir);
-			return;
-		}
-
-		if (action == OPENFILES_ACTION_OPEN)
-		{
-			gchar *dir = NULL;
-
-			if (doc)
-			{
-				if (doc->file_name)
-					dir = g_path_get_dirname(doc->file_name);
-			}
-			else
-				gtk_tree_model_get(model, &iter, DOCUMENTS_FILENAME, &dir, -1);
-
-			if (!dir || !g_path_is_absolute(dir))
-			{
-				const gchar *tmp = utils_get_default_dir_utf8();
-				SETPTR(dir, tmp ? g_strdup(tmp) : NULL);
-			}
-
-			if (dir && g_path_is_absolute(dir))
-				dialogs_show_open_file(FALSE, dir);
-			else
-				dialogs_show_open_file(FALSE, NULL);
-
-			g_free(dir);
-			return;
-		}
-
-		if (doc)
-		{
-			document_action(doc, action);
-		}
-		else
-		{
-			/* parent item selected */
-
-			switch (action)
-			{
-				case OPENFILES_ACTION_REMOVE_RECURSIVE:
+				if (doc)
 				{
-					gchar *short_name_a = NULL;
-
-					gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name_a, -1);
-					g_return_if_fail(short_name_a);
-
-					gint len = strlen(short_name_a);
-					gint i = gtk_tree_model_iter_n_children(model, NULL) - 1;
-
-					while (i >= 0 && gtk_tree_model_iter_nth_child(model, &iter, NULL, i))
-					{
-						gchar *short_name_b = NULL;
-						gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name_b, -1);
-
-						if (short_name_b && g_ascii_strncasecmp(short_name_a, short_name_b, len) == 0 &&
-								(short_name_b[len] == '\0' || short_name_b[len] == G_DIR_SEPARATOR))
-							document_action_recursive(model, &iter, OPENFILES_ACTION_REMOVE);
-
-						g_free(short_name_b);
-						--i;
-					}
-
-					g_free(short_name_a);
-					break;
+					if (doc->file_name)
+						dir = g_path_get_dirname(doc->file_name);
 				}
-				case OPENFILES_ACTION_RELOAD:
+				else
+					gtk_tree_model_get(model, &iter, DOCUMENTS_FILENAME, &dir, -1);
+
+				if (!dir || !g_path_is_absolute(dir))
+					if (app->project && !EMPTY(app->project->base_path))
+						SETPTR(dir, g_strdup(app->project->base_path));
+
+				if (dir && g_path_is_absolute(dir))
+					document_new_file_in_dir(dir, NULL, NULL, NULL, TRUE);
+				else
+					document_new_file(NULL, NULL, NULL);
+
+				g_free(dir);
+				break;
+			}
+			case OPENFILES_ACTION_OPEN:
+			{
+				gchar *dir = NULL;
+
+				if (doc)
+				{
+					if (doc->file_name)
+						dir = g_path_get_dirname(doc->file_name);
+				}
+				else
+					gtk_tree_model_get(model, &iter, DOCUMENTS_FILENAME, &dir, -1);
+
+				if (!dir || !g_path_is_absolute(dir))
+				{
+					const gchar *tmp = utils_get_default_dir_utf8();
+					SETPTR(dir, tmp ? g_strdup(tmp) : NULL);
+				}
+
+				if (dir && g_path_is_absolute(dir))
+					dialogs_show_open_file(FALSE, dir);
+				else
+					dialogs_show_open_file(FALSE, NULL);
+
+				g_free(dir);
+				break;
+			}
+			case OPENFILES_ACTION_REMOVE_RECURSIVE:
+			{
+				g_return_if_fail(doc == NULL);
+
+				gchar *short_name_a = NULL;
+				gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name_a, -1);
+				g_return_if_fail(short_name_a);
+
+				gint len = strlen(short_name_a);
+				gint i = gtk_tree_model_iter_n_children(model, NULL) - 1;
+
+				while (i >= 0 && gtk_tree_model_iter_nth_child(model, &iter, NULL, i))
+				{
+					gchar *short_name_b = NULL;
+					gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name_b, -1);
+
+					if (short_name_b && g_ascii_strncasecmp(short_name_a, short_name_b, len) == 0 &&
+							(short_name_b[len] == '\0' || short_name_b[len] == G_DIR_SEPARATOR))
+						document_action_recursive(model, &iter, OPENFILES_ACTION_REMOVE);
+
+					g_free(short_name_b);
+					--i;
+				}
+
+				g_free(short_name_a);
+				break;
+			}
+			case OPENFILES_ACTION_RELOAD:
+			{
+				if (doc)
+					document_reload_prompt(doc, NULL);
+				else
 				{
 					gchar *short_name = NULL;
 					gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name, -1);
@@ -1113,16 +1103,20 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 						if (dialogs_show_question_full(NULL, _("_Reload"), GTK_STOCK_CANCEL,
 								_("Any unsaved changes and undo history will be lost."),
 								_("Reload all documents under '%s'?"), short_name))
-						{
-							document_action_recursive(model, &iter, OPENFILES_ACTION_RELOAD_NO_PROMPT);
-						}
+							document_action_recursive(model, &iter,
+									OPENFILES_ACTION_RELOAD_NO_PROMPT);
 
 						g_free(short_name);
 					}
-
-					break;
 				}
-				default:
+
+				break;
+			}
+			default:
+			{
+				if (doc)
+					document_action(doc, action);
+				else
 					document_action_recursive(model, &iter, action);
 			}
 		}
