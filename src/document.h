@@ -353,6 +353,10 @@ gboolean document_rename_and_save(GeanyDocument *doc, const gchar *new_filename,
 
 gboolean document_rename_prompt(GeanyDocument *doc);
 
+gchar *document_get_dirname(GeanyDocument *doc);
+
+gboolean document_has_dirname(GeanyDocument *doc);
+
 #endif /* GEANY_PRIVATE */
 
 G_END_DECLS

@@ -2099,3 +2099,18 @@ void utils_start_new_geany_instance(const gchar *doc_path)
 	else
 		g_printerr("Unable to find 'geany'");
 }
+
+void utils_open_local_path(const gchar *path)
+{
+	gchar *uri = strncmp(path, "file://", 7) == 0 ? g_strdup(path) :
+			g_strconcat("file://", path, NULL);
+	GError *error = NULL;
+
+	if (!g_app_info_launch_default_for_uri(uri, NULL, &error))
+	{
+		dialogs_show_msgbox(GTK_MESSAGE_ERROR, "Failed to open %s: %s", uri, error->message);
+		g_error_free(error);
+	}
+
+	g_free(uri);
+}

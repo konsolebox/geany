@@ -111,6 +111,8 @@ void on_help1_activate(GtkMenuItem *menuitem, gpointer user_data);
 
 void on_toolbutton_compile_clicked(GtkAction *action, gpointer user_data);
 
+void on_open_directory1_activate(GtkMenuItem * menitem, gpointer user_data);
+
 void on_line_wrapping1_toggled(GtkCheckMenuItem *checkmenuitem, gpointer user_data);
 
 void on_toolbutton_goto_entry_activate(GtkAction *action, const gchar *text, gpointer user_data);

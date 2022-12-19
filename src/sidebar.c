@@ -62,6 +62,7 @@ static struct
 	GtkWidget *close_recursively;
 	GtkWidget *new;
 	GtkWidget *open;
+	GtkWidget *open_dir;
 	GtkWidget *save;
 	GtkWidget *save_as;
 	GtkWidget *reload;
@@ -73,7 +74,7 @@ static struct
 	GtkWidget *expand_all;
 	GtkWidget *collapse_all;
 }
-doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 enum
 {
@@ -87,6 +88,7 @@ enum
 	OPENFILES_ACTION_REMOVE_RECURSIVE,
 	OPENFILES_ACTION_NEW,
 	OPENFILES_ACTION_OPEN,
+	OPENFILES_ACTION_OPEN_DIR,
 	OPENFILES_ACTION_SAVE,
 	OPENFILES_ACTION_SAVE_AS,
 	OPENFILES_ACTION_RELOAD,
@@ -785,6 +787,19 @@ static void create_openfiles_popup_menu(void)
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
 
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Open Directory"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
+			gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, GTK_ICON_SIZE_MENU));
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+	g_signal_connect(item, "activate",
+			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_OPEN_DIR));
+	doc_items.open_dir = item;
+
+	item = gtk_separator_menu_item_new();
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+
 	item = gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE, NULL);
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
@@ -1062,6 +1077,21 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 				g_free(dir);
 				break;
 			}
+			case OPENFILES_ACTION_OPEN_DIR:
+			{
+				gchar *dir = NULL;
+
+				if (doc)
+					dir = document_get_dirname(doc);
+				else
+					gtk_tree_model_get(model, &iter, DOCUMENTS_FILENAME, &dir, -1);
+
+				if (dir && g_path_is_absolute(dir))
+					utils_open_local_path(dir);
+
+				g_free(dir);
+				break;
+			}
 			case OPENFILES_ACTION_REMOVE_RECURSIVE:
 			{
 				g_return_if_fail(doc == NULL);
@@ -1293,13 +1323,14 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gboolean sel, path;
 	gchar *shortname = NULL;
 	GeanyDocument *doc = NULL;
+	gchar *filename = NULL;
 
 	/* maybe no selection e.g. if ctrl-click deselected */
 	sel = gtk_tree_selection_get_selected(selection, &model, &iter);
 	if (sel)
 	{
-		gtk_tree_model_get(model, &iter, DOCUMENTS_DOCUMENT, &doc,
-			DOCUMENTS_SHORTNAME, &shortname, -1);
+		gtk_tree_model_get(model, &iter, DOCUMENTS_DOCUMENT, &doc, DOCUMENTS_SHORTNAME, &shortname,
+				DOCUMENTS_FILENAME, &filename, -1);
 	}
 
 	/* can close all, save all (except shortname), but only reload individually ATM */
@@ -1307,6 +1338,7 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gtk_widget_set_sensitive(doc_items.close_recursively, sel && !doc);
 	gtk_widget_set_sensitive(doc_items.new, sel);
 	gtk_widget_set_sensitive(doc_items.open, sel);
+	gtk_widget_set_sensitive(doc_items.open_dir, doc ? document_has_dirname(doc) : filename && g_path_is_absolute(filename));
 	gtk_widget_set_sensitive(doc_items.save, doc ? doc->changed && doc->file_name && g_path_is_absolute(doc->file_name) : sel);
 	gtk_widget_set_sensitive(doc_items.save_as, doc != NULL);
 	gtk_widget_set_sensitive(doc_items.reload, sel && (!doc || doc->real_path));
@@ -1315,6 +1347,7 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gtk_widget_set_sensitive(doc_items.delete, doc && doc->real_path);
 	gtk_widget_set_sensitive(doc_items.find_in_files, sel);
 	g_free(shortname);
+	g_free(filename);
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(doc_items.show_paths), documents_show_paths);
 	gtk_widget_set_sensitive(doc_items.expand_all, documents_show_paths);

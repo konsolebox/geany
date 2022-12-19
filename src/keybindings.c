@@ -677,6 +677,8 @@ static void init_default_kb(void)
 
 	group = keybindings_get_core_group(GEANY_KEY_GROUP_DOCUMENT);
 
+	add_kb(group, GEANY_KEYS_DOCUMENT_OPEN_DIRECTORY, NULL,
+		0, 0, "menu_open_directory", _("Open Directory"), "open_directory1");
 	add_kb(group, GEANY_KEYS_DOCUMENT_LINEWRAP, NULL,
 		0, 0, "menu_linewrap", _("Toggle Line wrapping"), "menu_line_wrapping1");
 	add_kb(group, GEANY_KEYS_DOCUMENT_LINEBREAK, NULL,
@@ -2630,6 +2632,9 @@ static gboolean cb_func_document_action(guint key_id)
 
 	switch (key_id)
 	{
+		case GEANY_KEYS_DOCUMENT_OPEN_DIRECTORY:
+			on_open_directory1_activate(NULL, NULL);
+			break;
 		case GEANY_KEYS_DOCUMENT_REPLACETABS:
 			on_replace_tabs_activate(NULL, NULL);
 			break;

@@ -4242,3 +4242,29 @@ void document_set_data_full(GeanyDocument *doc, const gchar *key,
 {
 	g_datalist_set_data_full(&doc->priv->data, key, data, free_func);
 }
+
+gchar *document_get_dirname(GeanyDocument *doc)
+{
+	g_return_val_if_fail(doc != NULL, NULL);
+
+	if (doc->file_name)
+	{
+		gchar *dir = g_path_get_dirname(doc->file_name);
+
+		if (dir && g_path_is_absolute(dir))
+			return dir;
+
+		g_free(dir);
+	}
+
+	return NULL;
+}
+
+gboolean document_has_dirname(GeanyDocument *doc)
+{
+	g_return_val_if_fail(doc != NULL, FALSE);
+	gchar *dirname = document_get_dirname(doc);
+	gboolean has_dirname = !!dirname;
+	g_free(dirname);
+	return has_dirname;
+}

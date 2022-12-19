@@ -668,6 +668,23 @@ static void on_menu_show_indentation_guides1_toggled(GtkCheckMenuItem *checkmenu
 	ui_toggle_editor_features(GEANY_EDITOR_SHOW_INDENTATION_GUIDES);
 }
 
+static void on_menu_document1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	GeanyDocument *doc = document_get_current();
+	GtkWidget *open_directory1 = ui_lookup_widget(main_widgets.window, "open_directory1");
+	gtk_widget_set_sensitive(open_directory1, !!doc && document_has_dirname(doc));
+}
+
+void on_open_directory1_activate(GtkMenuItem * menitem, gpointer user_data)
+{
+	GeanyDocument *doc = document_get_current();
+	g_return_if_fail(doc != NULL);
+	gchar *dir = document_get_dirname(doc);
+	g_return_if_fail(dir != NULL);
+	utils_open_local_path(dir);
+	g_free(dir);
+}
+
 void on_line_wrapping1_toggled(GtkCheckMenuItem *checkmenuitem, gpointer user_data)
 {
 	if (! ignore_callback)

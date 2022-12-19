@@ -170,6 +170,7 @@ enum GeanyKeyBindingID
 	GEANY_KEYS_DOCUMENT_FOLDALL,				/**< Keybinding. */
 	GEANY_KEYS_FORMAT_SENDTOVTE,				/**< Keybinding. */
 	GEANY_KEYS_PROJECT_PROPERTIES,				/**< Keybinding. */
+	GEANY_KEYS_DOCUMENT_OPEN_DIRECTORY,			/**< Keybinding. */
 	GEANY_KEYS_DOCUMENT_LINEWRAP,				/**< Keybinding. */
 	GEANY_KEYS_EDITOR_MACROLIST,				/**< Keybinding.
 												 * @deprecated 1.25, it doesn't do anything anymore */
