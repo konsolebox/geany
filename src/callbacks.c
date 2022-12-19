@@ -127,11 +127,13 @@ void on_save_all1_activate(GtkMenuItem *menuitem, gpointer user_data)
 	{
 		GeanyDocument *doc = document_get_from_page(i);
 
-		if (! doc->changed)
-			continue;
-
-		if (document_save_file(doc, FALSE))
-			count++;
+		if (doc->changed)
+		{
+			if (document_save_file(doc, FALSE))
+				count++;
+			else
+				break;
+		}
 	}
 	if (!count)
 		return;
