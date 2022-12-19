@@ -2499,8 +2499,10 @@ gboolean document_save_file(GeanyDocument *doc, gboolean force)
 		return FALSE;
 	if (doc->readonly)
 	{
-		ui_set_statusbar(TRUE,
-			_("Cannot save read-only document '%s'!"), DOC_FILENAME(doc));
+		document_try_focus(doc, NULL);
+		dialogs_show_msgbox(GTK_MESSAGE_ERROR, _("Cannot save read-only document '%s'!"),
+				DOC_FILENAME(doc));
+		ui_set_statusbar(TRUE, _("Cannot save read-only document '%s'!"), DOC_FILENAME(doc));
 		return FALSE;
 	}
 	document_check_disk_status(doc, TRUE);
