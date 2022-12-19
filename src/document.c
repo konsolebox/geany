@@ -1646,6 +1646,8 @@ void document_open_files_recursively(const GSList *filenames, gboolean readonly,
 	GError *error = NULL;
 	gboolean quit = FALSE;
 
+	g_return_if_fail(error_ptr == NULL || *error_ptr == NULL);
+
 	typedef struct EnumeratorData
 	{
 		GFileEnumerator *enumerator;
@@ -1753,13 +1755,14 @@ void document_open_files_recursively(const GSList *filenames, gboolean readonly,
 			document_open_file(file_path, readonly, ft, forced_enc);
 	}
 
-	if (error_ptr)
-		*error_ptr = error == NULL ? NULL :
-				g_error_new(error->domain, error->code,
-						"Failed to open files recursively: %s", error->message);
-
 	if (error)
+	{
+		if (error_ptr)
+			*error_ptr = g_error_new(error->domain, error->code,
+					"Failed to open files recursively: %s", error->message);
+
 		g_error_free(error);
+	}
 
 	if (cancelled_ptr)
 		*cancelled_ptr = quit;

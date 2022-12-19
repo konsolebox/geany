@@ -263,7 +263,7 @@ static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint respons
 				{
 					GtkFileFilter *filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(dialog));
 					const gchar *filter_name = gtk_file_filter_get_name(filter);
-					GError *error;
+					GError *error = NULL;
 					gchar *message;
 					gboolean cancelled;
 
