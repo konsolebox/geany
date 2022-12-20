@@ -402,15 +402,18 @@ static void set_sci_style(ScintillaObject *sci, guint style, guint ft_id, guint 
 
 void highlighting_free_styles(void)
 {
-	guint i;
+	if (style_sets)
+	{
+		guint i;
 
-	for (i = 0; i < filetypes_array->len; i++)
-		free_styleset(i);
+		for (i = 0; i < filetypes_array->len; i++)
+			free_styleset(i);
+
+		g_free(style_sets);
+	}
 
 	if (named_style_hash)
 		g_hash_table_destroy(named_style_hash);
-
-	g_free(style_sets);
 }
 
 static gchar*
