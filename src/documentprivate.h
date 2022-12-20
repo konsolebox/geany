@@ -69,6 +69,12 @@ enum
 	NUM_MSG_TYPES
 };
 
+typedef struct GeanyDocumentOrderedListNode {
+	void	*next;
+	void	*prev;
+}
+GeanyDocumentOrderedListNode;
+
 /* Private GeanyDocument fields */
 typedef struct GeanyDocumentPrivate
 {
@@ -116,6 +122,8 @@ typedef struct GeanyDocumentPrivate
 	/* Calculated folder name and path used for caching */
 	gchar			*folder;
 	gchar			*folder_path;
+	/* List that follows notebook tabs order */
+	GeanyDocumentOrderedListNode list;
 }
 GeanyDocumentPrivate;
 

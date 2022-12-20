@@ -71,6 +71,12 @@ static void
 notebook_page_reordered_cb(GtkNotebook *notebook, GtkWidget *child, guint page_num,
 		gpointer user_data);
 
+static void notebook_page_added_cb(GtkNotebook* notebook, GtkWidget* child, guint page_num,
+		gpointer user_data);
+
+static void notebook_page_removed_cb(GtkNotebook* notebook, GtkWidget* child, guint page_num,
+		gpointer user_data);
+
 static void
 on_window_drag_data_received(GtkWidget *widget, GdkDragContext *drag_context,
 		gint x, gint y, GtkSelectionData *data, guint target_type,
@@ -564,6 +570,8 @@ static void setup_tab_dnd(void)
 	GtkWidget *notebook = main_widgets.notebook;
 
 	g_signal_connect(notebook, "page-reordered", G_CALLBACK(notebook_page_reordered_cb), NULL);
+	g_signal_connect(notebook, "page-added", G_CALLBACK(notebook_page_added_cb), NULL);
+	g_signal_connect(notebook, "page-removed", G_CALLBACK(notebook_page_removed_cb), NULL);
 }
 
 static void
@@ -573,6 +581,20 @@ notebook_page_reordered_cb(GtkNotebook *notebook, GtkWidget *child, guint page_n
 	/* Not necessary to update open files treeview if it's sorted.
 	 * Note: if enabled, it's best to move the item instead of recreating all items. */
 	/*sidebar_openfiles_update_all();*/
+
+	document_reset_ordered_list();
+}
+
+static void notebook_page_added_cb(GtkNotebook* notebook, GtkWidget* child, guint page_num,
+		gpointer user_data)
+{
+	// document_reset_ordered_list();
+}
+
+static void notebook_page_removed_cb(GtkNotebook* notebook, GtkWidget* child, guint page_num,
+		gpointer user_data)
+{
+	// document_reset_ordered_list();
 }
 
 /* call this after the number of tabs in main_widgets.notebook changes. */

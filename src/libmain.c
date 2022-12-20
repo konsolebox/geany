@@ -1139,6 +1139,7 @@ gint main_lib(gint argc, gchar **argv)
 	templates_init();
 	navqueue_init();
 	document_init_doclist();
+	document_reset_ordered_list();
 	symbols_init();
 	editor_snippets_init();
 

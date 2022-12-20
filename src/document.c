@@ -104,6 +104,8 @@ enum
 
 static guint doc_id_counter = 0;
 
+static GeanyDocumentOrderedListNode ordered_list_origin;
+
 static void document_undo_clear_stack(GTrashStack **stack);
 static void document_undo_clear(GeanyDocument *doc);
 static void document_undo_add_internal(GeanyDocument *doc, guint type, gpointer data);
@@ -115,6 +117,7 @@ static GtkWidget* document_show_message(GeanyDocument *doc, GtkMessageType msgty
 	const gchar *btn_2, GtkResponseType response_2,
 	const gchar *btn_3, GtkResponseType response_3,
 	const gchar *extra_text, const gchar *format, ...) G_GNUC_PRINTF(11, 12);
+static void document_remove_from_ordered_list(GeanyDocument *doc);
 
 /**
  * Finds a document whose @c real_path field matches the given filename.
@@ -635,6 +638,8 @@ static GeanyDocument *document_create(const gchar *utf8_filename, gboolean filen
 
 	notebook_new_tab(doc);
 
+	document_reset_ordered_list();
+
 	/* select document in sidebar */
 	{
 		GtkTreeSelection *sel;
@@ -704,6 +709,7 @@ static gboolean remove_page(guint page_num)
 		navqueue_remove_file(doc->file_name);
 		msgwin_status_add(_("File %s closed."), DOC_FILENAME(doc));
 	}
+	document_remove_from_ordered_list(doc);
 	g_free(doc->encoding);
 	g_free(doc->priv->saved_encoding.encoding);
 	g_free(doc->file_name);
@@ -4273,4 +4279,103 @@ gboolean document_has_dirname(GeanyDocument *doc)
 	gboolean has_dirname = !!dirname;
 	g_free(dirname);
 	return has_dirname;
+}
+
+static void document_rebuild_ordered_list(GeanyDocument *doc_being_queried)
+{
+	if (doc_being_queried)
+		doc_being_queried->priv->list.next = doc_being_queried->priv->list.prev = NULL;
+
+	gint n_pages = gtk_notebook_get_n_pages(GTK_NOTEBOOK(main_widgets.notebook));
+	gint i;
+
+	GeanyDocument *doc, *first_doc, *last_doc;
+	ordered_list_origin.next = ordered_list_origin.prev = first_doc = last_doc = NULL;
+
+	if (n_pages > 0)
+	{
+		for (i = 0; i < n_pages; ++i)
+		{
+			doc = document_get_from_page(i);
+
+			if (i == 0)
+				first_doc = doc;
+
+			if (last_doc)
+			{
+				last_doc->priv->list.next = doc;
+				doc->priv->list.prev = last_doc;
+			}
+
+			last_doc = doc;
+		}
+
+		first_doc->priv->list.prev = &ordered_list_origin;
+		ordered_list_origin.next = first_doc;
+		last_doc->priv->list.next = &ordered_list_origin;
+		ordered_list_origin.prev = last_doc;
+	}
+}
+
+static inline void document_rebuild_ordered_list_if_needed(GeanyDocument *doc_being_queried)
+{
+	if (ordered_list_origin.next == NULL || ordered_list_origin.prev  == NULL)
+		document_rebuild_ordered_list(doc_being_queried);
+}
+
+GeanyDocument *document_get_ordered_list_first()
+{
+	document_rebuild_ordered_list_if_needed(NULL);
+	return ordered_list_origin.next;
+}
+
+GeanyDocument *document_get_ordered_list_last()
+{
+	document_rebuild_ordered_list_if_needed(NULL);
+	return ordered_list_origin.prev;
+}
+
+GeanyDocument *document_get_ordered_list_next(GeanyDocument *doc, gboolean wrap)
+{
+	document_rebuild_ordered_list_if_needed(doc);
+	g_return_val_if_fail(doc->priv->list.next != NULL, NULL); // NULL means not part of the list
+	return doc->priv->list.next == &ordered_list_origin ? (wrap ? ordered_list_origin.next : NULL) :
+			doc->priv->list.next;
+}
+
+GeanyDocument *document_get_ordered_list_prev(GeanyDocument *doc, gboolean wrap)
+{
+	document_rebuild_ordered_list_if_needed(doc);
+	g_return_val_if_fail(doc->priv->list.prev != NULL, NULL); // NULL means not part of the list
+	return doc->priv->list.prev == &ordered_list_origin ? (wrap ? ordered_list_origin.prev : NULL) :
+			doc->priv->list.prev;
+}
+
+static void document_remove_from_ordered_list(GeanyDocument *doc)
+{
+	void *next = doc->priv->list.next;
+	void *prev = doc->priv->list.prev;
+
+	doc->priv->list.next = doc->priv->list.prev = NULL;
+
+	if (ordered_list_origin.next && ordered_list_origin.prev)
+	{
+		g_return_if_fail(next != NULL);
+		g_return_if_fail(prev != NULL);
+
+		if (next == &ordered_list_origin)
+			ordered_list_origin.prev = prev == &ordered_list_origin ? NULL : prev;
+		else
+			((GeanyDocument *)next)->priv->list.prev = prev;
+
+		if (prev == &ordered_list_origin)
+			ordered_list_origin.next = next == &ordered_list_origin ? NULL : next;
+		else
+			((GeanyDocument *)prev)->priv->list.next = next;
+	}
+}
+
+void document_reset_ordered_list()
+{
+	ordered_list_origin.next = ordered_list_origin.prev = NULL;
 }

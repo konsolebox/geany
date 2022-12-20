@@ -357,6 +357,16 @@ gchar *document_get_dirname(GeanyDocument *doc);
 
 gboolean document_has_dirname(GeanyDocument *doc);
 
+GeanyDocument *document_get_ordered_list_first();
+
+GeanyDocument *document_get_ordered_list_last();
+
+GeanyDocument *document_get_ordered_list_next(GeanyDocument *doc, gboolean wrap);
+
+GeanyDocument *document_get_ordered_list_prev(GeanyDocument *doc, gboolean wrap);
+
+void document_reset_ordered_list();
+
 #endif /* GEANY_PRIVATE */
 
 G_END_DECLS
