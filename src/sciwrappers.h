@@ -206,6 +206,8 @@ gint				sci_text_width				(ScintillaObject *sci, gint styleNumber, const gchar *
 void				sci_move_selected_lines_down    (ScintillaObject *sci);
 void				sci_move_selected_lines_up      (ScintillaObject *sci);
 
+gint                sci_last_line               (ScintillaObject *sci);
+
 #endif /* GEANY_PRIVATE */
 
 G_END_DECLS

@@ -1190,3 +1190,8 @@ gint sci_word_end_position(ScintillaObject *sci, gint position, gboolean onlyWor
 	return SSM(sci, SCI_WORDENDPOSITION, position, onlyWordCharacters);
 }
 
+gint sci_last_line(ScintillaObject *sci)
+{
+	gint len = sci_get_length(sci);
+	return sci_get_line_from_position(sci, len - 1);
+}
