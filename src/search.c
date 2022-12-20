@@ -1410,41 +1410,44 @@ on_replace_entry_activate(GtkEntry *entry, gpointer user_data)
 		NULL);
 }
 
-static void replace_in_session(GeanyDocument *doc,
-		GeanyFindFlags search_flags_re, gboolean search_replace_escape_re,
-		const gchar *find, const gchar *replace,
+static void replace_in_session(GeanyDocument *doc, GeanyFindFlags search_flags_re,
+		gboolean search_replace_escape_re, const gchar *find, const gchar *replace,
 		const gchar *original_find, const gchar *original_replace)
 {
-	guint n, page_count, rep_count = 0, file_count = 0;
+	GeanyDocument *tmp_doc;
+	gint rep_count = 0, file_count = 0, reps;
 
 	/* replace in all documents following notebook tab order */
-	page_count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(main_widgets.notebook));
-	for (n = 0; n < page_count; n++)
+	foreach_ordered_document(tmp_doc)
 	{
-		GeanyDocument *tmp_doc = document_get_from_page(n);
-		gint reps = 0;
+		reps = document_replace_all(tmp_doc, find, replace, original_find, original_replace,
+				search_flags_re);
 
-		reps = document_replace_all(tmp_doc, find, replace, original_find, original_replace, search_flags_re);
-		rep_count += reps;
 		if (reps)
+		{
+			rep_count += reps;
 			file_count++;
+		}
 	}
+
 	if (file_count == 0)
 	{
 		utils_beep();
 		ui_set_statusbar(FALSE, _("No matches found for \"%s\"."), original_find);
 		return;
 	}
+
 	/* if only one file was changed, don't override that document's status message
 	 * so we don't have to translate 4 messages for ngettext */
 	if (file_count > 1)
 		ui_set_statusbar(FALSE, _("Replaced %u matches in %u documents."),
-			rep_count, file_count);
+				rep_count, file_count);
 
 	/* show which docs had replacements: */
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(msgwindow.notebook), MSG_STATUS);
 
-	ui_save_buttons_toggle(doc->changed);	/* update save all */
+	/* update save all */
+	ui_save_buttons_toggle(doc->changed);
 }
 
 static void
