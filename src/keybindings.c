@@ -2127,25 +2127,38 @@ static gboolean cb_func_goto_action(guint key_id)
 			goto_matching_brace(doc);
 			return TRUE;
 		case GEANY_KEYS_GOTO_NEXTMARKER:
-		{
-			gint mline = sci_marker_next(doc->editor->sci, cur_line + 1, 1 << 1, TRUE);
-
-			if (mline != -1)
-			{
-				sci_set_current_line(doc->editor->sci, mline);
-				editor_display_current_line(doc->editor, 0.5F);
-			}
-			return TRUE;
-		}
 		case GEANY_KEYS_GOTO_PREVIOUSMARKER:
 		{
-			gint mline = sci_marker_previous(doc->editor->sci, cur_line - 1, 1 << 1, TRUE);
+			GeanyDocument *starting_doc = doc;
+			gint marker_line = key_id == GEANY_KEYS_GOTO_NEXTMARKER ?
+					sci_marker_next(doc->editor->sci, cur_line + 1, 1 << 1, FALSE) :
+					sci_marker_previous(doc->editor->sci, cur_line - 1, 1 << 1, FALSE);
 
-			if (mline != -1)
+			if (marker_line != -1)
 			{
-				sci_set_current_line(doc->editor->sci, mline);
+				sci_set_current_line(doc->editor->sci, marker_line);
 				editor_display_current_line(doc->editor, 0.5F);
 			}
+			else
+			{
+				do
+				{
+					doc = document_get_ordered_list_next(doc, TRUE);
+					marker_line = key_id == GEANY_KEYS_GOTO_NEXTMARKER ?
+							sci_marker_next(doc->editor->sci, 1, 1 << 1, FALSE) :
+							sci_marker_previous(doc->editor->sci, sci_last_line(doc->editor->sci),
+							1 << 1, FALSE);
+
+					if (marker_line != -1)
+					{
+						document_show_tab(doc);
+						sci_set_current_line(doc->editor->sci, marker_line);
+						editor_display_current_line(doc->editor, 0.5F);
+						break;
+					}
+				} while (doc != starting_doc);
+			}
+
 			return TRUE;
 		}
 		case GEANY_KEYS_GOTO_TAGDEFINITION:
