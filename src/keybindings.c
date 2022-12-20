@@ -1111,19 +1111,19 @@ static gboolean check_fixed_kb(guint keyval, guint state)
 
 static gboolean check_snippet_completion(GeanyDocument *doc)
 {
-	GtkWidget *focusw = gtk_window_get_focus(GTK_WINDOW(main_widgets.window));
-
 	g_return_val_if_fail(doc, FALSE);
+	GtkWidget *focusw = gtk_window_get_focus(GTK_WINDOW(main_widgets.window));
+	ScintillaObject *sci = doc->editor->sci;
 
 	/* keybinding only valid when scintilla widget has focus */
-	if (focusw == GTK_WIDGET(doc->editor->sci))
+	if (focusw == GTK_WIDGET(sci))
 	{
-		ScintillaObject *sci = doc->editor->sci;
 		gint pos = sci_get_current_position(sci);
 
 		if (editor_prefs.complete_snippets)
 			return editor_complete_snippet(doc->editor, pos);
 	}
+
 	return FALSE;
 }
 
@@ -1682,10 +1682,8 @@ static gchar *get_current_word_or_sel(GeanyDocument *doc, gboolean sci_word)
 {
 	ScintillaObject *sci = doc->editor->sci;
 
-	if (sci_has_selection(sci))
-		return sci_get_selection_contents(sci);
-
-	return read_current_word(doc, sci_word) ? g_strdup(editor_info.current_word) : NULL;
+	return sci_has_selection(sci) ? sci_get_selection_contents(sci) :
+			read_current_word(doc, sci_word) ? g_strdup(editor_info.current_word) : NULL;
 }
 
 static void focus_sidebar(void)
@@ -1914,19 +1912,19 @@ static void cb_func_sort_tabs(guint key_id)
 
 static void goto_matching_brace(GeanyDocument *doc)
 {
-	gint pos, new_pos;
-	gint after_brace;
-
 	g_return_if_fail(DOC_VALID(doc));
 
-	pos = sci_get_current_position(doc->editor->sci);
-	after_brace = pos > 0 && utils_isbrace(sci_get_char_at(doc->editor->sci, pos - 1), TRUE);
-	pos -= after_brace;	/* set pos to the brace */
+	ScintillaObject *sci = doc->editor->sci;
+	gint pos, new_pos, after_brace;
 
-	new_pos = sci_find_matching_brace(doc->editor->sci, pos);
+	pos = sci_get_current_position(sci);
+	after_brace = pos > 0 && utils_isbrace(sci_get_char_at(sci, pos - 1), TRUE);
+	pos -= after_brace;	/* set pos to the brace */
+	new_pos = sci_find_matching_brace(sci, pos);
+
 	if (new_pos != -1)
 	{	/* set the cursor at/after the brace */
-		sci_set_current_position(doc->editor->sci, new_pos + (!after_brace), FALSE);
+		sci_set_current_position(sci, new_pos + (!after_brace), FALSE);
 		editor_display_current_line(doc->editor, 0.5F);
 	}
 }
@@ -2052,8 +2050,8 @@ static gboolean cb_func_mark_action(guint key_id)
 		}
 		case GEANY_KEYS_MARK_LINE:
 		{
-			gint cur_line = sci_get_current_line(doc->editor->sci);
-			sci_toggle_marker_at_line(doc->editor->sci, cur_line, 1);
+			gint cur_line = sci_get_current_line(sci);
+			sci_toggle_marker_at_line(sci, cur_line, 1);
 			break;
 		}
 		case GEANY_KEYS_MARK_REMOVEHIGHLIGHTS:
@@ -2097,7 +2095,8 @@ static gboolean cb_func_goto_action(guint key_id)
 	if (doc == NULL)
 		return TRUE;
 
-	cur_line = sci_get_current_line(doc->editor->sci);
+	ScintillaObject *sci = doc->editor->sci;
+	cur_line = sci_get_current_line(sci);
 
 	switch (key_id)
 	{
@@ -2131,12 +2130,12 @@ static gboolean cb_func_goto_action(guint key_id)
 		{
 			GeanyDocument *starting_doc = doc;
 			gint marker_line = key_id == GEANY_KEYS_GOTO_NEXTMARKER ?
-					sci_marker_next(doc->editor->sci, cur_line + 1, 1 << 1, FALSE) :
-					sci_marker_previous(doc->editor->sci, cur_line - 1, 1 << 1, FALSE);
+					sci_marker_next(sci, cur_line + 1, 1 << 1, FALSE) :
+					sci_marker_previous(sci, cur_line - 1, 1 << 1, FALSE);
 
 			if (marker_line != -1)
 			{
-				sci_set_current_line(doc->editor->sci, marker_line);
+				sci_set_current_line(sci, marker_line);
 				editor_display_current_line(doc->editor, 0.5F);
 			}
 			else
@@ -2144,15 +2143,15 @@ static gboolean cb_func_goto_action(guint key_id)
 				do
 				{
 					doc = document_get_ordered_list_next(doc, TRUE);
+					sci = doc->editor->sci;
 					marker_line = key_id == GEANY_KEYS_GOTO_NEXTMARKER ?
-							sci_marker_next(doc->editor->sci, 1, 1 << 1, FALSE) :
-							sci_marker_previous(doc->editor->sci, sci_last_line(doc->editor->sci),
-							1 << 1, FALSE);
+							sci_marker_next(sci, 1, 1 << 1, FALSE) :
+							sci_marker_previous(sci, sci_last_line(sci), 1 << 1, FALSE);
 
 					if (marker_line != -1)
 					{
 						document_show_tab(doc);
-						sci_set_current_line(doc->editor->sci, marker_line);
+						sci_set_current_line(sci, marker_line);
 						editor_display_current_line(doc->editor, 0.5F);
 						break;
 					}
@@ -2170,28 +2169,29 @@ static gboolean cb_func_goto_action(guint key_id)
 	}
 	/* only check editor-sensitive keybindings when editor has focus so home,end still
 	 * work in other widgets */
-	if (gtk_window_get_focus(GTK_WINDOW(main_widgets.window)) != GTK_WIDGET(doc->editor->sci))
+	if (gtk_window_get_focus(GTK_WINDOW(main_widgets.window)) != GTK_WIDGET(sci))
 		return FALSE;
 
 	switch (key_id)
 	{
 		case GEANY_KEYS_GOTO_LINESTART:
-			sci_send_command(doc->editor->sci, editor_prefs.smart_home_key ? SCI_VCHOME : SCI_HOME);
+			sci_send_command(sci, editor_prefs.smart_home_key ? SCI_VCHOME : SCI_HOME);
 			break;
 		case GEANY_KEYS_GOTO_LINEEND:
-			sci_send_command(doc->editor->sci, SCI_LINEEND);
+			sci_send_command(sci, SCI_LINEEND);
 			break;
 		case GEANY_KEYS_GOTO_LINESTARTVISUAL:
-			sci_send_command(doc->editor->sci, editor_prefs.smart_home_key ? SCI_VCHOMEDISPLAY : SCI_HOMEDISPLAY);
+			sci_send_command(sci, editor_prefs.smart_home_key ? SCI_VCHOMEDISPLAY :
+					SCI_HOMEDISPLAY);
 			break;
 		case GEANY_KEYS_GOTO_LINEENDVISUAL:
-			sci_send_command(doc->editor->sci, SCI_LINEENDDISPLAY);
+			sci_send_command(sci, SCI_LINEENDDISPLAY);
 			break;
 		case GEANY_KEYS_GOTO_PREVWORDPART:
-			sci_send_command(doc->editor->sci, SCI_WORDPARTLEFT);
+			sci_send_command(sci, SCI_WORDPARTLEFT);
 			break;
 		case GEANY_KEYS_GOTO_NEXTWORDPART:
-			sci_send_command(doc->editor->sci, SCI_WORDPARTRIGHT);
+			sci_send_command(sci, SCI_WORDPARTRIGHT);
 			break;
 	}
 	return TRUE;
@@ -2226,6 +2226,8 @@ static gboolean cb_func_editor_action(guint key_id)
 	if (doc == NULL || focusw != GTK_WIDGET(doc->editor->sci))
 		return FALSE; /* also makes tab work outside editor */
 
+	ScintillaObject *sci = doc->editor->sci;
+
 	switch (key_id)
 	{
 		case GEANY_KEYS_EDITOR_UNDO:
@@ -2238,10 +2240,10 @@ static gboolean cb_func_editor_action(guint key_id)
 			editor_scroll_to_line(doc->editor, -1, 0.5F);
 			break;
 		case GEANY_KEYS_EDITOR_SCROLLLINEUP:
-			sci_send_command(doc->editor->sci, SCI_LINESCROLLUP);
+			sci_send_command(sci, SCI_LINESCROLLUP);
 			break;
 		case GEANY_KEYS_EDITOR_SCROLLLINEDOWN:
-			sci_send_command(doc->editor->sci, SCI_LINESCROLLDOWN);
+			sci_send_command(sci, SCI_LINESCROLLDOWN);
 			break;
 		case GEANY_KEYS_EDITOR_DUPLICATELINE:
 			duplicate_lines(doc->editor);
@@ -2253,16 +2255,16 @@ static gboolean cb_func_editor_action(guint key_id)
 			delete_lines(doc->editor);
 			break;
 		case GEANY_KEYS_EDITOR_DELETELINETOEND:
-			sci_send_command(doc->editor->sci, SCI_DELLINERIGHT);
+			sci_send_command(sci, SCI_DELLINERIGHT);
 			break;
 		case GEANY_KEYS_EDITOR_DELETELINETOBEGINNING:
-			sci_send_command(doc->editor->sci, SCI_DELLINELEFT);
+			sci_send_command(sci, SCI_DELLINELEFT);
 			break;
 		case GEANY_KEYS_EDITOR_TRANSPOSELINE:
-			sci_send_command(doc->editor->sci, SCI_LINETRANSPOSE);
+			sci_send_command(sci, SCI_LINETRANSPOSE);
 			break;
 		case GEANY_KEYS_EDITOR_AUTOCOMPLETE:
-			editor_start_auto_complete(doc->editor, sci_get_current_position(doc->editor->sci), TRUE);
+			editor_start_auto_complete(doc->editor, sci_get_current_position(sci), TRUE);
 			break;
 		case GEANY_KEYS_EDITOR_CALLTIP:
 			editor_show_calltip(doc->editor, -1);
@@ -2284,10 +2286,10 @@ static gboolean cb_func_editor_action(guint key_id)
 			switch (kb->key)
 			{
 				case GDK_space:
-					sci_add_text(doc->editor->sci, " ");
+					sci_add_text(sci, " ");
 					break;
 				case GDK_Tab:
-					sci_send_command(doc->editor->sci, SCI_TAB);
+					sci_send_command(sci, SCI_TAB);
 					break;
 				default:
 					break;
@@ -2298,10 +2300,10 @@ static gboolean cb_func_editor_action(guint key_id)
 			return editor_complete_word_part(doc->editor);
 
 		case GEANY_KEYS_EDITOR_MOVELINEUP:
-			sci_move_selected_lines_up(doc->editor->sci);
+			sci_move_selected_lines_up(sci);
 			break;
 		case GEANY_KEYS_EDITOR_MOVELINEDOWN:
-			sci_move_selected_lines_down(doc->editor->sci);
+			sci_move_selected_lines_down(sci);
 			break;
 	}
 	return TRUE;
