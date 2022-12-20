@@ -2192,16 +2192,8 @@ void search_find_usage(const gchar *search_text, const gchar *original_search_te
 		count = find_document_usage(doc, search_text, flags);
 	}
 	else
-	{
-		guint i;
-		for (i = 0; i < documents_array->len; i++)
-		{
-			if (documents[i]->is_valid)
-			{
-				count += find_document_usage(documents[i], search_text, flags);
-			}
-		}
-	}
+		foreach_ordered_document(doc)
+			count += find_document_usage(doc, search_text, flags);
 
 	if (count == 0) /* no matches were found */
 	{
