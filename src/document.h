@@ -153,6 +153,10 @@ GeanyDocument;
 			{}\
 		else /* prevent outside 'else' matching our macro 'if' */
 
+#define foreach_ordered_document(doc) \
+	for (doc = document_get_ordered_list_first(); doc; doc = \
+			document_get_ordered_list_next(doc, FALSE))
+
 /** Null-safe way to check @ref GeanyDocument::is_valid.
  * @note This should not be used to check the result of the main API functions,
  * these only need a NULL-pointer check - @c document_get_current() != @c NULL. */
