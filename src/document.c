@@ -675,7 +675,7 @@ static gboolean remove_page(guint page_num)
 
 	g_return_val_if_fail(doc != NULL, FALSE);
 
-	if (doc->changed && ! dialogs_show_unsaved_file(doc))
+	if (doc->changed && ! dialogs_show_unsaved_file(doc, NULL))
 		return FALSE;
 
 	/* tell any plugins that the document is about to be closed */
@@ -3770,6 +3770,7 @@ GeanyDocument *document_clone(GeanyDocument *old_doc)
 gboolean document_account_for_unsaved(void)
 {
 	guint i, p, page_count;
+	gboolean ignore_all;
 
 	page_count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(main_widgets.notebook));
 	/* iterate over documents in tabs order */
@@ -3779,8 +3780,10 @@ gboolean document_account_for_unsaved(void)
 
 		if (DOC_VALID(doc) && doc->changed)
 		{
-			if (! dialogs_show_unsaved_file(doc))
+			if (! dialogs_show_unsaved_file(doc, &ignore_all))
 				return FALSE;
+			if (ignore_all)
+				break;
 		}
 	}
 	/* all documents should now be accounted for, so ignore any changes */

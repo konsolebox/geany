@@ -51,7 +51,7 @@ typedef void (*GeanyInputCallback)(const gchar *text, gpointer data);
 
 void dialogs_show_open_file(gboolean recursive, const gchar *utf8_initial_dir);
 
-gboolean dialogs_show_unsaved_file(GeanyDocument *doc);
+gboolean dialogs_show_unsaved_file(GeanyDocument *doc, gboolean *ignore_all_ptr);
 
 void dialogs_show_open_font(void);
 

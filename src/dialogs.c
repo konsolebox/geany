@@ -879,16 +879,37 @@ void dialogs_show_msgbox_with_secondary(GtkMessageType type, const gchar *text, 
 #endif
 }
 
-static gint run_unsaved_dialog(const gchar *msg, const gchar *msg2)
+gboolean dialogs_show_unsaved_file(GeanyDocument *doc, gboolean *ignore_all_ptr)
 {
-	GtkWidget *dialog, *button;
-	gint ret;
+	enum { IGNORE_ALL_RESPONSE = GTK_RESPONSE_CLOSE };
 
-	dialog = gtk_message_dialog_new(GTK_WINDOW(main_widgets.window), GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, "%s", msg);
+	/* display the file tab to remind the user of the document */
+	gboolean old_quitting_state = main_status.quitting;
+	main_status.quitting = FALSE;
+	document_show_tab(doc);
+	main_status.quitting = old_quitting_state;
+
+	gchar *basename = document_get_basename_for_display(doc, -1);
+	gchar *primary_message = g_strdup_printf(_("The file '%s' is not saved."), basename);
+	g_free(basename);
+
+	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(main_widgets.window),
+			GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, "%s",
+			primary_message);
+	GtkWidget *button;
+
 	gtk_window_set_title(GTK_WINDOW(dialog), _("Question"));
-	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", msg2);
+	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s",
+			_("Do you want to save it before closing?"));
+
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+
+	if (ignore_all_ptr)
+	{
+		button = ui_button_new_with_image(GTK_STOCK_CLOSE, _("_Ignore All"));
+		gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button, IGNORE_ALL_RESPONSE);
+		gtk_widget_show(button);
+	}
 
 	button = ui_button_new_with_image(GTK_STOCK_CLEAR, _("_Don't save"));
 	gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button, GTK_RESPONSE_NO);
@@ -897,43 +918,22 @@ static gint run_unsaved_dialog(const gchar *msg, const gchar *msg2)
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_SAVE, GTK_RESPONSE_YES);
 
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_YES);
-	ret = gtk_dialog_run(GTK_DIALOG(dialog));
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
 
 	gtk_widget_destroy(dialog);
+	g_free(primary_message);
 
-	return ret;
-}
-
-gboolean dialogs_show_unsaved_file(GeanyDocument *doc)
-{
-	gchar *msg, *short_fn = NULL;
-	const gchar *msg2;
-	gint response;
-	gboolean old_quitting_state = main_status.quitting;
-
-	/* display the file tab to remind the user of the document */
-	main_status.quitting = FALSE;
-	document_show_tab(doc);
-	main_status.quitting = old_quitting_state;
-
-	short_fn = document_get_basename_for_display(doc, -1);
-
-	msg = g_strdup_printf(_("The file '%s' is not saved."), short_fn);
-	msg2 = _("Do you want to save it before closing?");
-	g_free(short_fn);
-
-	response = run_unsaved_dialog(msg, msg2);
-	g_free(msg);
+	if (ignore_all_ptr)
+		*ignore_all_ptr = response == IGNORE_ALL_RESPONSE;
 
 	switch (response)
 	{
 		case GTK_RESPONSE_YES:
 			/* document_save_file() returns the status if the file could be saved */
 			return document_save_file(doc, FALSE);
-
 		case GTK_RESPONSE_NO:
+		case IGNORE_ALL_RESPONSE:
 			return TRUE;
-
 		case GTK_RESPONSE_CANCEL: /* fall through to default and leave the function */
 		default:
 			return FALSE;
