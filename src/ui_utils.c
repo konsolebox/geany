@@ -874,8 +874,6 @@ static void init_document_widgets(void)
 	add_doc_widget("find1");
 	add_doc_widget("find_next1");
 	add_doc_widget("find_previous1");
-	add_doc_widget("go_to_next_location1");
-	add_doc_widget("go_to_previous_location1");
 	add_doc_widget("go_to_next_marker1");
 	add_doc_widget("go_to_previous_marker1");
 	add_doc_widget("replace1");

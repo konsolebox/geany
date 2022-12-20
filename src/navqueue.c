@@ -35,6 +35,7 @@
 #include "sciwrappers.h"
 #include "toolbar.h"
 #include "utils.h"
+#include "ui_utils.h"
 
 #include "gtkcompat.h"
 
@@ -49,6 +50,13 @@ static GQueue *navigation_queue;
 static guint nav_queue_pos;
 
 static GtkAction *navigation_buttons[2];
+static GtkWidget *navigation_menu_items[2];
+
+static void set_sensitive(gint index, gboolean sensitive)
+{
+	gtk_action_set_sensitive(navigation_buttons[index], sensitive);
+	gtk_widget_set_sensitive(navigation_menu_items[index], sensitive);
+}
 
 void navqueue_init(void)
 {
@@ -58,8 +66,11 @@ void navqueue_init(void)
 	navigation_buttons[0] = toolbar_get_action_by_name("NavBack");
 	navigation_buttons[1] = toolbar_get_action_by_name("NavFor");
 
-	gtk_action_set_sensitive(navigation_buttons[0], FALSE);
-	gtk_action_set_sensitive(navigation_buttons[1], FALSE);
+	navigation_menu_items[0] = ui_lookup_widget(main_widgets.window, "go_to_previous_location1");
+	navigation_menu_items[1] = ui_lookup_widget(main_widgets.window, "go_to_next_location1");
+
+	set_sensitive(0, FALSE);
+	set_sensitive(1, FALSE);
 }
 
 void navqueue_free(void)
@@ -75,23 +86,22 @@ static void adjust_buttons(void)
 {
 	if (g_queue_get_length(navigation_queue) < 2)
 	{
-		gtk_action_set_sensitive(navigation_buttons[0], FALSE);
-		gtk_action_set_sensitive(navigation_buttons[1], FALSE);
+		set_sensitive(0, FALSE);
+		set_sensitive(1, FALSE);
 		return;
 	}
 	if (nav_queue_pos == 0)
 	{
-		gtk_action_set_sensitive(navigation_buttons[0], TRUE);
-		gtk_action_set_sensitive(navigation_buttons[1], FALSE);
+		set_sensitive(0, TRUE);
+		set_sensitive(1, FALSE);
 		return;
 	}
 	/* forward should be sensitive since where not at the start */
-	gtk_action_set_sensitive(navigation_buttons[1], TRUE);
+	set_sensitive(1, TRUE);
 
 	/* back should be sensitive if there's a place to go back to */
-	(nav_queue_pos < g_queue_get_length(navigation_queue) - 1) ?
-		gtk_action_set_sensitive(navigation_buttons[0], TRUE) :
-			gtk_action_set_sensitive(navigation_buttons[0], FALSE);
+	nav_queue_pos < g_queue_get_length(navigation_queue) - 1 ? set_sensitive(0, TRUE) :
+			set_sensitive(0, FALSE);
 }
 
 static gboolean
