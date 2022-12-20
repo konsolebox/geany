@@ -59,6 +59,7 @@ enum
 	GEANY_RESPONSE_FIND_PREVIOUS,
 	GEANY_RESPONSE_FIND_IN_FILE,
 	GEANY_RESPONSE_FIND_IN_SESSION,
+	GEANY_RESPONSE_FIND_IN_SELECTION,
 	GEANY_RESPONSE_HIGHLIGHT,
 	GEANY_RESPONSE_REPLACE,
 	GEANY_RESPONSE_REPLACE_AND_FIND,
@@ -502,6 +503,11 @@ static void create_find_dialog(void)
 	gtk_container_add(GTK_CONTAINER(bbox), button);
 	g_signal_connect(button, "clicked", G_CALLBACK(send_find_dialog_response),
 		GINT_TO_POINTER(GEANY_RESPONSE_HIGHLIGHT));
+
+	button = gtk_button_new_with_mnemonic(_("In Se_lection"));
+	gtk_container_add(GTK_CONTAINER(bbox), button);
+	g_signal_connect(button, "clicked", G_CALLBACK(send_find_dialog_response),
+		GINT_TO_POINTER(GEANY_RESPONSE_FIND_IN_SELECTION));
 
 	button = gtk_button_new_with_mnemonic(_("In Sessi_on"));
 	gtk_container_add(GTK_CONTAINER(bbox), button);
@@ -1360,13 +1366,17 @@ on_find_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 				break;
 			}
 			case GEANY_RESPONSE_FIND_IN_FILE:
-				search_find_usage(search_data.text, search_data.original_text, search_data.flags, FALSE);
+				search_find_usage(search_data.text, search_data.original_text, search_data.flags,
+						GEANY_FIND_CONTEXT_FILE);
 				break;
-
 			case GEANY_RESPONSE_FIND_IN_SESSION:
-				search_find_usage(search_data.text, search_data.original_text, search_data.flags, TRUE);
+				search_find_usage(search_data.text, search_data.original_text, search_data.flags,
+						GEANY_FIND_CONTEXT_SESSION);
 				break;
-
+			case GEANY_RESPONSE_FIND_IN_SELECTION:
+				search_find_usage(search_data.text, search_data.original_text, search_data.flags,
+						GEANY_FIND_CONTEXT_SELECTION);
+				break;
 			case GEANY_RESPONSE_HIGHLIGHT:
 			{
 				gint count = search_highlight_all(doc, search_data.text, search_data.flags, NULL);
@@ -2130,7 +2140,8 @@ gint search_find_text(ScintillaObject *sci, GeanyFindFlags flags, struct Sci_Tex
 	return ret;
 }
 
-static gint find_document_usage(GeanyDocument *doc, const gchar *search_text, GeanyFindFlags flags)
+static gint find_document_usage_range(GeanyDocument *doc, const gchar *search_text,
+		GeanyFindFlags flags, gint start, gint end)
 {
 	gchar *buffer, *short_file_name;
 	struct Sci_TextToFind ttf;
@@ -2142,8 +2153,8 @@ static gint find_document_usage(GeanyDocument *doc, const gchar *search_text, Ge
 
 	short_file_name = g_path_get_basename(DOC_FILENAME(doc));
 
-	ttf.chrg.cpMin = 0;
-	ttf.chrg.cpMax = sci_get_length(doc->editor->sci);
+	ttf.chrg.cpMin = start;
+	ttf.chrg.cpMax = end;
 	ttf.lpstrText = (gchar *)search_text;
 
 	matches = find_range(doc->editor->sci, flags, &ttf);
@@ -2169,14 +2180,64 @@ static gint find_document_usage(GeanyDocument *doc, const gchar *search_text, Ge
 	return count;
 }
 
+static gint find_document_usage(GeanyDocument *doc, const gchar *search_text, GeanyFindFlags flags,
+		gboolean in_selection)
+{
+	ScintillaObject *sci = doc->editor->sci;
+	if (in_selection)
+	{
+		gint selection_start = sci_get_selection_start(sci);
+		gint selection_end = sci_get_selection_end(sci);
+
+		if (selection_end == selection_start)
+		{
+			utils_beep();
+			return 0;
+		}
+
+		gint selection_mode = sci_get_selection_mode(sci);
+		gint selected_lines = sci_get_lines_selected(sci);
+		gint count = 0;
+
+		if (selection_mode == SC_SEL_RECTANGLE && selected_lines > 1)
+		{
+			gint first_line = sci_get_line_from_position(sci, selection_start);
+			gint line;
+
+			for (line = first_line; line < first_line + selected_lines; ++line)
+			{
+				gint line_start = sci_get_pos_at_line_sel_start(sci, line);
+
+				if (line_start != INVALID_POSITION)
+				{
+					gint line_end = sci_get_pos_at_line_sel_end(sci, line);
+					count += find_document_usage_range(doc, search_text, flags, line_start,
+							line_end);
+				}
+			}
+		}
+		else
+			count += find_document_usage_range(doc, search_text, flags, selection_start,
+							selection_end);
+
+		return count;
+	}
+	else
+		return find_document_usage_range(doc, search_text, flags, 0,
+				sci_get_length(doc->editor->sci));
+}
+
 void search_find_usage(const gchar *search_text, const gchar *original_search_text,
-		GeanyFindFlags flags, gboolean in_session)
+		GeanyFindFlags flags, GeanyFindContext context)
 {
 	GeanyDocument *doc;
 	gint count = 0;
 
-	doc = document_get_current();
-	g_return_if_fail(doc != NULL);
+	if (context == GEANY_FIND_CONTEXT_FILE || context == GEANY_FIND_CONTEXT_SELECTION)
+	{
+		doc = document_get_current();
+		g_return_if_fail(doc != NULL);
+	}
 
 	if (G_UNLIKELY(EMPTY(search_text)))
 	{
@@ -2187,13 +2248,19 @@ void search_find_usage(const gchar *search_text, const gchar *original_search_te
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(msgwindow.notebook), MSG_MESSAGE);
 	gtk_list_store_clear(msgwindow.store_msg);
 
-	if (! in_session)
-	{	/* use current document */
-		count = find_document_usage(doc, search_text, flags);
+	switch (context)
+	{
+		case GEANY_FIND_CONTEXT_FILE:
+			count = find_document_usage(doc, search_text, flags, FALSE);
+			break;
+		case GEANY_FIND_CONTEXT_SELECTION:
+			count = find_document_usage(doc, search_text, flags, TRUE);
+			break;
+		case GEANY_FIND_CONTEXT_SESSION:
+			foreach_ordered_document(doc)
+				count += find_document_usage(doc, search_text, flags, FALSE);
+			break;
 	}
-	else
-		foreach_ordered_document(doc)
-			count += find_document_usage(doc, search_text, flags);
 
 	if (count == 0) /* no matches were found */
 	{

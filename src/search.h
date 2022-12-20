@@ -100,6 +100,13 @@ typedef struct GeanySearchData
 }
 GeanySearchData;
 
+typedef enum GeanyFindContext
+{
+	GEANY_FIND_CONTEXT_FILE,
+	GEANY_FIND_CONTEXT_SESSION,
+	GEANY_FIND_CONTEXT_SELECTION
+} GeanyFindContext;
+
 extern GeanySearchData search_data;
 
 extern GeanySearchPrefs search_prefs;
@@ -124,7 +131,8 @@ gint search_find_text(struct _ScintillaObject *sci, GeanyFindFlags flags, struct
 
 void search_find_again(gboolean change_direction);
 
-void search_find_usage(const gchar *search_text, const gchar *original_search_text, GeanyFindFlags flags, gboolean in_session);
+void search_find_usage(const gchar *search_text, const gchar *original_search_text,
+		GeanyFindFlags flags, GeanyFindContext context);
 
 void search_find_selection(struct GeanyDocument *doc, gboolean search_backwards);
 

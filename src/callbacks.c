@@ -721,7 +721,7 @@ static void on_use_auto_indentation1_toggled(GtkCheckMenuItem *checkmenuitem, gp
 	}
 }
 
-static void find_usage(gboolean in_session)
+static void find_usage(gint context)
 {
 	GeanyFindFlags flags;
 	gchar *search_text;
@@ -742,18 +742,18 @@ static void find_usage(gboolean in_session)
 		flags = GEANY_FIND_MATCHCASE | GEANY_FIND_WHOLEWORD;
 	}
 
-	search_find_usage(search_text, search_text, flags, in_session);
+	search_find_usage(search_text, search_text, flags, context);
 	g_free(search_text);
 }
 
 void on_find_document_usage1_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
-	find_usage(FALSE);
+	find_usage(GEANY_FIND_CONTEXT_FILE);
 }
 
 void on_find_usage1_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
-	find_usage(TRUE);
+	find_usage(GEANY_FIND_CONTEXT_SESSION);
 }
 
 static void goto_tag(gboolean definition)
