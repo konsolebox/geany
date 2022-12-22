@@ -1214,42 +1214,27 @@ gint search_highlight_all(GeanyDocument *doc, const gchar *search_text, GeanyFin
 	GSList *matches = find_range(sci, flags, &ttf);
 
 	GeanyMatchInfo *info;
-	gboolean has_cleared = FALSE;
-	gint start, end, count = 0;
 	GSList *match;
+	gint count = 0;
 
 	sci_indicator_set(sci, GEANY_INDICATOR_USER);
 
-	if (sci_indicator_fill_or_clear)
+	if (sci_indicator_fill_or_clear == NULL)
 	{
-		foreach_slist (match, matches)
-		{
-			info = match->data;
+		gboolean has_cleared = FALSE;
 
-			if (info->end != info->start)
-				sci_indicator_fill_or_clear(sci, info->start, info->end - info->start);
-
-			geany_match_info_free(info);
-			count++;
-		}
-	}
-	else
-	{
 		foreach_slist (match, matches)
 		{
 			info = match->data;
 
 			if (info->end != info->start)
 			{
-				start = scintilla_send_message(sci, SCI_INDICATORSTART, GEANY_INDICATOR_USER,
-						info->start);
-
-				gint value = scintilla_send_message(sci, SCI_INDICATORVALUEAT, GEANY_INDICATOR_USER,
+				gint start = scintilla_send_message(sci, SCI_INDICATORSTART, GEANY_INDICATOR_USER,
 						info->start);
 
 				if (start == info->start)
 				{
-					end = scintilla_send_message(sci, SCI_INDICATOREND, GEANY_INDICATOR_USER,
+					gint end = scintilla_send_message(sci, SCI_INDICATOREND, GEANY_INDICATOR_USER,
 							info->start);
 
 					if (end == info->end)
@@ -1261,16 +1246,19 @@ gint search_highlight_all(GeanyDocument *doc, const gchar *search_text, GeanyFin
 			}
 		}
 
-		foreach_slist (match, matches)
-		{
-			info = match->data;
+		if (has_cleared == FALSE)
+			sci_indicator_fill_or_clear = sci_indicator_fill;
+	}
 
-			if (has_cleared == FALSE && info->end != info->start)
-				sci_indicator_fill(sci, info->start, info->end - info->start);
+	foreach_slist (match, matches)
+	{
+		info = match->data;
 
-			geany_match_info_free(info);
-			count++;
-		}
+		if (sci_indicator_fill_or_clear && info->end != info->start)
+			sci_indicator_fill_or_clear(sci, info->start, info->end - info->start);
+
+		geany_match_info_free(info);
+		count++;
 	}
 
 	g_slist_free(matches);
