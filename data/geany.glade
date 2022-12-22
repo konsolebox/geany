@@ -7595,6 +7595,7 @@
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">_Mark</property>
                     <property name="use_underline">True</property>
+                    <signal name="activate" handler="on_mark1_activate" swapped="no"/>
                     <child type="submenu">
                       <object class="GtkMenu" id="mark1_menu">
                         <child>
@@ -7632,6 +7633,21 @@
                         </child>
                         <child>
                           <object class="GtkSeparatorMenuItem" id="separator55">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckMenuItem" id="mark_smart_highlighting1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Smart Highlighting</property>
+                            <property name="use_underline">True</property>
+                            <signal name="toggled" handler="on_mark_smart_highlighting1_toggled" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorMenuItem" id="separator30">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>

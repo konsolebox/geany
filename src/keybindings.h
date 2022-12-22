@@ -187,6 +187,7 @@ enum GeanyKeyBindingID
 	GEANY_KEYS_MARK_LINE,						/**< Keybinding. */
 	GEANY_KEYS_MARK_HIGHLIGHT,					/**< Keybinding. */
 	GEANY_KEYS_MARK_HIGHLIGHTALL,				/**< Keybinding. */
+	GEANY_KEYS_MARK_TOGGLESMARTHIGHLIGHTING,	/**< Keybinding. */
 	GEANY_KEYS_MARK_REMOVELINEMARKERS,			/**< Keybinding. */
 	GEANY_KEYS_MARK_REMOVEHIGHLIGHTS,			/**< Keybinding. */
 	GEANY_KEYS_MARK_REMOVEYELLOWTAGMARKERS,		/**< Keybinding. */

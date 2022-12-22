@@ -122,6 +122,9 @@ static void on_notebook_switch_page(GtkNotebook *notebook,
 
 	if (!switch_in_progress)
 		update_mru_docs_head(new);
+
+	if (new && new->editor)
+		editor_update_smart_highlights(new->editor);
 }
 
 static void on_document_close(GObject *obj, GeanyDocument *doc)

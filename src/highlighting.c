@@ -634,6 +634,13 @@ static void styleset_common(ScintillaObject *sci, guint ft_id)
 		invert(common_style_set.styling[GCS_MARKER_SEARCH].background));
 	SSM(sci, SCI_INDICSETALPHA, GEANY_INDICATOR_USER, 60);
 
+	/* Smart highlighting indicator
+	 * Copies GCS_MARKER_SEARCH' style but with lower alpha for now */
+	SSM(sci, SCI_INDICSETSTYLE, GEANY_INDICATOR_SMART_HIGHLIGHT, INDIC_ROUNDBOX);
+	SSM(sci, SCI_INDICSETFORE, GEANY_INDICATOR_SMART_HIGHLIGHT,
+		invert(common_style_set.styling[GCS_MARKER_SEARCH].background));
+	SSM(sci, SCI_INDICSETALPHA, GEANY_INDICATOR_SMART_HIGHLIGHT, 20);
+
 	/* define marker symbols
 	 * 0 -> line marker */
 	SSM(sci, SCI_MARKERDEFINE, 0, SC_MARK_SHORTARROW);

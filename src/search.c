@@ -1197,15 +1197,13 @@ static GSList *find_range(ScintillaObject *sci, GeanyFindFlags flags, struct Sci
 
 /* Highlights or unhighlights matching texts
  * @return Number of matches marked. */
-gint search_highlight_all(GeanyDocument *doc, const gchar *search_text, GeanyFindFlags flags,
-		gboolean clear_mode)
+gint search_highlight_all(ScintillaObject *sci, const gchar *search_text, GeanyFindFlags flags,
+		gint indicator, gboolean clear_mode)
 {
-	g_return_val_if_fail(DOC_VALID(doc), 0);
+	g_return_val_if_fail(sci != NULL, 0);
 
 	if (G_UNLIKELY(EMPTY(search_text)))
 		return 0;
-
-	ScintillaObject *sci = doc->editor->sci;
 
 	struct Sci_TextToFind ttf;
 	ttf.chrg.cpMin = 0;
@@ -1216,7 +1214,7 @@ gint search_highlight_all(GeanyDocument *doc, const gchar *search_text, GeanyFin
 	GSList *match;
 	gint count = 0;
 
-	sci_indicator_set(sci, GEANY_INDICATOR_USER);
+	sci_indicator_set(sci, indicator);
 
 	foreach_slist (match, matches)
 	{
@@ -1336,7 +1334,8 @@ on_find_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 				break;
 			case GEANY_RESPONSE_HIGHLIGHT:
 			{
-				gint count = search_highlight_all(doc, search_data.text, search_data.flags, FALSE);
+				gint count = search_highlight_all(doc->editor->sci, search_data.text,
+						search_data.flags, GEANY_INDICATOR_USER, FALSE);
 
 				if (count == 0)
 					ui_set_statusbar(FALSE, _("No matches found for \"%s\"."), search_data.original_text);

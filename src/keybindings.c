@@ -555,6 +555,8 @@ static void init_default_kb(void)
 		GDK_h, GEANY_PRIMARY_MOD_MASK | GDK_SHIFT_MASK, "highlight", _("Highlight Word Or Selection"), "mark_highlight1");
 	add_kb(group, GEANY_KEYS_MARK_HIGHLIGHTALL, NULL,
 		GDK_m, GEANY_PRIMARY_MOD_MASK | GDK_SHIFT_MASK, "highlight_all", _("Highlight All Matching"), "mark_highlight_all1");
+	add_kb(group, GEANY_KEYS_MARK_TOGGLESMARTHIGHLIGHTING, NULL,
+		0, 0, "toggle_smart_highlighting", _("Toggle Smart Highlighting"), "mark_smart_highlighting1");
 	add_kb(group, GEANY_KEYS_MARK_REMOVEHIGHLIGHTS, NULL,
 		0, 0, "remove_highlights", _("Remove Highlights"), "remove_highlights1");
 	add_kb(group, GEANY_KEYS_MARK_REMOVELINEMARKERS, NULL,
@@ -2017,7 +2019,7 @@ static void do_highlight(GeanyDocument *doc, gboolean all_mode)
 	if (all_mode)
 	{
 		gchar *text = sci_get_contents_range(sci, start, end);
-		search_highlight_all(doc, text, all_mode_flags, clear_mode);
+		search_highlight_all(sci, text, all_mode_flags, GEANY_INDICATOR_USER, clear_mode);
 		g_free(text);
 	}
 	else
@@ -2043,6 +2045,12 @@ static gboolean cb_func_mark_action(guint key_id)
 		case GEANY_KEYS_MARK_HIGHLIGHTALL:
 		{
 			do_highlight(doc, TRUE);
+			break;
+		}
+		case GEANY_KEYS_MARK_TOGGLESMARTHIGHLIGHTING:
+		{
+			editor_prefs.smart_highlighting = !editor_prefs.smart_highlighting;
+			editor_update_smart_highlights(doc->editor);
 			break;
 		}
 		case GEANY_KEYS_MARK_LINE:

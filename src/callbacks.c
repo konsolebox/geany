@@ -1572,6 +1572,14 @@ static void on_goto1_activate(GtkMenuItem *menuitem, gpointer user_data)
 	gtk_widget_set_sensitive(previous_message, have_messages);
 }
 
+static void on_mark1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	ignore_callback = TRUE;
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ui_lookup_widget(main_widgets.window,
+			"mark_smart_highlighting1")), editor_prefs.smart_highlighting);
+	ignore_callback = FALSE;
+}
+
 /* simple implementation (vs. close all which doesn't close documents if cancelled),
  * if user_data is set, it is the GeanyDocument to keep */
 void on_close_other_documents1_activate(GtkMenuItem *menuitem, gpointer user_data)
@@ -1797,6 +1805,12 @@ static void on_mark_highlight1_activate(GtkMenuItem *menuitem, gpointer user_dat
 static void on_mark_highlight_all1_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	keybindings_send_command(GEANY_KEY_GROUP_MARK, GEANY_KEYS_MARK_HIGHLIGHTALL);
+}
+
+static void on_mark_smart_highlighting1_toggled(GtkCheckMenuItem *checkmenuitem, gpointer user_data)
+{
+	if (! ignore_callback)
+		keybindings_send_command(GEANY_KEY_GROUP_MARK, GEANY_KEYS_MARK_TOGGLESMARTHIGHLIGHTING);
 }
 
 static void on_remove_line_markers1_activate(GtkMenuItem *menuitem, gpointer user_data)

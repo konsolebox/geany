@@ -136,8 +136,8 @@ void search_find_usage(const gchar *search_text, const gchar *original_search_te
 
 void search_find_selection(struct GeanyDocument *doc, gboolean search_backwards);
 
-gint search_highlight_all(struct GeanyDocument *doc, const gchar *search_text, GeanyFindFlags flags,
-		gboolean clear_mode);
+gint search_highlight_all(struct _ScintillaObject *doc, const gchar *search_text, GeanyFindFlags flags,
+		gint indicator, gboolean clear_mode);
 
 gint search_replace_match(struct _ScintillaObject *sci, const GeanyMatchInfo *match, const gchar *replace_text);
 

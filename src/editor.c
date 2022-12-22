@@ -492,6 +492,32 @@ static void on_margin_click(GeanyEditor *editor, SCNotification *nt)
 	}
 }
 
+void editor_update_smart_highlights(GeanyEditor *editor)
+{
+	g_return_if_fail(editor != NULL);
+
+	if (!editor_prefs.smart_highlighting)
+	{
+		editor_indicator_clear(editor, GEANY_INDICATOR_SMART_HIGHLIGHT);
+		return;
+	}
+
+	ScintillaObject *sci = editor->sci;
+	sci_indicator_set(sci, GEANY_INDICATOR_SMART_HIGHLIGHT);
+	gint start = sci_get_selection_start(sci);
+	gint end = sci_get_selection_end(sci);
+
+	if (end == start || !SSM(sci, SCI_ISRANGEWORD, (uptr_t) start, end))
+	{
+		editor_indicator_clear(editor, GEANY_INDICATOR_SMART_HIGHLIGHT);
+		return;
+	}
+
+	gchar *text = sci_get_contents_range(sci, start, end);
+	search_highlight_all(sci, text, GEANY_FIND_MATCHCASE, GEANY_INDICATOR_SMART_HIGHLIGHT, FALSE);
+	g_free(text);
+}
+
 static void on_update_ui(GeanyEditor *editor, G_GNUC_UNUSED SCNotification *nt)
 {
 	ScintillaObject *sci = editor->sci;
@@ -501,6 +527,9 @@ static void on_update_ui(GeanyEditor *editor, G_GNUC_UNUSED SCNotification *nt)
 	 * this and so ignore every SCN_UPDATEUI events except for content and selection changes */
 	if (! (nt->updated & SC_UPDATE_CONTENT) && ! (nt->updated & SC_UPDATE_SELECTION))
 		return;
+
+	if (nt->updated & SC_UPDATE_SELECTION && editor_prefs.smart_highlighting)
+		editor_update_smart_highlights(editor);
 
 	/* undo / redo menu update */
 	ui_update_popup_reundo_items(editor->document);

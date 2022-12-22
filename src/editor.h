@@ -68,7 +68,9 @@ typedef enum
 	/** Indicator used to highlight search results in the document. This is a
 	 *  rounded box around the text. */
 	/* start container indicator outside of lexer indicators (0..7), see Scintilla docs */
-	GEANY_INDICATOR_USER = 8
+	GEANY_INDICATOR_USER = 8,
+	/* Smart highlight */
+	GEANY_INDICATOR_SMART_HIGHLIGHT = 9
 }
 GeanyIndicator;
 
@@ -135,6 +137,7 @@ typedef struct GeanyEditorPrefs
 	gboolean	long_line_enabled;
 	gint		autocompletion_update_freq;
 	gint		scroll_lines_around_cursor;
+	gboolean	smart_highlighting;
 }
 GeanyEditorPrefs;
 
@@ -318,6 +321,8 @@ void editor_apply_update_prefs(GeanyEditor *editor);
 gchar *editor_get_calltip_text(GeanyEditor *editor, const TMTag *tag);
 
 void editor_toggle_fold(GeanyEditor *editor, gint line, gint modifiers);
+
+void editor_update_smart_highlights(GeanyEditor *editor);
 
 #endif /* GEANY_PRIVATE */
 
