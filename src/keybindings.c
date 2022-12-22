@@ -2014,17 +2014,14 @@ static void do_highlight(GeanyDocument *doc, gboolean all_mode)
 		}
 	}
 
-	void (*fill_or_clear_func)(ScintillaObject *, gint, gint) = clear_mode ? sci_indicator_clear :
-			sci_indicator_fill;
-
 	if (all_mode)
 	{
 		gchar *text = sci_get_contents_range(sci, start, end);
-		search_highlight_all(doc, text, all_mode_flags, fill_or_clear_func);
+		search_highlight_all(doc, text, all_mode_flags, clear_mode);
 		g_free(text);
 	}
 	else
-		fill_or_clear_func(sci, start, end - start);
+		(clear_mode ? sci_indicator_clear : sci_indicator_fill)(sci, start, end - start);
 }
 
 static gboolean cb_func_mark_action(guint key_id)

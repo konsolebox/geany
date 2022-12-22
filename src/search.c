@@ -1198,7 +1198,7 @@ static GSList *find_range(ScintillaObject *sci, GeanyFindFlags flags, struct Sci
 /* Highlights or unhighlights matching texts
  * @return Number of matches marked. */
 gint search_highlight_all(GeanyDocument *doc, const gchar *search_text, GeanyFindFlags flags,
-		void (*sci_indicator_fill_or_clear)(ScintillaObject *, gint, gint))
+		gboolean clear_mode)
 {
 	g_return_val_if_fail(DOC_VALID(doc), 0);
 
@@ -1211,51 +1211,20 @@ gint search_highlight_all(GeanyDocument *doc, const gchar *search_text, GeanyFin
 	ttf.chrg.cpMin = 0;
 	ttf.chrg.cpMax = sci_get_length(sci);
 	ttf.lpstrText = (gchar *)search_text;
-	GSList *matches = find_range(sci, flags, &ttf);
 
-	GeanyMatchInfo *info;
+	GSList *matches = find_range(sci, flags, &ttf);
 	GSList *match;
 	gint count = 0;
 
 	sci_indicator_set(sci, GEANY_INDICATOR_USER);
 
-	if (sci_indicator_fill_or_clear == NULL)
-	{
-		gboolean has_cleared = FALSE;
-
-		foreach_slist (match, matches)
-		{
-			info = match->data;
-
-			if (info->end != info->start)
-			{
-				gint start = scintilla_send_message(sci, SCI_INDICATORSTART, GEANY_INDICATOR_USER,
-						info->start);
-
-				if (start == info->start)
-				{
-					gint end = scintilla_send_message(sci, SCI_INDICATOREND, GEANY_INDICATOR_USER,
-							info->start);
-
-					if (end == info->end)
-					{
-						sci_indicator_clear(sci, start, end - start);
-						has_cleared = TRUE;
-					}
-				}
-			}
-		}
-
-		if (has_cleared == FALSE)
-			sci_indicator_fill_or_clear = sci_indicator_fill;
-	}
-
 	foreach_slist (match, matches)
 	{
-		info = match->data;
+		GeanyMatchInfo *info = match->data;
+		gint start = info->start, end = info->end;
 
-		if (sci_indicator_fill_or_clear && info->end != info->start)
-			sci_indicator_fill_or_clear(sci, info->start, info->end - info->start);
+		if (end != start)
+			(clear_mode ? sci_indicator_clear : sci_indicator_fill)(sci, start, end - start);
 
 		geany_match_info_free(info);
 		count++;
@@ -1367,7 +1336,7 @@ on_find_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 				break;
 			case GEANY_RESPONSE_HIGHLIGHT:
 			{
-				gint count = search_highlight_all(doc, search_data.text, search_data.flags, NULL);
+				gint count = search_highlight_all(doc, search_data.text, search_data.flags, FALSE);
 
 				if (count == 0)
 					ui_set_statusbar(FALSE, _("No matches found for \"%s\"."), search_data.original_text);
