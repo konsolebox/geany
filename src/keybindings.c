@@ -588,9 +588,9 @@ static void init_default_kb(void)
 		GDK_comma, GEANY_PRIMARY_MOD_MASK, "edit_gotopreviousmarker",
 		_("Go to Pre_vious Marker"), "go_to_previous_marker1");
 	add_kb(group, GEANY_KEYS_SEARCH_NEXTMESSAGE, NULL,
-		0, 0, "menu_nextmessage", _("Next Message"), "next_message1");
+		GDK_Right, GEANY_PRIMARY_MOD_MASK | GDK_MOD1_MASK, "menu_nextmessage", _("Next Message"), "next_message1");
 	add_kb(group, GEANY_KEYS_SEARCH_PREVIOUSMESSAGE, NULL,
-		0, 0, "menu_previousmessage", _("Previous Message"), "previous_message1");
+		GDK_Left, GEANY_PRIMARY_MOD_MASK | GDK_MOD1_MASK, "menu_previousmessage", _("Previous Message"), "previous_message1");
 	add_kb(group, GEANY_KEYS_GOTO_TAGDEFINITION, NULL,
 		GDK_t, GEANY_PRIMARY_MOD_MASK, "popup_gototagdefinition",
 		_("Go to Symbol Definition"), "goto_tag_definition1");
