@@ -214,6 +214,14 @@ enum {
 	GEANY_AC_DQUOTE			= 16
 };
 
+/* Long line type */
+enum {
+	GEANY_LONG_LINE_TYPE_LINE = 0,
+	GEANY_LONG_LINE_TYPE_BACKGROUND = 1,
+	GEANY_LONG_LINE_TYPE_OLD = 2,
+	GEANY_LONG_LINE_TYPE_DISABLED = -1
+};
+
 typedef struct
 {
 	gchar	*current_word;	/* holds word under the mouse or keyboard cursor */
