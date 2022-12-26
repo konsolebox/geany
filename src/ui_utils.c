@@ -3024,3 +3024,58 @@ gboolean ui_encodings_combo_box_set_active_encoding(GtkComboBox *combo, gint enc
 	}
 	return FALSE;
 }
+
+gint ui_radio_button_get_group_value(GtkWidget *parent, gint default_value,
+		const gchar *button_name, gint button_value, ...)
+{
+	va_list args;
+	g_return_val_if_fail(parent != NULL, default_value);
+	GtkWidget *widget = ui_lookup_widget(parent, button_name);
+
+	if (widget && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
+		return button_value;
+
+	va_start(args, button_value);
+	gint value = default_value;
+
+	while (button_name = va_arg(args, const gchar *))
+	{
+		button_value = va_arg(args, gint);
+		widget = ui_lookup_widget(parent, button_name);
+
+		if (widget && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
+		{
+			value = button_value;
+			break;
+		}
+	}
+
+	va_end(args);
+	return value;
+}
+
+void ui_radio_button_set_group_value(GtkWidget *parent, gint value,
+		const gchar *default_button_name, const gchar *button_name, gint button_value, ...)
+{
+	va_list args;
+	va_start(args, button_value);
+	const gchar *found_button_name = NULL;
+
+	if (button_value == value)
+		found_button_name = button_name;
+
+	while (button_name = va_arg(args, const gchar *))
+	{
+		button_value = va_arg(args, gint);
+
+		if (found_button_name == NULL && button_value == value)
+			found_button_name = button_name;
+	}
+
+	va_end(args);
+	g_return_if_fail(parent != NULL);
+	GtkWidget *widget = ui_lookup_widget(parent, found_button_name ? found_button_name :
+			default_button_name);
+	g_return_if_fail(widget != NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), TRUE);
+}

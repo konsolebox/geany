@@ -343,6 +343,12 @@ gint ui_encodings_combo_box_get_active_encoding(GtkComboBox *combo);
 
 gboolean ui_encodings_combo_box_set_active_encoding(GtkComboBox *combo, gint enc);
 
+gint ui_radio_button_get_group_value(GtkWidget *parent, gint default_value,
+		const gchar *button_name, gint button_value, ...);
+
+void ui_radio_button_set_group_value(GtkWidget *parent, gint value,
+		const gchar *default_button_name, const gchar *button_name, gint button_value, ...);
+
 #endif /* GEANY_PRIVATE */
 
 G_END_DECLS
