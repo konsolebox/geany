@@ -614,7 +614,7 @@ get_widget(GtkWidget *owner, StashWidgetID widget_id)
 	return widget;
 }
 
-static void handle_radio_button(GtkWidget *widget, gint enum_id, gboolean *setting,
+static void handle_radio_button(GtkWidget *widget, gint enum_id, gint *setting,
 		PrefAction action)
 {
 	switch (action)
