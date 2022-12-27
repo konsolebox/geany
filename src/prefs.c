@@ -686,21 +686,17 @@ static void prefs_init_dialog(void)
 	kb_init(&global_kb_data);
 
 	/* Printing */
-	{
-		GtkWidget *widget_gtk = ui_lookup_widget(ui_widgets.prefs_dialog, "radio_print_gtk");
-		if (printing_prefs.use_gtk_printing)
-			widget = widget_gtk;
-		else
-			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "radio_print_external");
+	GtkWidget *radio_print_gtk = ui_lookup_widget(ui_widgets.prefs_dialog, "radio_print_gtk");
+	widget = printing_prefs.use_gtk_printing ? radio_print_gtk :
+			ui_lookup_widget(ui_widgets.prefs_dialog, "radio_print_external");
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), TRUE);
+	on_prefs_print_radio_button_toggled(GTK_TOGGLE_BUTTON(radio_print_gtk), NULL);
 
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), TRUE);
-
-		on_prefs_print_radio_button_toggled(GTK_TOGGLE_BUTTON(widget_gtk), NULL);
-	}
 	if (printing_prefs.external_print_cmd)
-		gtk_entry_set_text(
-			GTK_ENTRY(ui_lookup_widget(ui_widgets.prefs_dialog, "entry_print_external_cmd")),
-			printing_prefs.external_print_cmd);
+	{
+		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "entry_print_external_cmd");
+		gtk_entry_set_text(GTK_ENTRY(widget), printing_prefs.external_print_cmd);
+	}
 
 	widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_print_linenumbers");
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), printing_prefs.print_line_numbers);
