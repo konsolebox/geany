@@ -841,12 +841,14 @@ static void load_dialog_prefs(GKeyFile *config)
 	toolbar_prefs.append_to_menu = utils_get_setting_boolean(config, PACKAGE, "pref_toolbar_append_to_menu", FALSE);
 	{
 		toolbar_prefs.use_gtk_default_style = utils_get_setting_boolean(config, PACKAGE, "pref_toolbar_use_gtk_default_style", TRUE);
-		if (! toolbar_prefs.use_gtk_default_style)
-			toolbar_prefs.icon_style = utils_get_setting_integer(config, PACKAGE, "pref_toolbar_icon_style", GTK_TOOLBAR_ICONS);
+		toolbar_prefs.icon_style = toolbar_prefs.use_gtk_default_style ? -1 :
+				utils_get_setting_integer(config, PACKAGE, "pref_toolbar_icon_style",
+				GTK_TOOLBAR_ICONS);
 
 		toolbar_prefs.use_gtk_default_icon = utils_get_setting_boolean(config, PACKAGE, "pref_toolbar_use_gtk_default_icon", TRUE);
-		if (! toolbar_prefs.use_gtk_default_icon)
-			toolbar_prefs.icon_size = utils_get_setting_integer(config, PACKAGE, "pref_toolbar_icon_size", GTK_ICON_SIZE_LARGE_TOOLBAR);
+		toolbar_prefs.icon_size = toolbar_prefs.use_gtk_default_icon ? -1 :
+				utils_get_setting_integer(config, PACKAGE, "pref_toolbar_icon_size",
+				GTK_ICON_SIZE_LARGE_TOOLBAR);
 	}
 
 	/* VTE */
