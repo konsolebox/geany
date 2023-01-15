@@ -2091,26 +2091,46 @@ static gboolean cb_func_mark_action(guint key_id)
 	return TRUE;
 }
 
+/* Worth moving to editor.c but "circular dependencies" need looking at. */
+static gboolean editor_has_focus(GeanyEditor *editor)
+{
+	g_return_val_if_fail(editor != NULL && editor->sci != NULL, FALSE);
+	return gtk_window_get_focus(GTK_WINDOW(main_widgets.window)) == GTK_WIDGET(editor->sci);
+}
+
 /* Common function for goto keybindings, useful even when sci doesn't have focus. */
 static gboolean cb_func_goto_action(guint key_id)
 {
-	gint cur_line;
 	GeanyDocument *doc = document_get_current();
 
-	if (doc == NULL)
-		return TRUE;
+	switch (key_id)
+	{
+		case GEANY_KEYS_GOTO_LINESTART:
+		case GEANY_KEYS_GOTO_LINEEND:
+		case GEANY_KEYS_GOTO_LINESTARTVISUAL:
+		case GEANY_KEYS_GOTO_LINEENDVISUAL:
+		case GEANY_KEYS_GOTO_PREVWORDPART:
+		case GEANY_KEYS_GOTO_NEXTWORDPART:
+			/* Only check editor-sensitive keybindings when editor has focus so home,end still
+			 * work in other widgets */
+			if (!doc || !editor_has_focus(doc->editor))
+				return FALSE;
+			break;
+		default:
+			if (!doc)
+				return TRUE;
+	}
 
 	ScintillaObject *sci = doc->editor->sci;
-	cur_line = sci_get_current_line(sci);
 
 	switch (key_id)
 	{
 		case GEANY_KEYS_GOTO_BACK:
 			navqueue_go_back();
-			return TRUE;
+			break;
 		case GEANY_KEYS_GOTO_FORWARD:
 			navqueue_go_forward();
-			return TRUE;
+			break;
 		case GEANY_KEYS_GOTO_LINE:
 		{
 			if (toolbar_prefs.visible)
@@ -2121,19 +2141,21 @@ static gboolean cb_func_goto_action(guint key_id)
 				if (wid && gtk_widget_get_mapped(wid))
 				{
 					gtk_widget_grab_focus(wid);
-					return TRUE;
+					break;
 				}
 			}
+
 			on_go_to_line_activate(NULL, NULL);
-			return TRUE;
+			break;
 		}
 		case GEANY_KEYS_GOTO_MATCHINGBRACE:
 			goto_matching_brace(doc);
-			return TRUE;
+			break;
 		case GEANY_KEYS_GOTO_NEXTMARKER:
 		case GEANY_KEYS_GOTO_PREVIOUSMARKER:
 		{
 			GeanyDocument *starting_doc = doc;
+			gint cur_line = sci_get_current_line(sci);
 			gint marker_line = key_id == GEANY_KEYS_GOTO_NEXTMARKER ?
 					sci_marker_next(sci, cur_line + 1, 1 << 1, FALSE) :
 					sci_marker_previous(sci, cur_line - 1, 1 << 1, FALSE);
@@ -2163,22 +2185,14 @@ static gboolean cb_func_goto_action(guint key_id)
 				} while (doc != starting_doc);
 			}
 
-			return TRUE;
+			break;
 		}
 		case GEANY_KEYS_GOTO_TAGDEFINITION:
 			goto_tag(doc, TRUE);
-			return TRUE;
+			break;
 		case GEANY_KEYS_GOTO_TAGDECLARATION:
 			goto_tag(doc, FALSE);
-			return TRUE;
-	}
-	/* only check editor-sensitive keybindings when editor has focus so home,end still
-	 * work in other widgets */
-	if (gtk_window_get_focus(GTK_WINDOW(main_widgets.window)) != GTK_WIDGET(sci))
-		return FALSE;
-
-	switch (key_id)
-	{
+			break;
 		case GEANY_KEYS_GOTO_LINESTART:
 			sci_send_command(sci, editor_prefs.smart_home_key ? SCI_VCHOME : SCI_HOME);
 			break;
@@ -2199,6 +2213,7 @@ static gboolean cb_func_goto_action(guint key_id)
 			sci_send_command(sci, SCI_WORDPARTRIGHT);
 			break;
 	}
+
 	return TRUE;
 }
 
