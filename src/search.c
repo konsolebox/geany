@@ -497,17 +497,17 @@ static void create_find_dialog(void)
 
 	bbox = gtk_hbutton_box_new();
 
+	button = gtk_button_new_with_mnemonic(_("In Se_lection"));
+	gtk_container_add(GTK_CONTAINER(bbox), button);
+	g_signal_connect(button, "clicked", G_CALLBACK(send_find_dialog_response),
+		GINT_TO_POINTER(GEANY_RESPONSE_FIND_IN_SELECTION));
+
 	button = gtk_button_new_with_mnemonic(_("_Highlight"));
 	gtk_widget_set_tooltip_text(button,
 			_("Highlight all matches in the current document"));
 	gtk_container_add(GTK_CONTAINER(bbox), button);
 	g_signal_connect(button, "clicked", G_CALLBACK(send_find_dialog_response),
 		GINT_TO_POINTER(GEANY_RESPONSE_HIGHLIGHT));
-
-	button = gtk_button_new_with_mnemonic(_("In Se_lection"));
-	gtk_container_add(GTK_CONTAINER(bbox), button);
-	g_signal_connect(button, "clicked", G_CALLBACK(send_find_dialog_response),
-		GINT_TO_POINTER(GEANY_RESPONSE_FIND_IN_SELECTION));
 
 	button = gtk_button_new_with_mnemonic(_("In Sessi_on"));
 	gtk_container_add(GTK_CONTAINER(bbox), button);
