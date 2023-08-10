@@ -2190,67 +2190,97 @@ gboolean document_need_save_as(GeanyDocument *doc)
 GEANY_API_SYMBOL
 gboolean document_save_file_as(GeanyDocument *doc, const gchar *utf8_fname)
 {
-	gboolean ret;
-	gboolean new_file;
-
 	g_return_val_if_fail(doc != NULL, FALSE);
 
-	new_file = document_need_save_as(doc) || (utf8_fname != NULL && strcmp(doc->file_name, utf8_fname) != 0);
-	if (utf8_fname != NULL) {
-		SETPTR(doc->file_name, g_strdup(utf8_fname));
+	gboolean new_file = document_need_save_as(doc) || utf8_fname != NULL &&
+			strcmp(doc->file_name, utf8_fname) != 0;
+	gchar *old_file_name = NULL;
+	gboolean old_has_untitled_filename;
+
+	if (utf8_fname != NULL)
+	{
+		old_file_name = doc->file_name;
+		doc->file_name = g_strdup(utf8_fname);
+		old_has_untitled_filename = doc->priv->has_untitled_filename;
 		doc->priv->has_untitled_filename = FALSE;
 	}
 
-	/* reset real path, it's retrieved again in document_save() */
+	/* Reset real path. It's retrieved again in document_save() */
 	SETPTR(doc->real_path, NULL);
 
-	/* also reset folder */
+	/* Also reset folder */
 	SETPTR(doc->priv->folder, NULL);
 
-	/* detect filetype */
-	if (doc->file_type->id == GEANY_FILETYPES_NONE)
-	{
-		GeanyFiletype *ft = filetypes_detect_from_document(doc);
+	gboolean old_readonly = doc->readonly;
+	gint old_protected = doc->priv->protected;
 
-		document_set_filetype(doc, ft);
-		if (document_get_current() == doc)
-		{
-			ignore_callback = TRUE;
-			filetypes_select_radio_item(doc->file_type);
-			ignore_callback = FALSE;
-		}
-	}
-
-	if (new_file)
+	if (new_file && ! doc->readonly)
 	{
-		// assume user wants to throw away read-only setting
-		sci_set_readonly(doc->editor->sci, FALSE);
+		/* Assume user wants to throw away read-only setting.
+		 * Revert later if save fails. */
 		doc->readonly = FALSE;
+		sci_set_readonly(doc->editor->sci, FALSE);
 		if (doc->priv->protected > 0)
 			unprotect_document(doc);
+	}
 
-		if (doc->tm_file)
+	gboolean ret = document_save_file(doc, TRUE);
+
+	if (ret)
+	{
+		if (utf8_fname != NULL)
+			g_free(old_file_name);
+
+		/* Detect filetype */
+		if (doc->file_type->id == GEANY_FILETYPES_NONE)
 		{
-			/* create a new tm_source_file object otherwise tagmanager won't work correctly. */
+			GeanyFiletype *ft = filetypes_detect_from_document(doc);
+			document_set_filetype(doc, ft);
+
+			if (document_get_current() == doc)
+			{
+				ignore_callback = TRUE;
+				filetypes_select_radio_item(doc->file_type);
+				ignore_callback = FALSE;
+			}
+		}
+
+		if (new_file && doc->tm_file)
+		{
+			/* Create a new tm_source_file object otherwise tagmanager won't work correctly. */
 			tm_workspace_remove_source_file(doc->tm_file);
 			tm_source_file_free(doc->tm_file);
 			doc->tm_file = NULL;
 		}
-	}
 
-	replace_header_filename(doc);
+		replace_header_filename(doc);
 
-	ret = document_save_file(doc, TRUE);
+		/* Add file monitoring after the file has been saved to ignore any earlier events */
+		monitor_file_setup(doc);
+		doc->priv->file_disk_status = FILE_IGNORE;
 
-	/* file monitoring support, add file monitoring after the file has been saved
-	 * to ignore any earlier events */
-	monitor_file_setup(doc);
-	doc->priv->file_disk_status = FILE_IGNORE;
-
-	if (ret)
 		ui_add_recent_document(doc);
+		build_menu_update(doc);
+	}
+	else
+	{
+		if (utf8_fname != NULL)
+		{
+			SETPTR(doc->file_name, old_file_name);
+			doc->priv->has_untitled_filename = old_has_untitled_filename;
+		}
 
-	build_menu_update(doc);
+		SETPTR(doc->real_path, NULL);
+		SETPTR(doc->priv->folder, NULL);
+
+		if (new_file && old_readonly)
+		{
+			doc->readonly = TRUE;
+			sci_set_readonly(doc->editor->sci, TRUE);
+			doc->priv->protected = old_protected;
+			ui_update_tab_status(doc);
+		}
+	}
 
 	return ret;
 }
