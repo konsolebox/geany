@@ -764,7 +764,9 @@ static void styleset_common(ScintillaObject *sci, guint ft_id)
 	/* italic (4th argument) is whether to override default background selection */
 	SSM(sci, SCI_SETSELBACK, style->italic, invert(style->background));
 
+	#if 0
 	SSM(sci, SCI_SETSTYLEBITS, SSM(sci, SCI_GETSTYLEBITSNEEDED, 0, 0), 0);
+	#endif
 
 	SSM(sci, SCI_SETFOLDMARGINCOLOUR, 1, invert(common_style_set.styling[GCS_MARGIN_FOLDING].background));
 	SSM(sci, SCI_SETFOLDMARGINHICOLOUR, 1, invert(common_style_set.styling[GCS_MARGIN_FOLDING].background));

@@ -374,7 +374,11 @@ static void write_latex_file(GeanyDocument *doc, const gchar *filename,
 	GString *body;
 	GString *cmds;
 	GString *latex;
+	#ifdef SCI_GETSTYLEBITS
 	gint style_max = pow(2, scintilla_send_message(sci, SCI_GETSTYLEBITS, 0, 0));
+	#else
+	gint style_max = pow(2, 8);
+	#endif
 
 	/* first read all styles from Scintilla */
 	for (i = 0; i < style_max; i++)
@@ -578,7 +582,11 @@ static void write_html_file(GeanyDocument *doc, const gchar *filename,
 	GString *body;
 	GString *css;
 	GString *html;
+	#ifdef SCI_GETSTYLEBITS
 	gint style_max = pow(2, scintilla_send_message(sci, SCI_GETSTYLEBITS, 0, 0));
+	#else
+	gint style_max = pow(2, 8);
+	#endif
 
 	/* first read all styles from Scintilla */
 	for (i = 0; i < style_max; i++)

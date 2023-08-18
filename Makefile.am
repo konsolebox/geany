@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = ctags scintilla src plugins icons po doc data tests
+SUBDIRS = ctags scintilla-build lexilla-build src plugins icons po doc data tests
 
 AUTOMAKE_OPTIONS =	1.7
 

@@ -37,6 +37,8 @@
 
 #include "sciwrappers.h"
 
+#include "Lexilla.h"
+
 #include "utils.h"
 
 #include <string.h>
@@ -512,10 +514,12 @@ gint sci_get_lexer(ScintillaObject *sci)
 void sci_set_lexer(ScintillaObject *sci, guint lexer_id)
 {
 	gint old = sci_get_lexer(sci);
+	const char *name = LexerNameFromID(lexer_id);
+	ILexer5 *lexer = CreateLexer(name);
+	SSM(sci, SCI_SETILEXER, 0, (sptr_t) lexer);
+	gint new = sci_get_lexer(sci);
 
-	SSM(sci, SCI_SETLEXER, lexer_id, 0);
-
-	if (old != (gint)lexer_id)
+	if (old != new)
 		SSM(sci, SCI_CLEARDOCUMENTSTYLE, 0, 0);
 }
 
