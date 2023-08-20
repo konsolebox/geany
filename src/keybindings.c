@@ -356,7 +356,7 @@ static void init_default_kb(void)
 	add_kb(group, GEANY_KEYS_FILE_OPENLASTTAB, NULL,
 		0, 0, "file_openlasttab", _("Re-open last closed tab"), NULL);
 	add_kb(group, GEANY_KEYS_FILE_QUIT, NULL,
-		GDK_q, GEANY_PRIMARY_MOD_MASK, "menu_quit", _("Quit"), "menu_quit1");
+		0, 0, "menu_quit", _("Quit"), "menu_quit1");
 
 	group = keybindings_get_core_group(GEANY_KEY_GROUP_PROJECT);
 
