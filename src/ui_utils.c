@@ -2455,7 +2455,6 @@ void ui_init(void)
 		GeanySharedMenu arr[] = {
 			{"commands2_menu", "commands2", "commands1"},
 			{"menu_format1_menu", "menu_format1", "menu_format2"},
-			{"more1_menu", "more1", "search2"},
 			{NULL, NULL, NULL}
 		};
 		static GeanySharedMenu items[G_N_ELEMENTS(arr)];
