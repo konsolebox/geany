@@ -111,6 +111,8 @@ static gboolean no_plugins = FALSE;
 #endif
 static gboolean dummy = FALSE;
 
+static gint save_default_session_files_queued = 0;
+
 gboolean new_instance_mode_arg_callback(const gchar *option_name, const gchar *value, gpointer data, GError **error)
 {
 	gint len = strlen(option_name);
@@ -267,6 +269,7 @@ static void main_init(void)
 	ui_prefs.recent_queue				= g_queue_new();
 	ui_prefs.recent_projects_queue		= g_queue_new();
 	main_status.opening_session_files	= FALSE;
+	main_status.opening_files_recursively	= FALSE;
 
 	main_widgets.window = create_window1();
 	g_signal_connect(main_widgets.window, "notify::is-active", G_CALLBACK(on_window_active_changed), NULL);
@@ -301,6 +304,8 @@ static void main_init(void)
 
 	gtk_window_set_default_size(GTK_WINDOW(main_widgets.window),
 		GEANY_WINDOW_DEFAULT_WIDTH, GEANY_WINDOW_DEFAULT_HEIGHT);
+
+	save_default_session_files_queued = 0;
 }
 
 const gchar *main_get_version_string(void)
@@ -1416,4 +1421,34 @@ void main_reload_configuration(void)
 	symbols_reload_config_files();
 
 	ui_set_statusbar(TRUE, _("Configuration files reloaded."));
+}
+
+static gboolean save_default_session_files(gpointer data)
+{
+	if (! main_status.quitting)
+		configuration_save_default_session();
+
+	save_default_session_files_queued = 0;
+	return FALSE;
+}
+
+void consider_saving_default_session_files(gboolean deferred_only)
+{
+	if (deferred_only && save_default_session_files_queued != -1)
+		return;
+
+	if (save_default_session_files_queued == 1)
+		return;
+
+	if (! cl_options.load_session || main_status.quitting || main_status.opening_session_files)
+		return;
+
+	if (main_status.opening_files_recursively)
+	{
+		save_default_session_files_queued = -1;
+		return;
+	}
+
+	save_default_session_files_queued = 1;
+	g_idle_add_full(G_PRIORITY_LOW, save_default_session_files, NULL, NULL);
 }

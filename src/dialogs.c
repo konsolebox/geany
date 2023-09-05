@@ -282,9 +282,12 @@ static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint respons
 						dialogs_create_cancellable_status_window(&status_window, &label,
 								"Opening Files Recursively", "Opening files recursively...", TRUE);
 
+						main_status.opening_files_recursively = TRUE;
 						document_open_files_recursively(filelist, ro, ft, charset, filter, &error,
 								&cancelled, G_CALLBACK(on_recursive_open_iterate), &status_window,
 								label);
+						main_status.opening_files_recursively = FALSE;
+						consider_saving_default_session_files(TRUE);
 
 						if (error)
 						{

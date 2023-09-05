@@ -649,6 +649,7 @@ static GeanyDocument *document_create(const gchar *utf8_filename, gboolean filen
 	}
 
 	ui_document_buttons_update();
+	consider_saving_default_session_files(FALSE);
 
 	doc->is_valid = TRUE;	/* do this last to prevent UI updating with NULL items. */
 	doc->changed = TRUE;
@@ -765,6 +766,8 @@ gboolean document_remove_page(guint page_num)
 
 	if (done && ui_prefs.new_document_after_close)
 		document_new_file_if_non_open();
+	if (done)
+		consider_saving_default_session_files(FALSE);
 
 	return done;
 }

@@ -63,6 +63,7 @@ typedef struct GeanyStatus
 							  * (used to prevent notebook switch page signals) */
 	gboolean	quitting;	/* state when Geany is quitting completely */
 	gboolean	main_window_realized;
+	gboolean	opening_files_recursively;
 }
 GeanyStatus;
 
@@ -79,6 +80,8 @@ gboolean main_handle_filename(const gchar *locale_filename);
 void main_load_project_from_command_line(const gchar *locale_filename, gboolean use_session);
 
 gint main_lib(gint argc, gchar **argv);
+
+void consider_saving_default_session_files(gboolean deferred_only);
 
 #endif /* GEANY_PRIVATE */
 
