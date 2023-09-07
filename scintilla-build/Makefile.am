@@ -15,10 +15,13 @@ marshallers: $(SCINTILLA)/gtk/scintilla-marshal.list
 gtk-scintilla-marshal.c: marshallers
 gtk-scintilla-marshal.h: marshallers
 
+ScintillaGTKWithSymbols.cxx:
+	patch -p0 $(SCINTILLA)/gtk/ScintillaGTK.cxx ScintillaGTKWithSymbols.cxx.patch -o ScintillaGTKWithSymbols.cxx
+
 SRCS = \
 	$(SCINTILLA)/gtk/Converter.h \
 	$(SCINTILLA)/gtk/PlatGTK.cxx \
-	$(SCINTILLA)/gtk/ScintillaGTK.cxx \
+	ScintillaGTKWithSymbols.cxx \
 	$(SCINTILLA)/gtk/ScintillaGTK.h \
 	$(SCINTILLA)/gtk/ScintillaGTKAccessible.cxx \
 	$(SCINTILLA)/gtk/ScintillaGTKAccessible.h \
