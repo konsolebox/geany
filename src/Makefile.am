@@ -119,6 +119,12 @@ endif
 libgeany_la_CFLAGS  = $(AM_CPPFLAGS) @LIBGEANY_CFLAGS@
 libgeany_la_LDFLAGS = @LIBGEANY_LDFLAGS@
 
+$(top_builddir)/scintilla-build/libscintilla.la:
+	$(MAKE) -C $(top_builddir)/scintilla-build
+
+$(top_builddir)/lexilla-build/liblexilla.la:
+	$(MAKE) -C $(top_builddir)/lexilla-build
+
 libgeany_la_LIBADD = \
 	$(top_builddir)/scintilla-build/libscintilla.la \
 	$(top_builddir)/lexilla-build/liblexilla.la \
