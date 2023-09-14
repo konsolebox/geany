@@ -38,6 +38,7 @@
 #include "geanyobject.h"
 #include "keyfile.h"
 #include "main.h"
+#include "prefs.h"
 #include "projectprivate.h"
 #include "sidebar.h"
 #include "stash.h"
@@ -449,7 +450,8 @@ static void destroy_project(gboolean open_default)
 		{
 			configuration_reload_default_session();
 			configuration_open_files();
-			document_new_file_if_non_open();
+			if (prefs.auto_open_new_file)
+				document_new_file_if_non_open();
 			ui_focus_current_document();
 		}
 	}
