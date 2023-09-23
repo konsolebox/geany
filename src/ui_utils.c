@@ -225,6 +225,16 @@ static gchar *create_statusbar_statistics(GeanyDocument *doc,
 			{
 				gint len = sci_get_selected_text_length(sci);
 				g_string_append_printf(stats_str, "%d", len);
+
+				if (len > 0)
+				{
+					gint lines = sci_get_lines_selected(doc->editor->sci);
+					g_assert(lines > 0);
+					gint end_pos = sci_get_selection_end(sci);
+					gint end_col = sci_get_col_from_position(sci, end_pos);
+					g_string_append_printf(stats_str, ", %dL", end_col == 0 ? lines - 1 : lines);
+				}
+
 				break;
 			}
 			case 'n' :
