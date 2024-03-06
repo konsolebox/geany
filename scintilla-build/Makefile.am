@@ -89,6 +89,8 @@ SRCS = \
 	$(SCINTILLA)/src/SplitVector.h \
 	$(SCINTILLA)/src/Style.cxx \
 	$(SCINTILLA)/src/Style.h \
+	$(SCINTILLA)/src/UndoHistory.cxx \
+	$(SCINTILLA)/src/UndoHistory.h \
 	$(SCINTILLA)/src/UniConversion.cxx \
 	$(SCINTILLA)/src/UniConversion.h \
 	$(SCINTILLA)/src/UniqueString.cxx \
