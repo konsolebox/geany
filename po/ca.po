@@ -3552,11 +3552,11 @@ msgid "Previous Message"
 msgstr "Missatge anterior"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "Troba l'ús"
 
 #: ../src/keybindings.c:553
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "Troba el document de l'ús"
 
 #: ../src/keybindings.c:560 ../src/toolbar.c:70

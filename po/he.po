@@ -3469,11 +3469,11 @@ msgid "Previous Message"
 msgstr "הודעה קודמת"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "חיפוש מספר המופעים"
 
 #: ../src/keybindings.c:553
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "חיפוש מספר המופעים במסמך"
 
 #: ../src/keybindings.c:560 ../src/toolbar.c:70

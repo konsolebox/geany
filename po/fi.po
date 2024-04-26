@@ -3574,11 +3574,11 @@ msgid "Previous Message"
 msgstr "Edellinen viesti"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "Etsi avoimista"
 
 #: ../src/keybindings.c:553
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "Etsi asiakirjasta"
 
 #: ../src/keybindings.c:560 ../src/toolbar.c:70

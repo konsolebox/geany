@@ -3807,12 +3807,12 @@ msgid "Previous Message"
 msgstr "Следващо съобщение"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "Намери къде се използва"
 
 #: ../src/keybindings.c:553
 #, fuzzy
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "Намери къде се използва"
 
 #: ../src/keybindings.c:560 ../src/toolbar.c:70

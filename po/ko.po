@@ -3512,11 +3512,11 @@ msgid "Previous Message"
 msgstr "이전 메시지"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "사용법 찾기"
 
 #: ../src/keybindings.c:553
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "문서 사용법 찾기"
 
 #: ../src/keybindings.c:560 ../src/toolbar.c:70

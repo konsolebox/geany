@@ -3664,12 +3664,12 @@ msgid "Previous Message"
 msgstr "Даргаагийн _Мэдээ"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "Хэрэглээг хай"
 
 #: ../src/keybindings.c:553
 #, fuzzy
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "Хэрэглээг хай"
 
 #: ../src/keybindings.c:560 ../src/toolbar.c:70

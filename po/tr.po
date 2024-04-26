@@ -3509,11 +3509,11 @@ msgid "Previous Message"
 msgstr "Önceki Mesaj"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "Kullanım Bul"
 
 #: ../src/keybindings.c:553
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "Döküman Kullanımı Bul"
 
 #: ../src/keybindings.c:560 ../src/toolbar.c:70

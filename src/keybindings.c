@@ -542,10 +542,10 @@ static void init_default_kb(void)
 		"find_in_files1");
 	add_kb(group, GEANY_KEYS_SEARCH_FINDUSAGE, NULL,
 		GDK_e, GEANY_PRIMARY_MOD_MASK | GDK_SHIFT_MASK, "popup_findusage",
-		_("Find Usage"), "find_usage1");
+		_("Find In Session"), "find_usage1");
 	add_kb(group, GEANY_KEYS_SEARCH_FINDDOCUMENTUSAGE, NULL,
 		GDK_d, GEANY_PRIMARY_MOD_MASK | GDK_SHIFT_MASK, "popup_finddocumentusage",
-		_("Find Document Usage"), "find_document_usage1");
+		_("Find In Document"), "find_document_usage1");
 
 	group = keybindings_get_core_group(GEANY_KEY_GROUP_MARK);
 

@@ -3528,11 +3528,11 @@ msgid "Previous Message"
 msgstr "Ankstesnis pranešimas"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "Kiek kartų panaudotas"
 
 #: ../src/keybindings.c:553
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "Kiek kartų panaudotas dokumente"
 
 #: ../src/keybindings.c:560 ../src/toolbar.c:70

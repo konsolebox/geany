@@ -3584,11 +3584,11 @@ msgid "Previous Message"
 msgstr "Προηγούμενο Μήνυμα"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "Εύρεση Χρήσης"
 
 #: ../src/keybindings.c:553
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "Αναζήτηση Χρήσης Εγγράφου"
 
 #: ../src/keybindings.c:560 ../src/toolbar.c:70

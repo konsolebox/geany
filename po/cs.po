@@ -3557,11 +3557,11 @@ msgid "Previous Message"
 msgstr "Předchozí zpráva"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "Najít použití"
 
 #: ../src/keybindings.c:553
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "Najít použití v dokumentu"
 
 # Překlad "location" může být i umístění, paměťové místo, adresa, vyhledávání. Zkontrolovat (také překlad "Navigate")!

@@ -3596,11 +3596,11 @@ msgid "Previous Message"
 msgstr "Message précédent"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "Utiliser la recherche"
 
 #: ../src/keybindings.c:553
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "Rechercher dans le document"
 
 #: ../src/keybindings.c:560 ../src/toolbar.c:70

@@ -3534,11 +3534,11 @@ msgid "Previous Message"
 msgstr "Папярэдняе паведамленне"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "Знайсці выкарыстанне"
 
 #: ../src/keybindings.c:553
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "Знайсці выкарыстанне дакумента"
 
 #: ../src/keybindings.c:560 ../src/toolbar.c:70

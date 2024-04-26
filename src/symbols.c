@@ -2475,12 +2475,12 @@ static void create_taglist_popup_menu(void)
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(menu), item);
 
-	symbol_menu.find_usage = item = ui_image_menu_item_new(GTK_STOCK_FIND, _("Find _Usage"));
+	symbol_menu.find_usage = item = ui_image_menu_item_new(GTK_STOCK_FIND, _("Find In S_ession"));
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(menu), item);
 	g_signal_connect(item, "activate", G_CALLBACK(on_find_usage), symbol_menu.find_usage);
 
-	symbol_menu.find_doc_usage = item = ui_image_menu_item_new(GTK_STOCK_FIND, _("Find _Document Usage"));
+	symbol_menu.find_doc_usage = item = ui_image_menu_item_new(GTK_STOCK_FIND, _("Find In _Document"));
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(menu), item);
 	g_signal_connect(item, "activate", G_CALLBACK(on_find_usage), symbol_menu.find_doc_usage);

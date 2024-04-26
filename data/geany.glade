@@ -489,7 +489,7 @@
     </child>
     <child>
       <object class="GtkImageMenuItem" id="find_usage2">
-        <property name="label" translatable="yes">Find _Usage</property>
+        <property name="label" translatable="yes">Find In S_ession</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="use_underline">True</property>
@@ -500,7 +500,7 @@
     </child>
     <child>
       <object class="GtkImageMenuItem" id="find_document_usage2">
-        <property name="label" translatable="yes">Find _Document Usage</property>
+        <property name="label" translatable="yes">Find In _Document</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="use_underline">True</property>
@@ -7459,7 +7459,7 @@
                           <object class="GtkMenuItem" id="find_usage1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Find _Usage</property>
+                            <property name="label" translatable="yes">Find In S_ession</property>
                             <property name="use_underline">True</property>
                             <signal name="activate" handler="on_find_usage1_activate" swapped="no"/>
                           </object>
@@ -7468,7 +7468,7 @@
                           <object class="GtkMenuItem" id="find_document_usage1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Find _Document Usage</property>
+                            <property name="label" translatable="yes">Find In _Document</property>
                             <property name="use_underline">True</property>
                             <signal name="activate" handler="on_find_document_usage1_activate" swapped="no"/>
                           </object>

@@ -3443,12 +3443,12 @@ msgid "Previous Message"
 msgstr "Претходна порука"
 
 #: ../src/keybindings.c:550
-msgid "Find Usage"
+msgid "Find In Session"
 msgstr "Тражи у фајловима"
 
 #: ../src/keybindings.c:553
 #, fuzzy
-msgid "Find Document Usage"
+msgid "Find In Document"
 msgstr "Пронађи _употребу документа"
 
 #: ../src/keybindings.c:560 ../src/toolbar.c:70
