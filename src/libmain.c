@@ -508,12 +508,27 @@ static void wait_for_input_on_windows(void)
 #endif
 }
 
+static gboolean is_valid_debug_domain(const gchar *domain)
+{
+	static const gchar *valid_domains[] = { "error", "warning", "critical", "message", "info",
+			"debug", "all", NULL };
+	const gchar **iter;
+
+	if (domain != NULL)
+		for (iter = valid_domains; *iter != NULL; ++iter)
+			if (g_strcmp0 (domain, *iter) == 0)
+				return TRUE;
+
+	return FALSE;
+}
+
 static void parse_command_line_options(gint *argc, gchar ***argv)
 {
 	GError *error = NULL;
 	GOptionContext *context;
 	gint i;
 	CommandLineOptions def_clo = {NEW_INSTANCE_DISABLED, NULL, TRUE, -1, -1, FALSE, FALSE, FALSE};
+	const char *env;
 
 	/* first initialise cl_options fields with default values */
 	cl_options = def_clo;
@@ -544,13 +559,14 @@ static void parse_command_line_options(gint *argc, gchar ***argv)
 		exit(1);
 	}
 
-	app->debug_mode = verbose_mode;
+	env = g_getenv("GEANY_DEBUG");
+	app->debug_mode = verbose_mode || env != NULL && *env != '\0';
 	if (app->debug_mode)
 	{
 		/* Since GLib 2.32 messages logged with levels INFO and DEBUG aren't output by the
 		 * default log handler unless the G_MESSAGES_DEBUG environment variable contains the
 		 * domain of the message or is set to the special value "all" */
-		g_setenv("G_MESSAGES_DEBUG", "all", TRUE);
+		g_setenv("G_MESSAGES_DEBUG", is_valid_debug_domain(env) ? env : "all", TRUE);
 	}
 
 #ifdef G_OS_WIN32
