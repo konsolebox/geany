@@ -550,7 +550,7 @@ static void parse_command_line_options(gint *argc, gchar ***argv)
 		/* Since GLib 2.32 messages logged with levels INFO and DEBUG aren't output by the
 		 * default log handler unless the G_MESSAGES_DEBUG environment variable contains the
 		 * domain of the message or is set to the special value "all" */
-		g_setenv("G_MESSAGES_DEBUG", "all", FALSE);
+		g_setenv("G_MESSAGES_DEBUG", "all", TRUE);
 	}
 
 #ifdef G_OS_WIN32
