@@ -979,25 +979,21 @@ static void on_radio_long_line_custom_toggled(GtkToggleButton *radio, GtkWidget 
 gboolean project_load_file(const gchar *locale_file_name)
 {
 	g_return_val_if_fail(locale_file_name != NULL, FALSE);
+	gchar *utf8_filename = utils_get_utf8_from_locale(locale_file_name);
 
 	if (load_config(locale_file_name))
 	{
-		gchar *utf8_filename = utils_get_utf8_from_locale(locale_file_name);
-
 		ui_set_statusbar(TRUE, _("Project \"%s\" opened."), app->project->name);
-
 		ui_add_recent_project_file(utf8_filename);
 		g_free(utf8_filename);
 		return TRUE;
 	}
 	else
 	{
-		gchar *utf8_filename = utils_get_utf8_from_locale(locale_file_name);
-
 		ui_set_statusbar(TRUE, _("Project file \"%s\" could not be loaded."), utf8_filename);
 		g_free(utf8_filename);
+		return FALSE;
 	}
-	return FALSE;
 }
 
 /* Reads the given filename and creates a new project with the data found in the file.
