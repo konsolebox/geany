@@ -152,6 +152,9 @@ static void send_open_command(gint sock, gint argc, gchar **argv)
 		}
 	}
 
+	if (cl_options.no_projects)
+		socket_fd_write_cstring(sock, "no-projects");
+
 	/* use "openro" to denote readonly status for new docs */
 	socket_fd_write_cstring(sock, cl_options.readonly ? "openro" : "open");
 
@@ -551,7 +554,7 @@ static void handle_input_filename(const gchar *buf)
 	locale_filename = utils_get_locale_from_utf8(utf8_filename);
 	if (locale_filename)
 	{
-		if (g_str_has_suffix(locale_filename, ".geany"))
+		if (! cl_options.no_projects && g_str_has_suffix(locale_filename, ".geany"))
 		{
 			if (project_ask_close())
 				main_load_project_from_command_line(locale_filename, TRUE);
@@ -572,6 +575,7 @@ gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpoint
 	GtkWidget *window = data;
 	gboolean popup = FALSE;
 	gboolean readonly;
+	gboolean no_projects = FALSE;
 
 	fd = g_io_channel_unix_get_fd(source);
 	sock = accept(fd, (struct sockaddr *)&caddr, &caddr_len);
@@ -582,12 +586,15 @@ gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpoint
 		if ((readonly = strncmp(buf, "openro", 7) == 0) || strncmp(buf, "open", 5) == 0)
 		{
 			cl_options.readonly = readonly;
+			cl_options.no_projects = no_projects;
 
 			while (socket_fd_get_cstring(sock, buf, sizeof(buf)) != -1 && ! is_eot (buf))
 				handle_input_filename(buf);
 
 			popup = TRUE;
 		}
+		else if (strncmp(buf, "no-projects", 12) == 0)
+			no_projects = TRUE;
 		else if (strncmp(buf, "doclist", 8) == 0)
 		{
 			const gchar *filename;

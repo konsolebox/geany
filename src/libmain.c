@@ -150,6 +150,7 @@ static GOptionEntry entries[] =
 #ifdef HAVE_PLUGINS
 	{ "no-plugins", 'p', 0, G_OPTION_ARG_NONE, &no_plugins, N_("Don't load plugins"), NULL },
 #endif
+	{ "no-projects", 0, 0, G_OPTION_ARG_NONE, &cl_options.no_projects, N_("Open project files as regular files"), NULL },
 	{ "print-prefix", 0, 0, G_OPTION_ARG_NONE, &print_prefix, N_("Print Geany's installation prefix"), NULL },
 	{ "read-only", 'r', 0, G_OPTION_ARG_NONE, &cl_options.readonly, N_("Open all FILES in read-only mode (see documentation)"), NULL },
 	{ "no-session", 's', G_OPTION_FLAG_REVERSE, G_OPTION_ARG_NONE, &cl_options.load_session, N_("Don't load the previous session's files"), NULL },
@@ -930,7 +931,7 @@ static void load_startup_files(gint argc, gchar **argv)
 {
 	gboolean load_session = FALSE;
 
-	if (argc > 1 && g_str_has_suffix(argv[1], ".geany"))
+	if (! cl_options.no_projects && argc > 1 && g_str_has_suffix(argv[1], ".geany"))
 	{
 		gchar *filename = main_get_argv_filename(argv[1]);
 
