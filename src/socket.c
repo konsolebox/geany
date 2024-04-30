@@ -114,11 +114,15 @@ static gint socket_fd_open_unix		(const gchar *path);
 
 static gint socket_fd_write			(gint sock, const gchar *buf, gint len);
 static gint socket_fd_write_all		(gint sock, const gchar *buf, gint len);
-static gint socket_fd_gets			(gint sock, gchar *buf, gint len);
+static gint socket_fd_write_cstring (gint fd, const gchar *buf);
+static gint socket_fd_write_eot     (gint fd);
+static gint socket_fd_get_cstring	(gint sock, gchar *buf, gint len);
 static gint socket_fd_check_io		(gint fd, GIOCondition cond);
 static gint socket_fd_read			(gint sock, gchar *buf, gint len);
 static gint socket_fd_recv			(gint fd, gchar *buf, gint len, gint flags);
 static gint socket_fd_close			(gint sock);
+
+static gboolean is_eot              (const gchar *str);
 
 static void send_open_command(gint sock, gint argc, gchar **argv)
 {
@@ -131,27 +135,25 @@ static void send_open_command(gint sock, gint argc, gchar **argv)
 	{
 		if (cl_options.goto_line >= 0)
 		{
-			gchar *line = g_strdup_printf("%d\n", cl_options.goto_line);
-			socket_fd_write_all(sock, "line\n", 5);
-			socket_fd_write_all(sock, line, strlen(line));
-			socket_fd_write_all(sock, ".\n", 2);
+			gchar *line = g_strdup_printf("%d", cl_options.goto_line);
+			socket_fd_write_cstring(sock, "line");
+			socket_fd_write_cstring(sock, line);
+			socket_fd_write_eot(sock);
 			g_free(line);
 		}
 
 		if (cl_options.goto_column >= 0)
 		{
-			gchar *col = g_strdup_printf("%d\n", cl_options.goto_column);
-			socket_fd_write_all(sock, "column\n", 7);
-			socket_fd_write_all(sock, col, strlen(col));
-			socket_fd_write_all(sock, ".\n", 2);
+			gchar *col = g_strdup_printf("%d", cl_options.goto_column);
+			socket_fd_write_cstring(sock, "column");
+			socket_fd_write_cstring(sock, col);
+			socket_fd_write_eot(sock);
 			g_free(col);
 		}
 	}
 
-	if (cl_options.readonly) /* append "ro" to denote readonly status for new docs */
-		socket_fd_write_all(sock, "openro\n", 7);
-	else
-		socket_fd_write_all(sock, "open\n", 5);
+	/* use "openro" to denote readonly status for new docs */
+	socket_fd_write_cstring(sock, cl_options.readonly ? "openro" : "open");
 
 	for (i = 1; i < argc && argv[i] != NULL; i++)
 	{
@@ -159,10 +161,7 @@ static void send_open_command(gint sock, gint argc, gchar **argv)
 
 		/* if the filename is valid or if a new file should be opened is check on the other side */
 		if (filename != NULL)
-		{
-			socket_fd_write_all(sock, filename, strlen(filename));
-			socket_fd_write_all(sock, "\n", 1);
-		}
+			socket_fd_write_cstring(sock, filename);
 		else
 		{
 			g_printerr(_("Could not find file '%s'."), filename);
@@ -170,7 +169,8 @@ static void send_open_command(gint sock, gint argc, gchar **argv)
 		}
 		g_free(filename);
 	}
-	socket_fd_write_all(sock, ".\n", 2);
+
+	socket_fd_write_eot(sock);
 }
 
 #ifndef G_OS_WIN32
@@ -201,19 +201,10 @@ static void socket_get_document_list(gint sock)
 	if (sock < 0)
 		return;
 
-	socket_fd_write_all(sock, "doclist\n", 8);
+	socket_fd_write_cstring(sock, "doclist");
 
-	do
-	{
-		n_read = socket_fd_read(sock, buf, BUFFER_LENGTH);
-		/* if we received ETX (end-of-text), there is nothing else to read, so cut that
-		 * byte not to output it and to be sure not to validate the loop condition */
-		if (n_read > 0 && buf[n_read - 1] == '\3')
-			n_read--;
-		if (n_read > 0)
-			fwrite(buf, 1, n_read, stdout);
-	}
-	while (n_read >= BUFFER_LENGTH);
+	while (socket_fd_get_cstring(sock, buf, BUFFER_LENGTH) != -1 && ! is_eot (buf))
+		printf("%s\n", buf);
 }
 
 #ifndef G_OS_WIN32
@@ -314,7 +305,8 @@ gint socket_init(gint argc, gchar **argv)
 
 #ifdef G_OS_WIN32
 	/* first we send a request to retrieve the window handle and focus the window */
-	socket_fd_write_all(sock, "window\n", 7);
+	socket_fd_write_cstring(sock, "window");
+
 	if (socket_fd_read(sock, (gchar *)&hwnd, sizeof(hwnd)) == sizeof(hwnd))
 		SetForegroundWindow(hwnd);
 #endif
@@ -571,21 +563,6 @@ static void handle_input_filename(const gchar *buf)
 	g_free(locale_filename);
 }
 
-static gchar *build_document_list(void)
-{
-	GString *doc_list = g_string_new(NULL);
-	guint i;
-	const gchar *filename;
-
-	foreach_document(i)
-	{
-		filename = DOC_FILENAME(documents[i]);
-		g_string_append(doc_list, filename);
-		g_string_append_c(doc_list, '\n');
-	}
-	return g_string_free(doc_list, FALSE);
-}
-
 gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpointer data)
 {
 	gint fd, sock;
@@ -594,57 +571,50 @@ gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpoint
 	socklen_t caddr_len = sizeof(caddr);
 	GtkWidget *window = data;
 	gboolean popup = FALSE;
+	gboolean readonly;
 
 	fd = g_io_channel_unix_get_fd(source);
 	sock = accept(fd, (struct sockaddr *)&caddr, &caddr_len);
 
 	/* first get the command */
-	while (socket_fd_gets(sock, buf, sizeof(buf)) != -1)
+	while (socket_fd_get_cstring(sock, buf, sizeof(buf)) != -1)
 	{
-		if (strncmp(buf, "open", 4) == 0)
+		if ((readonly = strncmp(buf, "openro", 7) == 0) || strncmp(buf, "open", 5) == 0)
 		{
-			cl_options.readonly = strncmp(buf+4, "ro", 2) == 0; /* open in readonly? */
-			while (socket_fd_gets(sock, buf, sizeof(buf)) != -1 && *buf != '.')
-			{
-				gsize buf_len = strlen(buf);
+			cl_options.readonly = readonly;
 
-				/* remove trailing newline */
-				if (buf_len > 0 && buf[buf_len - 1] == '\n')
-					buf[buf_len - 1] = '\0';
-
+			while (socket_fd_get_cstring(sock, buf, sizeof(buf)) != -1 && ! is_eot (buf))
 				handle_input_filename(buf);
-			}
+
 			popup = TRUE;
 		}
-		else if (strncmp(buf, "doclist", 7) == 0)
+		else if (strncmp(buf, "doclist", 8) == 0)
 		{
-			gchar *doc_list = build_document_list();
-			if (!EMPTY(doc_list))
-				socket_fd_write_all(sock, doc_list, strlen(doc_list));
-			/* send ETX (end-of-text) so reader knows to stop reading */
-			socket_fd_write_all(sock, "\3", 1);
-			g_free(doc_list);
-		}
-		else if (strncmp(buf, "line", 4) == 0)
-		{
-			while (socket_fd_gets(sock, buf, sizeof(buf)) != -1 && *buf != '.')
+			const gchar *filename;
+			guint i;
+
+			foreach_document(i)
 			{
-				g_strstrip(buf); /* remove \n char */
-				/* on any error we get 0 which should be safe enough as fallback */
+				filename = DOC_FILENAME(documents[i]);
+
+				if (filename != NULL)
+					socket_fd_write_cstring(sock, filename);
+			}
+
+			socket_fd_write_eot(sock);
+		}
+		else if (strncmp(buf, "line", 5) == 0)
+		{
+			while (socket_fd_get_cstring(sock, buf, sizeof(buf)) != -1 && ! is_eot (buf))
 				cl_options.goto_line = atoi(buf);
-			}
 		}
-		else if (strncmp(buf, "column", 6) == 0)
+		else if (strncmp(buf, "column", 7) == 0)
 		{
-			while (socket_fd_gets(sock, buf, sizeof(buf)) != -1 && *buf != '.')
-			{
-				g_strstrip(buf); /* remove \n char */
-				/* on any error we get 0 which should be safe enough as fallback */
+			while (socket_fd_get_cstring(sock, buf, sizeof(buf)) != -1 && ! is_eot (buf))
 				cl_options.goto_column = atoi(buf);
-			}
 		}
 #ifdef G_OS_WIN32
-		else if (strncmp(buf, "window", 6) == 0)
+		else if (strncmp(buf, "window", 7) == 0)
 		{
 #	if GTK_CHECK_VERSION(3, 0, 0)
 			HWND hwnd = (HWND) gdk_win32_window_get_handle(gtk_widget_get_window(window));
@@ -684,26 +654,33 @@ gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpoint
 	return TRUE;
 }
 
-static gint socket_fd_gets(gint fd, gchar *buf, gint len)
+static gint socket_fd_get_cstring(gint fd, gchar *buf, gint len)
 {
-	gchar *newline, *bp = buf;
-	gint n;
+	gchar *nulbyte, *bp = buf;
+	gint n, p;
 
-	if (--len < 1)
-		return -1;
+	g_return_val_if_fail(len > 0, -1);
+
 	do
 	{
 		if ((n = socket_fd_recv(fd, bp, len, MSG_PEEK)) <= 0)
 			return -1;
-		if ((newline = memchr(bp, '\n', n)) != NULL)
-			n = newline - bp + 1;
-		if ((n = socket_fd_read(fd, bp, n)) < 0)
+
+		if ((nulbyte = memchr(bp, '\0', n)) != NULL)
+			n = nulbyte - bp + 1;
+
+		if ((p = socket_fd_read(fd, bp, n)) < 0)
 			return -1;
+
+		g_return_val_if_fail(p == n, -1);
 		bp += n;
 		len -= n;
-	} while (! newline && len);
+	}
+	while (nulbyte == NULL && len > 0);
 
-	*bp = '\0';
+	g_return_val_if_fail(len >= 0, -1);
+	g_return_val_if_fail(bp > buf, -1);
+	g_return_val_if_fail(*(bp - 1) == '\0', -1);
 	return bp - buf;
 }
 
@@ -777,6 +754,11 @@ static gint socket_fd_check_io(gint fd, GIOCondition cond)
 	}
 }
 
+static gint socket_fd_write_cstring(gint fd, const gchar *buf)
+{
+	return socket_fd_write_all(fd, buf, strlen(buf) + 1);
+}
+
 static gint socket_fd_write_all(gint fd, const gchar *buf, gint len)
 {
 	gint n, wrlen = 0;
@@ -807,3 +789,15 @@ gint socket_fd_write(gint fd, const gchar *buf, gint len)
 }
 
 #endif
+
+#define EOT "\4"
+
+gint socket_fd_write_eot(gint fd)
+{
+	return socket_fd_write_all(fd, EOT, 2);
+}
+
+static gboolean is_eot(const gchar *str)
+{
+	return strncmp(str, EOT, 2) == 0;
+}
