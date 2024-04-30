@@ -916,6 +916,9 @@ void main_load_project_from_command_line(const gchar *locale_filename, gboolean 
 {
 	gchar *pfile;
 
+	printf("Loading project file: %s\n", locale_filename);
+	printf("Use '--no-projects' option to load project files as regular files.\n");
+
 	pfile = utils_get_path_from_uri(locale_filename);
 	if (pfile != NULL)
 	{
