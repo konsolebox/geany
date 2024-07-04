@@ -1868,7 +1868,7 @@ static GRegex *compile_regex(const gchar *str, GeanyFindFlags sflags)
 		geany_debug("%s: Unsupported regex flags found!", G_STRFUNC);
 	}
 
-	regex = g_regex_new(str, rflags, G_REGEX_MATCH_NOTEMPTY, &error);
+	regex = g_regex_new(str, rflags, 0, &error);
 	if (!regex)
 	{
 		ui_set_statusbar(FALSE, _("Bad regex: %s"), error->message);
