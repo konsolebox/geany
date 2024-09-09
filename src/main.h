@@ -76,7 +76,7 @@ gchar *main_get_argv_filename(const gchar *filename);
 
 gboolean main_quit(void);
 
-gboolean main_handle_filename(const gchar *locale_filename);
+gboolean main_handle_filename(const gchar *locale_filename, GError **error);
 
 void main_load_project_from_command_line(const gchar *locale_filename, gboolean use_session);
 

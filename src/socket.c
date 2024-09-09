@@ -560,7 +560,7 @@ static void handle_input_filename(const gchar *buf)
 				main_load_project_from_command_line(locale_filename, TRUE);
 		}
 		else
-			main_handle_filename(locale_filename);
+			main_handle_filename(locale_filename, NULL);
 	}
 	g_free(utf8_filename);
 	g_free(locale_filename);

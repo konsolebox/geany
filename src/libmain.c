@@ -801,50 +801,67 @@ static void signal_cb(gint sig)
 
 /* Used for command-line arguments at startup or from socket.
  * this will strip any :line:col filename suffix from locale_filename */
-gboolean main_handle_filename(const gchar *locale_filename)
+gboolean main_handle_filename(const gchar *locale_filename, GError **error)
 {
 	GeanyDocument *doc;
 	gint line = -1, column = -1;
-	gchar *filename;
+	gchar *filename, *utf8_filename;
 
 	g_return_val_if_fail(locale_filename, FALSE);
 
+	if (error != NULL)
+		*error = NULL;
+
 	/* check whether the passed filename is an URI */
 	filename = utils_get_path_from_uri(locale_filename);
-	if (filename == NULL)
-		return FALSE;
 
-	get_line_and_column_from_filename(filename, &line, &column);
-	if (line >= 0)
-		cl_options.goto_line = line;
-	if (column >= 0)
-		cl_options.goto_column = column;
-
-	if (g_file_test(filename, G_FILE_TEST_IS_REGULAR))
+	if (filename != NULL)
 	{
-		doc = document_open_file(filename, cl_options.readonly, NULL, NULL);
-		/* add recent file manually if opening_session_files is set */
-		if (doc != NULL && main_status.opening_session_files)
-			ui_add_recent_document(doc);
-		g_free(filename);
-		return TRUE;
-	}
-	else if (file_prefs.cmdline_new_files && g_file_test(filename, G_FILE_TEST_EXISTS) == FALSE)
-	{	/* create new file with the given filename */
-		gchar *utf8_filename = utils_get_utf8_from_locale(filename);
+		get_line_and_column_from_filename(filename, &line, &column);
 
-		doc = document_find_by_filename(utf8_filename);
-		if (doc)
-			document_show_tab(doc);
-		else
-			doc = document_new_file(utf8_filename, NULL, NULL);
-		if (doc != NULL)
-			ui_add_recent_document(doc);
-		g_free(utf8_filename);
+		if (line >= 0)
+			cl_options.goto_line = line;
+		if (column >= 0)
+			cl_options.goto_column = column;
+
+		if (g_file_test(filename, G_FILE_TEST_IS_REGULAR))
+		{
+			doc = document_open_file(filename, cl_options.readonly, NULL, NULL);
+
+			/* add recent file manually if opening_session_files is set */
+			if (doc != NULL && main_status.opening_session_files)
+				ui_add_recent_document(doc);
+
+			g_free(filename);
+			return TRUE;
+		}
+
+		if (file_prefs.cmdline_new_files && g_file_test(filename, G_FILE_TEST_EXISTS) == FALSE)
+		{
+			/* create new file with the given filename */
+			utf8_filename = utils_get_utf8_from_locale(filename);
+			doc = document_find_by_filename(utf8_filename);
+
+			if (doc)
+				document_show_tab(doc);
+			else
+				doc = document_new_file(utf8_filename, NULL, NULL);
+
+			if (doc != NULL)
+				ui_add_recent_document(doc);
+
+			g_free(utf8_filename);
+			g_free(filename);
+			return TRUE;
+		}
+
 		g_free(filename);
-		return TRUE;
 	}
-	g_free(filename);
+
+	if (error != NULL)
+		g_set_error(error, G_FILE_ERROR, G_FILE_ERROR_NOENT, _("Could not find file '%s'."),
+				locale_filename);
+
 	return FALSE;
 }
 
@@ -852,6 +869,7 @@ gboolean main_handle_filename(const gchar *locale_filename)
 static void open_cl_files(gint argc, gchar **argv)
 {
 	gint i;
+	GError *error = NULL;
 
 	for (i = 1; i < argc; i++)
 	{
@@ -867,13 +885,11 @@ static void open_cl_files(gint argc, gchar **argv)
 		/* It seems argv elements are encoded in CP1252 on a German Windows */
 		SETPTR(filename, g_locale_to_utf8(filename, -1, NULL, NULL, NULL));
 #endif
-		if (filename && ! main_handle_filename(filename))
+		if (filename && ! main_handle_filename(filename, &error))
 		{
-			const gchar *msg = _("Could not find file '%s'.");
-
-			g_printerr(msg, filename);	/* also print to the terminal */
-			g_printerr("\n");
-			ui_set_statusbar(TRUE, msg, filename);
+			g_printerr("%s\n", error->message);	/* also print to the terminal */
+			ui_set_statusbar(TRUE, error->message);
+			g_error_free(error);
 		}
 		g_free(filename);
 	}
