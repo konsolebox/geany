@@ -174,6 +174,8 @@ gchar *utils_get_locale_from_utf8(const gchar *utf8_text);
 
 gchar *utils_get_utf8_from_locale(const gchar *locale_text);
 
+gchar *utils_get_utf8_from_locale_v2(const gchar *locale_text, GError **error);
+
 gchar *utils_remove_ext_from_filename(const gchar *filename);
 
 gint utils_mkdir(const gchar *path, gboolean create_parent_dirs);

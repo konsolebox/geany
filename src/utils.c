@@ -1223,6 +1223,11 @@ gchar *utils_get_locale_from_utf8(const gchar *utf8_text)
 GEANY_API_SYMBOL
 gchar *utils_get_utf8_from_locale(const gchar *locale_text)
 {
+	return utils_get_utf8_from_locale_v2(locale_text, NULL);
+}
+
+gchar *utils_get_utf8_from_locale_v2(const gchar *locale_text, GError **error)
+{
 #ifdef G_OS_WIN32
 	/* just do nothing on Windows platforms, this ifdef is just to prevent unwanted conversions
 	 * which would result in wrongly converted strings */
@@ -1231,10 +1236,18 @@ gchar *utils_get_utf8_from_locale(const gchar *locale_text)
 	gchar *utf8_text;
 
 	if (! locale_text)
+	{
+		if (error)
+			g_set_error(error, G_CONVERT_ERROR, G_CONVERT_ERROR_FAILED, "Specified text is NULL.");
+
 		return NULL;
-	utf8_text = g_locale_to_utf8(locale_text, -1, NULL, NULL, NULL);
+	}
+
+	utf8_text = g_locale_to_utf8(locale_text, -1, NULL, NULL, error);
+
 	if (utf8_text == NULL)
 		utf8_text = g_strdup(locale_text);
+
 	return utf8_text;
 #endif
 }
