@@ -2718,6 +2718,19 @@ static void ui_menu_sort_by_label(GtkMenu *menu)
 	g_list_free(list);
 }
 
+void ui_label_set_text(GtkLabel *label, const gchar *format, ...)
+{
+	va_list a;
+	gchar *text;
+
+	va_start(a, format);
+	text = g_strdup_vprintf(format, a);
+	va_end(a);
+
+	gtk_label_set_text(label, text);
+	g_free(text);
+}
+
 void ui_label_set_markup(GtkLabel *label, const gchar *format, ...)
 {
 	va_list a;
