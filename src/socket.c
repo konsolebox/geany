@@ -65,6 +65,7 @@
 #include "encodings.h"
 #include "main.h"
 #include "support.h"
+#include "ui_utils.h"
 #include "utils.h"
 #include "win32.h"
 
@@ -541,39 +542,98 @@ static void socket_init_win32(void)
 }
 #endif
 
-static void handle_input_filename(const gchar *buf)
+static void popup(GtkWidget *window)
 {
-	gchar *utf8_filename, *locale_filename;
+#ifdef GDK_WINDOWING_X11
+	GdkWindow *x11_window = gtk_widget_get_window(window);
 
-	/* we never know how the input is encoded, so do the best auto detection we can */
-	if (! g_utf8_validate(buf, -1, NULL))
-		utf8_filename = encodings_convert_to_utf8(buf, -1, NULL);
-	else
-		utf8_filename = g_strdup(buf);
-
-	locale_filename = utils_get_locale_from_utf8(utf8_filename);
-	if (locale_filename)
+	/* Set the proper interaction time on the window. This seems necessary to make
+	 * gtk_window_present() really bring the main window into the foreground on some
+	 * window managers like Gnome's metacity.
+	 * Code taken from Gedit. */
+#	if GTK_CHECK_VERSION(3, 0, 0)
+	if (GDK_IS_X11_WINDOW(x11_window))
+#	endif
 	{
-		if (! cl_options.no_projects && g_str_has_suffix(locale_filename, ".geany"))
-		{
-			if (project_ask_close())
-				main_load_project_from_command_line(locale_filename, TRUE);
-		}
-		else
-			main_handle_filename(locale_filename, NULL);
+		gdk_x11_window_set_user_time(x11_window, gdk_x11_get_server_time(x11_window));
 	}
-	g_free(utf8_filename);
-	g_free(locale_filename);
+#endif
+	gtk_window_present(GTK_WINDOW(window));
+#ifdef G_OS_WIN32
+	gdk_window_show(gtk_widget_get_window(window));
+#endif
+}
+
+static void handle_input_filenames(gint sock, GtkWidget *window)
+{
+	GtkWidget *status_window, *label;
+	gchar *utf8_filename, *locale_filename, *message;
+	gchar buf[BUFFER_LENGTH];
+	GError *error;
+
+	if (socket_fd_get_cstring(sock, buf, sizeof(buf)) != -1 && ! is_eot (buf))
+	{
+		popup(window);
+		dialogs_create_cancellable_status_window(&status_window, &label, "Opening Files",
+				"Opening files...", TRUE);
+
+		do
+		{
+			while (gtk_events_pending())
+				gtk_main_iteration();
+
+			if (status_window == NULL)
+			{
+				dialogs_show_msgbox(GTK_MESSAGE_WARNING, "Cancelled.");
+				break;
+			}
+
+			/* we never know how the input is encoded, so do the best auto detection we can */
+			if (! g_utf8_validate(buf, -1, NULL))
+				utf8_filename = encodings_convert_to_utf8(buf, -1, NULL);
+			else
+				utf8_filename = g_strdup(buf);
+
+			locale_filename = utils_get_locale_from_utf8(utf8_filename);
+
+			if (locale_filename)
+			{
+				ui_label_set_text(GTK_LABEL(label), "Opening '%s'...", utf8_filename);
+
+				while (gtk_events_pending())
+					gtk_main_iteration();
+
+				if (! cl_options.no_projects && g_str_has_suffix(locale_filename, ".geany"))
+				{
+					if (project_ask_close())
+						main_load_project_from_command_line(locale_filename, TRUE);
+				}
+				else if (! main_handle_filename(locale_filename, &error))
+				{
+					ui_set_statusbar(TRUE, "%s", error->message);
+					dialogs_show_msgbox(GTK_MESSAGE_ERROR, "%s", error->message);
+					g_error_free(error);
+				}
+			}
+
+			g_free(utf8_filename);
+			g_free(locale_filename);
+		}
+		while (socket_fd_get_cstring(sock, buf, sizeof(buf)) != -1 && ! is_eot (buf));
+
+		if (status_window)
+			gtk_widget_destroy(status_window);
+	}
 }
 
 gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpointer data)
 {
+	GtkWidget *window = data;
+
 	gint fd, sock;
 	gchar buf[BUFFER_LENGTH];
 	struct sockaddr_in caddr;
 	socklen_t caddr_len = sizeof(caddr);
-	GtkWidget *window = data;
-	gboolean popup = FALSE;
 	gboolean readonly;
 	gboolean no_projects = FALSE;
 
@@ -587,11 +647,7 @@ gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpoint
 		{
 			cl_options.readonly = readonly;
 			cl_options.no_projects = no_projects;
-
-			while (socket_fd_get_cstring(sock, buf, sizeof(buf)) != -1 && ! is_eot (buf))
-				handle_input_filename(buf);
-
-			popup = TRUE;
+			handle_input_filenames(sock, window);
 		}
 		else if (strncmp(buf, "no-projects", 12) == 0)
 			no_projects = TRUE;
@@ -634,30 +690,7 @@ gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpoint
 #endif
 	}
 
-	if (popup)
-	{
-#ifdef GDK_WINDOWING_X11
-		GdkWindow *x11_window = gtk_widget_get_window(window);
-
-		/* Set the proper interaction time on the window. This seems necessary to make
-		 * gtk_window_present() really bring the main window into the foreground on some
-		 * window managers like Gnome's metacity.
-		 * Code taken from Gedit. */
-#	if GTK_CHECK_VERSION(3, 0, 0)
-		if (GDK_IS_X11_WINDOW(x11_window))
-#	endif
-		{
-			gdk_x11_window_set_user_time(x11_window, gdk_x11_get_server_time(x11_window));
-		}
-#endif
-		gtk_window_present(GTK_WINDOW(window));
-#ifdef G_OS_WIN32
-		gdk_window_show(gtk_widget_get_window(window));
-#endif
-	}
-
 	socket_fd_close(sock);
-
 	return TRUE;
 }
 
