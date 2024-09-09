@@ -869,30 +869,65 @@ gboolean main_handle_filename(const gchar *locale_filename, GError **error)
 static void open_cl_files(gint argc, gchar **argv)
 {
 	gint i;
-	GError *error = NULL;
+	GError *error;
+	GtkWidget *status_window = NULL, *label;
+	gboolean status_window_opened = FALSE;
+	gchar *filename = NULL, *utf8_filename, *message;
 
 	for (i = 1; i < argc; i++)
 	{
-		gchar *filename = main_get_argv_filename(argv[i]);
+		SETPTR(filename, main_get_argv_filename(argv[i]));
 
 		if (g_file_test(filename, G_FILE_TEST_IS_DIR))
-		{
-			g_free(filename);
 			continue;
+
+		if (status_window_opened == FALSE)
+		{
+			dialogs_create_cancellable_status_window(&status_window, &label, "Opening Files",
+					"Opening files...", TRUE);
+			status_window_opened = TRUE;
+		}
+
+		while (gtk_events_pending())
+			gtk_main_iteration();
+
+		if (status_window == NULL)
+		{
+			dialogs_show_msgbox(GTK_MESSAGE_WARNING, "Cancelled.");
+			break;
 		}
 
 #ifdef G_OS_WIN32
 		/* It seems argv elements are encoded in CP1252 on a German Windows */
-		SETPTR(filename, g_locale_to_utf8(filename, -1, NULL, NULL, NULL));
+		utf8_filename = g_locale_to_utf8(filename, -1, NULL, NULL, &error);
+		SETPTR(filename, g_strdup(utf8_filename));
+#else
+		utf8_filename = utils_get_utf8_from_locale_v2(filename, &error);
 #endif
-		if (filename && ! main_handle_filename(filename, &error))
-		{
-			g_printerr("%s\n", error->message);	/* also print to the terminal */
-			ui_set_statusbar(TRUE, error->message);
-			g_error_free(error);
-		}
-		g_free(filename);
+
+		if (utf8_filename == NULL)
+			goto error;
+
+		ui_label_set_text(GTK_LABEL(label), "Opening '%s'...", utf8_filename);
+		g_free(utf8_filename);
+
+		while (gtk_events_pending())
+			gtk_main_iteration();
+
+		if (main_handle_filename(filename, &error))
+			continue;
+
+error:
+		g_printerr("%s", error->message);
+		ui_set_statusbar(TRUE, "%s", error->message);
+		dialogs_show_msgbox(GTK_MESSAGE_ERROR, "%s", error->message);
+		g_error_free(error);
 	}
+
+	g_free(filename);
+
+	if (status_window)
+		gtk_widget_destroy(status_window);
 }
 
 static void load_session_project_file(void)
