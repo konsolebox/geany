@@ -128,6 +128,7 @@ static gboolean is_eot              (const gchar *str);
 static void send_open_command(gint sock, gint argc, gchar **argv)
 {
 	gint i;
+	gboolean erred = FALSE;
 
 	g_return_if_fail(argc > 1 || cl_options.new_instance_mode == NEW_INSTANCE_EXPLICITLY_DISABLED);
 	geany_debug("using running instance of Geany");
@@ -159,18 +160,23 @@ static void send_open_command(gint sock, gint argc, gchar **argv)
 	/* use "openro" to denote readonly status for new docs */
 	socket_fd_write_cstring(sock, cl_options.readonly ? "openro" : "open");
 
-	for (i = 1; i < argc && argv[i] != NULL; i++)
+	for (i = 1; i < argc && argv[i] != NULL && ! erred; i++)
 	{
 		gchar *filename = main_get_argv_filename(argv[i]);
 
 		/* if the filename is valid or if a new file should be opened is check on the other side */
-		if (filename != NULL)
-			socket_fd_write_cstring(sock, filename);
-		else
+		if (filename == NULL)
 		{
 			g_printerr(_("Could not find file '%s'."), filename);
 			g_printerr("\n");	/* keep translation from open_cl_files() in main.c. */
 		}
+		else if (socket_fd_write_cstring(sock, filename) == -1)
+		{
+			g_printerr(_("Socket error occurred: %s"), strerror(errno));
+			g_printerr(_("This may also indicate that opening of files has been cancelled."));
+			erred = TRUE;
+		}
+
 		g_free(filename);
 	}
 
@@ -564,7 +570,7 @@ static void popup(GtkWidget *window)
 #endif
 }
 
-static void handle_input_filenames(gint sock, GtkWidget *window)
+static gboolean handle_input_filenames(gint sock, GtkWidget *window)
 {
 	GtkWidget *status_window, *label;
 	gchar *utf8_filename, *locale_filename, *message;
@@ -585,7 +591,7 @@ static void handle_input_filenames(gint sock, GtkWidget *window)
 			if (status_window == NULL)
 			{
 				dialogs_show_msgbox(GTK_MESSAGE_WARNING, "Cancelled.");
-				break;
+				return FALSE;
 			}
 
 			/* we never know how the input is encoded, so do the best auto detection we can */
@@ -621,9 +627,10 @@ static void handle_input_filenames(gint sock, GtkWidget *window)
 		}
 		while (socket_fd_get_cstring(sock, buf, sizeof(buf)) != -1 && ! is_eot (buf));
 
-		if (status_window)
-			gtk_widget_destroy(status_window);
+		gtk_widget_destroy(status_window);
 	}
+
+	return TRUE;
 }
 
 gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpointer data)
@@ -647,7 +654,9 @@ gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpoint
 		{
 			cl_options.readonly = readonly;
 			cl_options.no_projects = no_projects;
-			handle_input_filenames(sock, window);
+
+			if (! handle_input_filenames(sock, window))
+				break;
 		}
 		else if (strncmp(buf, "no-projects", 12) == 0)
 			no_projects = TRUE;
