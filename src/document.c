@@ -1916,9 +1916,7 @@ void document_reload_all()
 			if (doc->real_path)
 			{
 				gchar *real_path_utf8 = utils_get_utf8_from_locale(doc->real_path);
-				gchar *message = g_strconcat("Reloading '", real_path_utf8, "'...", NULL);
-				gtk_label_set_text(GTK_LABEL(label), message);
-				g_free(message);
+				ui_label_set_text(GTK_LABEL(label), "Reloading '%s'...", real_path_utf8);
 				g_free(real_path_utf8);
 
 				while (gtk_events_pending())

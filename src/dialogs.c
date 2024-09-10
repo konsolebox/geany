@@ -1203,7 +1203,7 @@ gboolean dialogs_show_input_numeric(const gchar *title, const gchar *label_text,
 void dialogs_show_file_properties(GeanyDocument *doc)
 {
 	GtkWidget *dialog, *label, *image, *check;
-	gchar *file_size, *title, *base_name, *time_changed, *time_modified, *time_accessed, *enctext;
+	gchar *file_size, *title, *base_name, *time_changed, *time_modified, *time_accessed;
 	gchar *short_name;
 #ifdef HAVE_SYS_TYPES_H
 	GStatBuf st;
@@ -1297,12 +1297,9 @@ void dialogs_show_file_properties(GeanyDocument *doc)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check), doc->readonly);
 
 	label = ui_lookup_widget(dialog, "file_encoding_label");
-	enctext = g_strdup_printf("%s %s",
-		doc->encoding,
-		(encodings_is_unicode_charset(doc->encoding)) ?
-			((doc->has_bom) ? _("(with BOM)") : _("(without BOM)")) : "");
-	gtk_label_set_text(GTK_LABEL(label), enctext);
-	g_free(enctext);
+	ui_label_set_text(GTK_LABEL(label), "%s %s", doc->encoding,
+			encodings_is_unicode_charset(doc->encoding) ?
+			(doc->has_bom ? _("(with BOM)") : _("(without BOM)")) : "");
 
 	label = ui_lookup_widget(dialog, "file_modified_label");
 	gtk_label_set_text(GTK_LABEL(label), time_modified);
