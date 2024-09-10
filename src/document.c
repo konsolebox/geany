@@ -1642,20 +1642,30 @@ static GFileEnumerator *enumerate_children(const char *dir_path, GError **error)
 	return enumerator;
 }
 
-void document_open_files_recursively(const GSList *filenames, gboolean readonly, GeanyFiletype *ft,
-		const gchar *forced_enc, GtkFileFilter *filter, GError **error_ptr, gboolean *cancelled_ptr,
-		GCallback iteration_callback, gpointer user_data, gpointer user_data_2)
+static gboolean update_recursive_open_status_window(const char *file_path, GtkWidget **window_ptr,
+		GtkLabel *label)
 {
-	const GSList *item;
-	gchar *file_path, *dir_path;
-	const gchar *filename;
-	GFileEnumerator *enumerator;
-	GFileInfo *file_info;
-	GFileType file_type;
-	GError *error = NULL;
-	gboolean quit = FALSE;
+	while (gtk_events_pending())
+		gtk_main_iteration();
 
-	g_return_if_fail(error_ptr == NULL || *error_ptr == NULL);
+	if (*window_ptr == NULL)
+		return FALSE;
+
+	gchar *file_path_utf8 = utils_get_utf8_from_locale(file_path);
+	ui_label_set_text(label, "Opening '%s'...", file_path_utf8);
+	g_free(file_path_utf8);
+
+	while (gtk_events_pending())
+		gtk_main_iteration();
+
+	return TRUE;
+}
+
+void document_open_files_recursively(const GSList *filenames, gboolean readonly, GeanyFiletype *ft,
+		const gchar *forced_enc, GtkFileFilter *filter)
+{
+	const guint RECURSION_LIMIT = 100;
+	const guint ENUM_STACK_SIZE = RECURSION_LIMIT - 1;
 
 	typedef struct EnumeratorData
 	{
@@ -1663,45 +1673,57 @@ void document_open_files_recursively(const GSList *filenames, gboolean readonly,
 		gchar *dir_path;
 	} EnumeratorData;
 
-	const guint RECURSION_LIMIT = 100;
-	const guint ENUM_STACK_SIZE = RECURSION_LIMIT - 1;
 	EnumeratorData enum_stack[ENUM_STACK_SIZE];
 	guint enum_stack_index = 0;
 
-	GtkFileFilterInfo filter_info;
-	filter_info.contains = GTK_FILE_FILTER_FILENAME|GTK_FILE_FILTER_DISPLAY_NAME|
-			GTK_FILE_FILTER_MIME_TYPE;
-	filter_info.uri = NULL;
+	const GSList *item;
+	GtkWidget *status_window, *label;
+	GError *error = NULL;
+	gboolean cancelled = FALSE;
 
-	typedef gboolean (*t_iteration_callback)(const gchar *, gpointer *, gpointer *);
-	t_iteration_callback callback = (t_iteration_callback) iteration_callback;
+	GtkFileFilterInfo filter_info = {
+		.contains = GTK_FILE_FILTER_FILENAME|GTK_FILE_FILTER_DISPLAY_NAME|GTK_FILE_FILTER_MIME_TYPE,
+		.uri = NULL
+	};
 
-	for (item = filenames; item != NULL && error == NULL && !quit; item = g_slist_next(item))
+	dialogs_create_cancellable_status_window(&status_window, &label, "Opening Files Recursively",
+			"Opening files recursively...", TRUE);
+
+	for (item = filenames; item != NULL && error == NULL && ! cancelled; item = g_slist_next(item))
 	{
-		file_path = item->data;
+		gchar *file_path = item->data;
 
-		if (! callback(file_path, user_data, user_data_2))
+		if (file_path == NULL)
+		{
+			g_warning("Unexpected NULL file path encountered.\n");
+			continue;
+		}
+
+		if (! update_recursive_open_status_window(file_path, &status_window, GTK_LABEL(label)))
+		{
+			cancelled = TRUE;
 			break;
+		}
 
 		if (g_file_test(file_path, G_FILE_TEST_IS_DIR))
 		{
-			dir_path = file_path;
-			enumerator = enumerate_children(dir_path, &error);
+			gchar *dir_path = file_path;
+			GFileEnumerator *enumerator = enumerate_children(dir_path, &error);
 
 			while (TRUE)
 			{
-				while (error == NULL && !quit)
+				while (error == NULL && ! cancelled)
 				{
-					file_info = g_file_enumerator_next_file(enumerator, NULL, &error);
+					GFileInfo *file_info = g_file_enumerator_next_file(enumerator, NULL, &error);
 
 					if (file_info == NULL)
 						break;
 
-					file_type = g_file_info_get_file_type(file_info);
+					GFileType file_type = g_file_info_get_file_type(file_info);
 
 					if (file_type != G_FILE_TYPE_SYMBOLIC_LINK)
 					{
-						filename = g_file_info_get_name(file_info);
+						const gchar *filename = g_file_info_get_name(file_info);
 
 						if (filename == NULL)
 							error = g_error_new(0, 0, "Failed to get filename of a file");
@@ -1726,15 +1748,16 @@ void document_open_files_recursively(const GSList *filenames, gboolean readonly,
 								if (file_path)
 								{
 									filter_info.filename = filename;
+									filter_info.mime_type = g_file_info_get_content_type(file_info);
 									filter_info.display_name =
 											g_file_info_get_display_name(file_info);
-									filter_info.mime_type = g_file_info_get_content_type(file_info);
 
 									if (gtk_file_filter_filter(filter, &filter_info))
 									{
-										if (! callback(file_path, user_data, user_data_2))
+										if (! update_recursive_open_status_window(file_path,
+												&status_window, GTK_LABEL(label)))
 										{
-											quit = TRUE;
+											cancelled = TRUE;
 											break;
 										}
 
@@ -1766,15 +1789,15 @@ void document_open_files_recursively(const GSList *filenames, gboolean readonly,
 
 	if (error)
 	{
-		if (error_ptr)
-			*error_ptr = g_error_new(error->domain, error->code,
-					"Failed to open files recursively: %s", error->message);
-
+		dialogs_show_msgbox(GTK_MESSAGE_ERROR, "Failed to open files recursively: %s",
+				error->message);
 		g_error_free(error);
 	}
+	else if (cancelled)
+		dialogs_show_msgbox(GTK_MESSAGE_WARNING, "Cancelled.");
 
-	if (cancelled_ptr)
-		*cancelled_ptr = quit;
+	if (status_window)
+		gtk_widget_destroy(status_window);
 }
 
 static void on_keep_edit_history_on_reload_response(GtkWidget *bar, gint response_id, GeanyDocument *doc)

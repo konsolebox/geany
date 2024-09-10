@@ -169,32 +169,6 @@ void dialogs_create_cancellable_status_window(GtkWidget **window_ptr, GtkWidget 
 		gtk_widget_show_all(window);
 }
 
-static gboolean on_recursive_open_iterate(const char *file_path, GtkWidget **window_ptr,
-		GtkLabel *label)
-{
-	while (gtk_events_pending())
-		gtk_main_iteration();
-
-	if (*window_ptr != NULL)
-	{
-		if (file_path)
-		{
-			gchar *file_path_utf8 = utils_get_utf8_from_locale(file_path);
-			gchar *message = g_strconcat("Opening '", file_path_utf8, "'...", NULL);
-			gtk_label_set_text(label, message);
-			g_free(message);
-			g_free(file_path_utf8);
-
-			while (gtk_events_pending())
-				gtk_main_iteration();
-		}
-
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint response,
 		gboolean recursive)
 {
@@ -263,9 +237,7 @@ static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint respons
 				{
 					GtkFileFilter *filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(dialog));
 					const gchar *filter_name = gtk_file_filter_get_name(filter);
-					GError *error = NULL;
 					gchar *message;
-					gboolean cancelled;
 
 					if (only_dir)
 						message = g_strdup_printf(_("Open files in \"%s\" using filter \"%s\"?"),
@@ -278,27 +250,10 @@ static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint respons
 							_("This may take a while depending on the files and the filter."),
 							"%s", message))
 					{
-						GtkWidget *status_window, *label;
-						dialogs_create_cancellable_status_window(&status_window, &label,
-								"Opening Files Recursively", "Opening files recursively...", TRUE);
-
 						main_status.opening_files_recursively = TRUE;
-						document_open_files_recursively(filelist, ro, ft, charset, filter, &error,
-								&cancelled, G_CALLBACK(on_recursive_open_iterate), &status_window,
-								label);
+						document_open_files_recursively(filelist, ro, ft, charset, filter);
 						main_status.opening_files_recursively = FALSE;
 						consider_saving_default_session_files(TRUE);
-
-						if (error)
-						{
-							dialogs_show_msgbox(GTK_MESSAGE_ERROR, "%s", error->message);
-							g_error_free(error);
-						}
-						else if (cancelled)
-							dialogs_show_msgbox(GTK_MESSAGE_WARNING, "Cancelled.");
-
-						if (status_window)
-							gtk_widget_destroy(status_window);
 					}
 					else
 						ret = FALSE;
