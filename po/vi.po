@@ -5033,7 +5033,7 @@ msgstr "Lỗi tạo tập tin thẻ, có lẽ vì không tìm thấy thẻ.\n"
 #: ../src/symbols.c:1662
 #, fuzzy, c-format
 msgid ""
-"Usage: %s -g <Tags File> <File list>\n"
+"Usage: %s -g <Tags File> <File list>"
 "\n"
 msgstr ""
 "Sử dụng: %s -g <tập tin thẻ> <danh sách tập tin>\n"
@@ -5044,11 +5044,11 @@ msgstr ""
 msgid ""
 "Example:\n"
 "CFLAGS=`pkg-config gtk+-2.0 --cflags` %s -g gtk2.c.tags /usr/include/gtk-2.0/"
-"gtk/gtk.h\n"
+"gtk/gtk.h"
 msgstr ""
 "Thí dụ :\n"
 "CFLAGS=`pkg-config gtk+-2.0 --cflags` %s -g gtk2.c.tags /usr/include/gtk-2.0/"
-"gtk/gtk.h\n"
+"gtk/gtk.h"
 
 #: ../src/symbols.c:1677
 #, fuzzy

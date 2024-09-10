@@ -555,7 +555,7 @@ static void parse_command_line_options(gint *argc, gchar ***argv)
 
 	if (error != NULL)
 	{
-		g_printerr("Geany: %s\n", error->message);
+		g_printerr("Geany: %s", error->message);
 		g_error_free(error);
 		exit(1);
 	}

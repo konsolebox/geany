@@ -4941,7 +4941,7 @@ msgstr ""
 #: ../src/symbols.c:1662
 #, c-format
 msgid ""
-"Usage: %s -g <Tags File> <File list>\n"
+"Usage: %s -g <Tags File> <File list>"
 "\n"
 msgstr ""
 "Ús: %s -g <Fitxer d'Etiquetes> <Llista de Fitxers>\n"
@@ -4952,11 +4952,11 @@ msgstr ""
 msgid ""
 "Example:\n"
 "CFLAGS=`pkg-config gtk+-2.0 --cflags` %s -g gtk2.c.tags /usr/include/gtk-2.0/"
-"gtk/gtk.h\n"
+"gtk/gtk.h"
 msgstr ""
 "Exemple:\n"
 "CFLAGS=`pkg-config·gtk+-2.0·--cflags`·%s·-g·gtk2.c.tags·/usr/include/gtk-2.0/"
-"gtk/gtk.h\n"
+"gtk/gtk.h"
 
 #: ../src/symbols.c:1677
 msgid "Load Tags File"

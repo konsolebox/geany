@@ -166,10 +166,7 @@ static void send_open_command(gint sock, gint argc, gchar **argv)
 
 		/* if the filename is valid or if a new file should be opened is check on the other side */
 		if (filename == NULL)
-		{
 			g_printerr(_("Could not find file '%s'."), filename);
-			g_printerr("\n");	/* keep translation from open_cl_files() in main.c. */
-		}
 		else if (socket_fd_write_cstring(sock, filename) == -1)
 		{
 			g_printerr(_("Socket error occurred: %s"), strerror(errno));

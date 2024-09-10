@@ -1580,7 +1580,7 @@ int symbols_generate_global_tags(int argc, char **argv, gboolean want_preprocess
 
 		if (ft == NULL)
 		{
-			g_printerr(_("Unknown filetype extension for \"%s\".\n"), tags_file);
+			g_printerr(_("Unknown filetype extension for \"%s\"."), tags_file);
 			return 1;
 		}
 		/* load config in case of custom filetypes */
@@ -1613,10 +1613,11 @@ int symbols_generate_global_tags(int argc, char **argv, gboolean want_preprocess
 	}
 	else
 	{
-		g_printerr(_("Usage: %s -g <Tags File> <File list>\n\n"), argv[0]);
+		g_printerr(_("Usage: %s -g <Tags File> <File list>"), argv[0]);
+		g_printerr("");
 		g_printerr(_("Example:\n"
 			"CFLAGS=`pkg-config gtk+-2.0 --cflags` %s -g gtk2.c.tags"
-			" /usr/include/gtk-2.0/gtk/gtk.h\n"), argv[0]);
+			" /usr/include/gtk-2.0/gtk/gtk.h"), argv[0]);
 		return 1;
 	}
 	return 0;

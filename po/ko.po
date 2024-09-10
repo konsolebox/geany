@@ -4860,7 +4860,7 @@ msgstr "태그 파일 만들기 실패했습니다. 태그가 없는 것 같습�
 #: ../src/symbols.c:1662
 #, fuzzy, c-format
 msgid ""
-"Usage: %s -g <Tags File> <File list>\n"
+"Usage: %s -g <Tags File> <File list>"
 "\n"
 msgstr ""
 "사용법: %s -g <태그파일> <파일목록>\n"
@@ -4871,11 +4871,11 @@ msgstr ""
 msgid ""
 "Example:\n"
 "CFLAGS=`pkg-config gtk+-2.0 --cflags` %s -g gtk2.c.tags /usr/include/gtk-2.0/"
-"gtk/gtk.h\n"
+"gtk/gtk.h"
 msgstr ""
 "예:\n"
 "CFLAGS=`pkg-config gtk+-2.0 --cflags` %s -g gtk2.c.tags /usr/include/gtk-2.0/"
-"gtk/gtk.h\n"
+"gtk/gtk.h"
 
 #: ../src/symbols.c:1677
 #, fuzzy

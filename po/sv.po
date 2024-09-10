@@ -4885,7 +4885,7 @@ msgstr "Kunde inte skapa en taggfil, kanske därför inga symboler hittades.\n"
 #: ../src/symbols.c:1662
 #, c-format
 msgid ""
-"Usage: %s -g <Tags File> <File list>\n"
+"Usage: %s -g <Tags File> <File list>"
 "\n"
 msgstr ""
 "Användning: %s -g <Taggfil> <Fillista>\n"
@@ -4896,11 +4896,11 @@ msgstr ""
 msgid ""
 "Example:\n"
 "CFLAGS=`pkg-config gtk+-2.0 --cflags` %s -g gtk2.c.tags /usr/include/gtk-2.0/"
-"gtk/gtk.h\n"
+"gtk/gtk.h"
 msgstr ""
 "Exempelvis:\n"
 "CFLAGS=`pkg-config gtk+-2.0 --cflags` %s -g gtk2.c.tags /usr/include/gtk-2.0/"
-"gtk/gtk.h\n"
+"gtk/gtk.h"
 
 #: ../src/symbols.c:1677
 msgid "Load Tags File"
