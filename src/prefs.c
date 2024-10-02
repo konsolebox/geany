@@ -731,46 +731,46 @@ static void prefs_init_dialog(void)
 	if (vte_info.have_vte)
 	{
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "font_term");
-		gtk_font_button_set_font_name(GTK_FONT_BUTTON(widget), vc->font);
+		gtk_font_button_set_font_name(GTK_FONT_BUTTON(widget), vte_config.font);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "color_fore");
-		gtk_color_button_set_color(GTK_COLOR_BUTTON(widget), &vc->colour_fore);
+		gtk_color_button_set_color(GTK_COLOR_BUTTON(widget), &vte_config.colour_fore);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "color_back");
-		gtk_color_button_set_color(GTK_COLOR_BUTTON(widget), &vc->colour_back);
+		gtk_color_button_set_color(GTK_COLOR_BUTTON(widget), &vte_config.colour_back);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "spin_scrollback");
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), vc->scrollback_lines);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), vte_config.scrollback_lines);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "entry_shell");
-		gtk_entry_set_text(GTK_ENTRY(widget), vc->shell);
+		gtk_entry_set_text(GTK_ENTRY(widget), vte_config.shell);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_scroll_key");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vc->scroll_on_key);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.scroll_on_key);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_scroll_out");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vc->scroll_on_out);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.scroll_on_out);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_enable_bash_keys");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vc->enable_bash_keys);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.enable_bash_keys);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_ignore_menu_key");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vc->ignore_menu_bar_accel);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.ignore_menu_bar_accel);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_follow_path");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vc->follow_path);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.follow_path);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_run_in_vte");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vc->run_in_vte);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.run_in_vte);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_skip_script");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vc->skip_run_script);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.skip_run_script);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_cursor_blinks");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vc->cursor_blinks);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.cursor_blinks);
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "allow_bold");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vc->allow_bold);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.allow_bold);
 	}
 #endif
 }
@@ -1175,38 +1175,38 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 		{
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "spin_scrollback");
 			gtk_spin_button_update(GTK_SPIN_BUTTON(widget));
-			vc->scrollback_lines = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget));
+			vte_config.scrollback_lines = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget));
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "entry_shell");
-			g_free(vc->shell);
-			vc->shell = g_strdup(gtk_entry_get_text(GTK_ENTRY(widget)));
+			g_free(vte_config.shell);
+			vte_config.shell = g_strdup(gtk_entry_get_text(GTK_ENTRY(widget)));
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_scroll_key");
-			vc->scroll_on_key = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+			vte_config.scroll_on_key = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_scroll_out");
-			vc->scroll_on_out = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+			vte_config.scroll_on_out = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_enable_bash_keys");
-			vc->enable_bash_keys = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+			vte_config.enable_bash_keys = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_ignore_menu_key");
-			vc->ignore_menu_bar_accel = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+			vte_config.ignore_menu_bar_accel = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_follow_path");
-			vc->follow_path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+			vte_config.follow_path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_run_in_vte");
-			vc->run_in_vte = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+			vte_config.run_in_vte = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_skip_script");
-			vc->skip_run_script = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+			vte_config.skip_run_script = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_cursor_blinks");
-			vc->cursor_blinks = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+			vte_config.cursor_blinks = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "allow_bold");
-			vc->allow_bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+			vte_config.allow_bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 			vte_apply_user_settings();
 		}

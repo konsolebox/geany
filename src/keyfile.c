@@ -522,23 +522,23 @@ static void save_dialog_prefs(GKeyFile *config)
 	{
 		gchar *tmp_string;
 
-		g_key_file_set_string(config, "VTE", "font", vc->font);
-		g_key_file_set_boolean(config, "VTE", "scroll_on_key", vc->scroll_on_key);
-		g_key_file_set_boolean(config, "VTE", "scroll_on_out", vc->scroll_on_out);
-		g_key_file_set_boolean(config, "VTE", "enable_bash_keys", vc->enable_bash_keys);
-		g_key_file_set_boolean(config, "VTE", "ignore_menu_bar_accel", vc->ignore_menu_bar_accel);
-		g_key_file_set_boolean(config, "VTE", "follow_path", vc->follow_path);
-		g_key_file_set_boolean(config, "VTE", "run_in_vte", vc->run_in_vte);
-		g_key_file_set_boolean(config, "VTE", "skip_run_script", vc->skip_run_script);
-		g_key_file_set_boolean(config, "VTE", "cursor_blinks", vc->cursor_blinks);
-		g_key_file_set_boolean(config, "VTE", "allow_bold", vc->allow_bold);
-		g_key_file_set_integer(config, "VTE", "scrollback_lines", vc->scrollback_lines);
-		g_key_file_set_string(config, "VTE", "font", vc->font);
-		g_key_file_set_string(config, "VTE", "shell", vc->shell);
-		tmp_string = utils_get_hex_from_color(&vc->colour_fore);
+		g_key_file_set_string(config, "VTE", "font", vte_config.font);
+		g_key_file_set_boolean(config, "VTE", "scroll_on_key", vte_config.scroll_on_key);
+		g_key_file_set_boolean(config, "VTE", "scroll_on_out", vte_config.scroll_on_out);
+		g_key_file_set_boolean(config, "VTE", "enable_bash_keys", vte_config.enable_bash_keys);
+		g_key_file_set_boolean(config, "VTE", "ignore_menu_bar_accel", vte_config.ignore_menu_bar_accel);
+		g_key_file_set_boolean(config, "VTE", "follow_path", vte_config.follow_path);
+		g_key_file_set_boolean(config, "VTE", "run_in_vte", vte_config.run_in_vte);
+		g_key_file_set_boolean(config, "VTE", "skip_run_script", vte_config.skip_run_script);
+		g_key_file_set_boolean(config, "VTE", "cursor_blinks", vte_config.cursor_blinks);
+		g_key_file_set_boolean(config, "VTE", "allow_bold", vte_config.allow_bold);
+		g_key_file_set_integer(config, "VTE", "scrollback_lines", vte_config.scrollback_lines);
+		g_key_file_set_string(config, "VTE", "font", vte_config.font);
+		g_key_file_set_string(config, "VTE", "shell", vte_config.shell);
+		tmp_string = utils_get_hex_from_color(&vte_config.colour_fore);
 		g_key_file_set_string(config, "VTE", "colour_fore", tmp_string);
 		g_free(tmp_string);
-		tmp_string = utils_get_hex_from_color(&vc->colour_back);
+		tmp_string = utils_get_hex_from_color(&vte_config.colour_back);
 		g_key_file_set_string(config, "VTE", "colour_back", tmp_string);
 		g_free(tmp_string);
 	}
@@ -867,7 +867,6 @@ static void load_dialog_prefs(GKeyFile *config)
 			shell = "/bin/bash -l";
 #endif
 
-		vc = g_new0(VteConfig, 1);
 		vte_info.dir = utils_get_setting_string(config, "VTE", "last_dir", NULL);
 		if ((vte_info.dir == NULL || utils_str_equal(vte_info.dir, "")) && pw != NULL)
 			/* last dir is not set, fallback to user's home directory */
@@ -876,20 +875,20 @@ static void load_dialog_prefs(GKeyFile *config)
 			/* fallback to root */
 			vte_info.dir = g_strdup("/");
 
-		vc->shell = utils_get_setting_string(config, "VTE", "shell", shell);
-		vc->font = utils_get_setting_string(config, "VTE", "font", GEANY_DEFAULT_FONT_EDITOR);
-		vc->scroll_on_key = utils_get_setting_boolean(config, "VTE", "scroll_on_key", TRUE);
-		vc->scroll_on_out = utils_get_setting_boolean(config, "VTE", "scroll_on_out", TRUE);
-		vc->enable_bash_keys = utils_get_setting_boolean(config, "VTE", "enable_bash_keys", TRUE);
-		vc->ignore_menu_bar_accel = utils_get_setting_boolean(config, "VTE", "ignore_menu_bar_accel", FALSE);
-		vc->follow_path = utils_get_setting_boolean(config, "VTE", "follow_path", FALSE);
-		vc->run_in_vte = utils_get_setting_boolean(config, "VTE", "run_in_vte", FALSE);
-		vc->skip_run_script = utils_get_setting_boolean(config, "VTE", "skip_run_script", FALSE);
-		vc->cursor_blinks = utils_get_setting_boolean(config, "VTE", "cursor_blinks", FALSE);
-		vc->allow_bold = utils_get_setting_boolean(config, "VTE", "allow_bold", TRUE);
-		vc->scrollback_lines = utils_get_setting_integer(config, "VTE", "scrollback_lines", 500);
-		get_setting_color(config, "VTE", "colour_fore", &vc->colour_fore, "#ffffff");
-		get_setting_color(config, "VTE", "colour_back", &vc->colour_back, "#000000");
+		vte_config.shell = utils_get_setting_string(config, "VTE", "shell", shell);
+		vte_config.font = utils_get_setting_string(config, "VTE", "font", GEANY_DEFAULT_FONT_EDITOR);
+		vte_config.scroll_on_key = utils_get_setting_boolean(config, "VTE", "scroll_on_key", TRUE);
+		vte_config.scroll_on_out = utils_get_setting_boolean(config, "VTE", "scroll_on_out", TRUE);
+		vte_config.enable_bash_keys = utils_get_setting_boolean(config, "VTE", "enable_bash_keys", TRUE);
+		vte_config.ignore_menu_bar_accel = utils_get_setting_boolean(config, "VTE", "ignore_menu_bar_accel", FALSE);
+		vte_config.follow_path = utils_get_setting_boolean(config, "VTE", "follow_path", FALSE);
+		vte_config.run_in_vte = utils_get_setting_boolean(config, "VTE", "run_in_vte", FALSE);
+		vte_config.skip_run_script = utils_get_setting_boolean(config, "VTE", "skip_run_script", FALSE);
+		vte_config.cursor_blinks = utils_get_setting_boolean(config, "VTE", "cursor_blinks", FALSE);
+		vte_config.allow_bold = utils_get_setting_boolean(config, "VTE", "allow_bold", TRUE);
+		vte_config.scrollback_lines = utils_get_setting_integer(config, "VTE", "scrollback_lines", 500);
+		get_setting_color(config, "VTE", "colour_fore", &vte_config.colour_fore, "#ffffff");
+		get_setting_color(config, "VTE", "colour_back", &vte_config.colour_back, "#000000");
 
 		/* various VTE prefs.
 		 * this can't be done in init_pref_groups() because we need to know the value of
@@ -897,8 +896,8 @@ static void load_dialog_prefs(GKeyFile *config)
 		group = stash_group_new("VTE");
 		configuration_add_various_pref_group(group);
 
-		stash_group_add_string(group, &vc->send_cmd_prefix, "send_cmd_prefix", "");
-		stash_group_add_boolean(group, &vc->send_selection_unsafe, "send_selection_unsafe", FALSE);
+		stash_group_add_string(group, &vte_config.send_cmd_prefix, "send_cmd_prefix", "");
+		stash_group_add_boolean(group, &vte_config.send_selection_unsafe, "send_selection_unsafe", FALSE);
 	}
 #endif
 	/* templates */
