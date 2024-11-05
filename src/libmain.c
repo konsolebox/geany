@@ -47,6 +47,7 @@
 #include "navqueue.h"
 #include "notebook.h"
 #include "plugins.h"
+#include "projectprivate.h"
 #include "prefs.h"
 #include "printing.h"
 #include "sidebar.h"
@@ -117,7 +118,7 @@ enum {
 	QUEUED = 1
 };
 
-static gint save_default_session_files_queued = NOT_QUEUED;
+static gint save_session_files_queued = NOT_QUEUED;
 
 gboolean new_instance_mode_arg_callback(const gchar *option_name, const gchar *value, gpointer data, GError **error)
 {
@@ -312,7 +313,7 @@ static void main_init(void)
 	gtk_window_set_default_size(GTK_WINDOW(main_widgets.window),
 		GEANY_WINDOW_DEFAULT_WIDTH, GEANY_WINDOW_DEFAULT_HEIGHT);
 
-	save_default_session_files_queued = NOT_QUEUED;
+	save_session_files_queued = NOT_QUEUED;
 }
 
 const gchar *main_get_version_string(void)
@@ -1012,13 +1013,23 @@ static void load_startup_files(gint argc, gchar **argv)
 	{
 		if (app->project == NULL)
 			load_session_project_file();
+		if (app->project == NULL)
+			configuration_load_default_session();
 		load_session = TRUE;
 	}
 
 	if (load_session)
 	{
 		/* load session files into tabs, as they are found in the session_files variable */
-		configuration_open_files();
+		if (app->project != NULL)
+		{
+			configuration_open_files(app->project->priv->session_files);
+			app->project->priv->session_files = NULL;
+		}
+		else
+		{
+			configuration_open_default_session();
+		}
 
 		if (gtk_notebook_get_n_pages(GTK_NOTEBOOK(main_widgets.notebook)) == 0)
 		{
@@ -1500,21 +1511,26 @@ void main_reload_configuration(void)
 	ui_set_statusbar(TRUE, _("Configuration files reloaded."));
 }
 
-static gboolean save_default_session_files(gpointer data)
+static gboolean save_session_files(gpointer data)
 {
 	if (! main_status.quitting)
-		configuration_save_default_session();
+	{
+		if (app->project != NULL)
+			project_write_config();
+		else
+			configuration_save_default_session();
+	}
 
-	save_default_session_files_queued = NOT_QUEUED;
+	save_session_files_queued = NOT_QUEUED;
 	return FALSE;
 }
 
-void consider_saving_default_session_files(gboolean deferred_only)
+void consider_saving_session_files(gboolean deferred_only)
 {
-	if (deferred_only && save_default_session_files_queued != DEFERRED)
+	if (deferred_only && save_session_files_queued != DEFERRED)
 		return;
 
-	if (save_default_session_files_queued == QUEUED)
+	if (save_session_files_queued == QUEUED)
 		return;
 
 	if (! cl_options.load_session || main_status.quitting || main_status.opening_session_files)
@@ -1522,10 +1538,10 @@ void consider_saving_default_session_files(gboolean deferred_only)
 
 	if (main_status.opening_files_recursively)
 	{
-		save_default_session_files_queued = DEFERRED;
+		save_session_files_queued = DEFERRED;
 		return;
 	}
 
-	save_default_session_files_queued = QUEUED;
-	g_idle_add_full(G_PRIORITY_LOW, save_default_session_files, NULL, NULL);
+	save_session_files_queued = QUEUED;
+	g_idle_add_full(G_PRIORITY_LOW, save_session_files, NULL, NULL);
 }

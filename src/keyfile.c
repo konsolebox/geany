@@ -105,7 +105,7 @@
 
 static gchar *scribble_text = NULL;
 static gint scribble_pos = -1;
-static GPtrArray *session_files = NULL;
+static GPtrArray *default_session_files = NULL;
 static gint session_notebook_page;
 static gint hpan_position;
 static gint vpan_position;
@@ -630,7 +630,7 @@ static void write_config_file(ConfigPayload payload)
 			save_recent_files(config, ui_prefs.recent_queue, "recent_files");
 			save_recent_files(config, ui_prefs.recent_projects_queue, "recent_projects");
 
-			if (cl_options.load_session)
+			if (cl_options.load_session && app->project == NULL)
 				configuration_save_session_files(config);
 #ifdef HAVE_VTE
 			else if (vte_info.have_vte)
@@ -683,34 +683,20 @@ static void load_recent_files(GKeyFile *config, GQueue *queue, const gchar *key)
 }
 
 /*
- * Load session list from the given keyfile, and store it in the global
- * session_files variable for later file loading
+ * Load session list from the given keyfile and return an array containg the file names
  * */
-void configuration_load_session_files(GKeyFile *config, gboolean read_recent_files)
+GPtrArray *configuration_load_session_files(GKeyFile *config)
 {
 	guint i;
 	gboolean have_session_files;
 	gchar entry[16];
 	gchar **tmp_array;
 	GError *error = NULL;
+	GPtrArray *files;
 
 	session_notebook_page = utils_get_setting_integer(config, "files", "current_page", -1);
 
-	if (read_recent_files)
-	{
-		load_recent_files(config, ui_prefs.recent_queue, "recent_files");
-		load_recent_files(config, ui_prefs.recent_projects_queue, "recent_projects");
-	}
-
-	/* the project may load another list than the main setting */
-	if (session_files != NULL)
-	{
-		foreach_ptr_array(tmp_array, i, session_files)
-			g_strfreev(tmp_array);
-		g_ptr_array_free(session_files, TRUE);
-	}
-
-	session_files = g_ptr_array_new();
+	files = g_ptr_array_new();
 	have_session_files = TRUE;
 	i = 0;
 	while (have_session_files)
@@ -723,7 +709,7 @@ void configuration_load_session_files(GKeyFile *config, gboolean read_recent_fil
 			error = NULL;
 			have_session_files = FALSE;
 		}
-		g_ptr_array_add(session_files, tmp_array);
+		g_ptr_array_add(files, tmp_array);
 		i++;
 	}
 
@@ -736,6 +722,8 @@ void configuration_load_session_files(GKeyFile *config, gboolean read_recent_fil
 		g_free(tmp_string);
 	}
 #endif
+
+	return files;
 }
 
 #ifdef HAVE_VTE
@@ -1118,15 +1106,17 @@ void configuration_clear_default_session(void)
 /*
  * Only reload the session part of the default configuration
  */
-void configuration_reload_default_session(void)
+void configuration_load_default_session(void)
 {
 	gchar *configfile = g_build_filename(app->configdir, SESSION_FILE, NULL);
 	GKeyFile *config = g_key_file_new();
 
+	g_return_if_fail(default_session_files == NULL);
+
 	g_key_file_load_from_file(config, configfile, G_KEY_FILE_NONE, NULL);
 	g_free(configfile);
 
-	configuration_load_session_files(config, FALSE);
+	default_session_files = configuration_load_session_files(config);
 
 	g_key_file_free(config);
 }
@@ -1203,7 +1193,8 @@ static gboolean read_config_file(ConfigPayload payload)
 		case SESSION:
 			project_load_prefs(config);
 			load_ui_session(config);
-			configuration_load_session_files(config, TRUE);
+			load_recent_files(config, ui_prefs.recent_queue, "recent_files");
+			load_recent_files(config, ui_prefs.recent_projects_queue, "recent_projects");
 			break;
 		default:
 			g_assert_not_reached();
@@ -1286,7 +1277,7 @@ static gboolean open_session_file(gchar **tmp, guint len)
 /* Open session files
  * Note: notebook page switch handler and adding to recent files list is always disabled
  * for all files opened within this function */
-void configuration_open_files(void)
+void configuration_open_files(GPtrArray *session_files)
 {
 	gint i;
 	gboolean failure = FALSE;
@@ -1341,7 +1332,15 @@ void configuration_open_files(void)
 		main_status.opening_session_files = FALSE;
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(main_widgets.notebook), target_page);
 	}
+
 	main_status.opening_session_files = FALSE;
+}
+
+void configuration_open_default_session(void)
+{
+	g_return_if_fail(default_session_files != NULL);
+	configuration_open_files(default_session_files);
+	default_session_files = NULL;
 }
 
 /* set some settings which are already read from the config file, but need other things, like the

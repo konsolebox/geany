@@ -232,8 +232,8 @@ void project_new(void)
 			else
 			{
 				// reload any documents that were closed
-				configuration_reload_default_session();
-				configuration_open_files();
+				configuration_load_default_session();
+				configuration_open_default_session();
 			}
 			break;
 		}
@@ -263,7 +263,8 @@ gboolean project_load_file_with_session(const gchar *locale_file_name)
 {
 	if (project_load_file(locale_file_name))
 	{
-		configuration_open_files();
+		configuration_open_files(app->project->priv->session_files);
+		app->project->priv->session_files = NULL;
 		document_new_file_if_non_open();
 		ui_focus_current_document();
 		return TRUE;
@@ -441,8 +442,8 @@ static void destroy_project(gboolean open_default)
 	/* after closing all tabs let's open the tabs found in the default config */
 	if (open_default && cl_options.load_session)
 	{
-		configuration_reload_default_session();
-		configuration_open_files();
+		configuration_load_default_session();
+		configuration_open_default_session();
 		if (prefs.auto_open_new_file)
 			document_new_file_if_non_open();
 		ui_focus_current_document();
@@ -1028,11 +1029,14 @@ static gboolean load_config(const gchar *filename)
 
 	build_load_menu(config, GEANY_BCS_PROJ, (gpointer)p);
 	/* save current (non-project) session (it could have been changed since program startup) */
-	configuration_save_default_session();
-	/* now close all open files */
-	document_close_all();
+	if (!main_status.opening_session_files)
+	{
+		configuration_save_default_session();
+		/* now close all open files */
+		document_close_all();
+	}
 	/* read session files so they can be opened with configuration_open_files() */
-	configuration_load_session_files(config, FALSE);
+	p->priv->session_files = configuration_load_session_files(config);
 	g_signal_emit_by_name(geany_object, "project-open", config);
 	g_key_file_free(config);
 

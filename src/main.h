@@ -82,7 +82,7 @@ void main_load_project_from_command_line(const gchar *locale_filename, gboolean 
 
 gint main_lib(gint argc, gchar **argv);
 
-void consider_saving_default_session_files(gboolean deferred_only);
+void consider_saving_session_files(gboolean deferred_only);
 
 #endif /* GEANY_PRIVATE */
 
