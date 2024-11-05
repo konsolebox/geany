@@ -1283,7 +1283,7 @@ void configuration_open_files(GPtrArray *session_files)
 	gboolean failure = FALSE;
 
 	/* necessary to set it to TRUE for project session support */
-	main_status.opening_session_files = TRUE;
+	main_status.opening_session_files++;
 
 	i = file_prefs.tab_order_ltr ? 0 : (session_files->len - 1);
 	while (TRUE)
@@ -1316,7 +1316,10 @@ void configuration_open_files(GPtrArray *session_files)
 	session_files = NULL;
 
 	if (failure)
+	{
 		ui_set_statusbar(TRUE, _("Failed to load one or more session files."));
+		main_status.opening_session_files--;
+	}
 	else
 	{
 		/* explicitly trigger a notebook page switch after unsetting main_status.opening_session_files
@@ -1329,11 +1332,9 @@ void configuration_open_files(GPtrArray *session_files)
 		if (target_page == cur_page && n_pages > 0)
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(main_widgets.notebook), (cur_page + 1) % n_pages);
 
-		main_status.opening_session_files = FALSE;
+		main_status.opening_session_files--;
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(main_widgets.notebook), target_page);
 	}
-
-	main_status.opening_session_files = FALSE;
 }
 
 void configuration_open_default_session(void)
