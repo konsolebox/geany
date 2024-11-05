@@ -1316,25 +1316,12 @@ void configuration_open_files(GPtrArray *session_files)
 	session_files = NULL;
 
 	if (failure)
-	{
 		ui_set_statusbar(TRUE, _("Failed to load one or more session files."));
-		main_status.opening_session_files--;
-	}
 	else
-	{
-		/* explicitly trigger a notebook page switch after unsetting main_status.opening_session_files
-		 * for callbacks to run (and update window title, encoding settings, and so on) */
-		gint n_pages = gtk_notebook_get_n_pages(GTK_NOTEBOOK(main_widgets.notebook));
-		gint cur_page = gtk_notebook_get_current_page(GTK_NOTEBOOK(main_widgets.notebook));
-		gint target_page = session_notebook_page >= 0 ? session_notebook_page : cur_page;
+		document_show_tab(session_notebook_page >= 0 ?
+				document_get_from_page(session_notebook_page) : document_get_current());
 
-		/* if target page is current page, switch to another page first to really trigger an event */
-		if (target_page == cur_page && n_pages > 0)
-			gtk_notebook_set_current_page(GTK_NOTEBOOK(main_widgets.notebook), (cur_page + 1) % n_pages);
-
-		main_status.opening_session_files--;
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(main_widgets.notebook), target_page);
-	}
+	main_status.opening_session_files--;
 }
 
 void configuration_open_default_session(void)

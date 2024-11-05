@@ -586,12 +586,6 @@ void document_try_focus(GeanyDocument *doc, GtkWidget *source_widget)
 	}
 }
 
-static gboolean on_idle_focus(gpointer doc)
-{
-	document_try_focus(doc, NULL);
-	return FALSE;
-}
-
 /* Creates a new document and editor, adding a tab in the notebook.
  * @return The created document */
 static GeanyDocument *document_create(const gchar *utf8_filename, gboolean filename_is_untitled)
@@ -1578,7 +1572,8 @@ GeanyDocument *document_open_file_full(GeanyDocument *doc, const gchar *filename
 
 	/* finally, let the editor widget grab the focus so you can start coding
 	 * right away */
-	g_idle_add(on_idle_focus, doc);
+	document_try_focus(doc, NULL);
+
 	return doc;
 }
 
