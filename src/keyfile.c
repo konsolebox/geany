@@ -1279,38 +1279,24 @@ static gboolean open_session_file(gchar **tmp, guint len)
  * for all files opened within this function */
 void configuration_open_files(GPtrArray *session_files)
 {
-	gint i;
+	gint i = file_prefs.tab_order_ltr ? 0 : session_files->len - 1;
 	gboolean failure = FALSE;
 
 	/* necessary to set it to TRUE for project session support */
 	main_status.opening_session_files++;
 
-	i = file_prefs.tab_order_ltr ? 0 : (session_files->len - 1);
-	while (TRUE)
+	do
 	{
 		gchar **tmp = g_ptr_array_index(session_files, i);
 		guint len;
 
 		if (tmp != NULL && (len = g_strv_length(tmp)) >= 8)
-		{
 			if (! open_session_file(tmp, len))
 				failure = TRUE;
-		}
-		g_strfreev(tmp);
 
-		if (file_prefs.tab_order_ltr)
-		{
-			i++;
-			if (i >= (gint)session_files->len)
-				break;
-		}
-		else
-		{
-			i--;
-			if (i < 0)
-				break;
-		}
+		g_strfreev(tmp);
 	}
+	while (file_prefs.tab_order_ltr ? ++i < (gint)session_files->len : --i >= 0);
 
 	g_ptr_array_free(session_files, TRUE);
 	session_files = NULL;
