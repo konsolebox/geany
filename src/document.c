@@ -578,10 +578,8 @@ void document_try_focus(GeanyDocument *doc, GtkWidget *source_widget)
 		GtkWidget *sci = GTK_WIDGET(doc->editor->sci);
 		GtkWidget *focusw = gtk_window_get_focus(GTK_WINDOW(main_widgets.window));
 
-		if (source_widget == NULL)
-			source_widget = doc->priv->tag_tree;
-
-		if (focusw == source_widget)
+		if (source_widget != NULL ? focusw == source_widget :
+				focusw == doc->priv->tag_tree || focusw == vte_config.vte)
 			gtk_widget_grab_focus(sci);
 	}
 }
