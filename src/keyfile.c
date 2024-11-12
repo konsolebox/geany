@@ -1215,51 +1215,34 @@ gboolean configuration_load(void)
 static gboolean open_session_file(gchar **tmp, guint len)
 {
 	guint pos;
-	const gchar *ft_name;
-	gchar *locale_filename;
-	gchar *unescaped_filename;
-	const gchar *encoding;
-	gint  indent_type;
-	gboolean ro, auto_indent, line_wrapping;
-	/** TODO when we have a global pref for line breaking, use its value */
-	gboolean line_breaking = FALSE;
-	gboolean ret = FALSE;
+	const gchar *ft_name, *encoding;
+	gboolean ret = FALSE, ro, auto_indent, line_wrapping, line_breaking, favorite;
+	gint indent_type, indent_width;
+	gchar *unescaped_filename, *locale_filename;
 
 	pos = atoi(tmp[0]);
 	ft_name = tmp[1];
 	ro = atoi(tmp[2]);
-	if (isdigit(tmp[3][0]))
-	{
-		encoding = encodings_get_charset_from_index(atoi(tmp[3]));
-	}
-	else
-	{
-		encoding = &(tmp[3][1]);
-	}
+	encoding = isdigit(tmp[3][0]) ? encodings_get_charset_from_index(atoi(tmp[3])) : &(tmp[3][1]);
 	indent_type = atoi(tmp[4]);
 	auto_indent = atoi(tmp[5]);
 	line_wrapping = atoi(tmp[6]);
 	/* try to get the locale equivalent for the filename */
 	unescaped_filename = g_uri_unescape_string(tmp[7], NULL);
 	locale_filename = utils_get_locale_from_utf8(unescaped_filename);
-
-	if (len > 8)
-		line_breaking = atoi(tmp[8]);
+	/** TODO when we have a global pref for line breaking, use its value */
+	line_breaking = len > 8 && atoi(tmp[8]);
 
 	if (g_file_test(locale_filename, G_FILE_TEST_IS_REGULAR))
 	{
-		gboolean favorite = len > 10 && atoi(tmp[10]);
+		favorite = len > 10 && atoi(tmp[10]);
 		GeanyFiletype *ft = filetypes_lookup_by_name(ft_name);
 		GeanyDocument *doc = document_open_file_full(NULL, locale_filename, pos, ro, favorite,
 				ft, encoding);
 
 		if (doc)
 		{
-			gint indent_width = doc->editor->indent_width;
-
-			if (len > 9)
-				indent_width = atoi(tmp[9]);
-
+			indent_width = len > 9 ? atoi(tmp[9]) : doc->editor->indent_width;
 			editor_set_indent(doc->editor, indent_type, indent_width);
 			editor_set_line_wrapping(doc->editor, line_wrapping);
 			doc->editor->line_breaking = line_breaking;
@@ -1268,9 +1251,7 @@ static gboolean open_session_file(gchar **tmp, guint len)
 		}
 	}
 	else
-	{
 		geany_debug("Could not find file '%s'.", tmp[7]);
-	}
 
 	g_free(locale_filename);
 	g_free(unescaped_filename);
