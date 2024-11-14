@@ -1846,3 +1846,29 @@ void sidebar_rename_file_cb(G_GNUC_UNUSED guint key_id)
 		}
 	}
 }
+
+void sidebar_openfiles_scroll_to_row(GeanyDocument *doc)
+{
+	GtkTreeIter *iter;
+	GtkTreeSelection *selection;
+	GtkTreePath *path;
+
+	g_return_if_fail(tv.tree_openfiles != NULL);
+	g_return_if_fail(store_openfiles != NULL);
+
+	if (DOC_VALID(doc))
+	{
+		iter = &doc->priv->iter;
+
+		if (doc->priv->iter_favorite.stamp)
+		{
+			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
+
+			if (gtk_tree_selection_iter_is_selected(selection, &doc->priv->iter) == FALSE)
+				iter = &doc->priv->iter_favorite;
+		}
+
+		path = gtk_tree_model_get_path(GTK_TREE_MODEL(store_openfiles), iter);
+		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(tv.tree_openfiles), path, NULL, FALSE, 0, 0);
+	}
+}

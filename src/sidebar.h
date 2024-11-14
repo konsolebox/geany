@@ -74,6 +74,8 @@ void sidebar_focus_symbols_tab(void);
 
 void sidebar_rename_file_cb(guint key_id);
 
+void sidebar_openfiles_scroll_to_row(GeanyDocument *doc);
+
 G_END_DECLS
 
 #endif /* GEANY_SIDEBAR_H */

@@ -4483,6 +4483,7 @@ void document_handle_switch_page_after(GtkWidget *page)
 		ui_document_show_hide(doc); /* update the document menu */
 		build_menu_update(doc);
 		sidebar_update_tag_list(doc, FALSE);
+		sidebar_openfiles_scroll_to_row(doc);
 		document_highlight_tags(doc);
 		document_check_disk_status(doc, TRUE);
 
