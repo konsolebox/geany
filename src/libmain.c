@@ -1286,16 +1286,6 @@ gint main_lib(gint argc, gchar **argv)
 	ui_document_buttons_update();
 	ui_save_buttons_toggle(FALSE);
 
-	doc = document_get_current();
-
-	if (doc)
-	{
-		sidebar_select_openfiles_item(doc);
-		build_menu_update(doc);
-	}
-
-	sidebar_update_tag_list(doc, FALSE);
-
 #ifdef G_OS_WIN32
 	/* Manually realise the main window to be able to set the position but don't show it.
 	 * We don't set the position after showing the window to avoid flickering. */
@@ -1304,10 +1294,19 @@ gint main_lib(gint argc, gchar **argv)
 	setup_window_position();
 
 	/* finally show the window */
-	if (doc)
-		document_grab_focus(doc);
 	gtk_widget_show(main_widgets.window);
 	main_status.main_window_realized = TRUE;
+
+	/* doc seems to be always NULL if accessed before main window is shown */
+	if ((doc = document_get_current()) != NULL)
+	{
+		sidebar_select_openfiles_item(doc);
+		build_menu_update(doc);
+		sidebar_update_tag_list(doc, FALSE);
+		document_grab_focus(doc);
+	}
+	else
+		sidebar_update_tag_list(NULL, FALSE);
 
 	configuration_apply_settings();
 
