@@ -1052,6 +1052,10 @@ void ui_document_show_hide_real(GeanyDocument *doc)
 	}
 
 	gtk_check_menu_item_set_active(
+			GTK_CHECK_MENU_ITEM(ui_lookup_widget(main_widgets.window, "set_file_favorite1")),
+			document_get_favorite(doc));
+
+	gtk_check_menu_item_set_active(
 			GTK_CHECK_MENU_ITEM(ui_lookup_widget(main_widgets.window, "set_file_readonly1")),
 			doc->readonly);
 
@@ -1680,11 +1684,39 @@ void ui_combo_box_prepend_text_once(GtkComboBoxText *combo, const gchar *text)
 	gtk_combo_box_text_prepend_text(combo, text);
 }
 
+void ui_label_set_font_weight(GtkLabel *label, PangoWeight weight)
+{
+	PangoContext *reference_pango_context;
+	PangoFontDescription *reference_font_description, *new_font_description;
+
+	g_return_if_fail(label != NULL);
+
+	reference_pango_context = gtk_widget_get_pango_context(GTK_WIDGET(label));
+	g_return_if_fail(reference_pango_context != NULL);
+
+	reference_font_description = pango_context_get_font_description(reference_pango_context);
+	g_return_if_fail(reference_font_description != NULL);
+
+	new_font_description = pango_font_description_copy(reference_font_description);
+	g_return_if_fail(new_font_description != NULL);
+
+	pango_font_description_set_weight(new_font_description, weight);
+	gtk_widget_modify_font(GTK_WIDGET(label), new_font_description);
+	g_free(new_font_description);
+}
+
+PangoWeight ui_document_label_font_weight(GeanyDocument *doc)
+{
+	return document_get_favorite(doc) ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL;
+}
+
 /* Changes the color of the notebook tab text and open files items according to
  * document status. */
 void ui_update_tab_status(GeanyDocument *doc)
 {
-	gtk_widget_set_name(doc->priv->tab_label, document_get_status_widget_class(doc));
+	GtkWidget *tab_label = doc->priv->tab_label;
+	gtk_widget_set_name(tab_label, document_get_status_widget_class(doc));
+	ui_label_set_font_weight(GTK_LABEL(tab_label), ui_document_label_font_weight(doc));
 
 	sidebar_openfiles_update(doc);
 }

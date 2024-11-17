@@ -675,6 +675,12 @@ void on_line_wrapping1_toggled(GtkCheckMenuItem *checkmenuitem, gpointer user_da
 	}
 }
 
+static void on_set_file_favorite1_toggled(GtkCheckMenuItem *checkmenuitem, gpointer user_data)
+{
+	if (! ignore_callback)
+		document_toggle_favorite(document_get_current(), TRUE);
+}
+
 static void on_set_file_readonly1_toggled(GtkCheckMenuItem *checkmenuitem, gpointer user_data)
 {
 	if (! ignore_callback)

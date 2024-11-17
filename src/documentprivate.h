@@ -124,6 +124,10 @@ typedef struct GeanyDocumentPrivate
 	gchar			*folder_path;
 	/* List that follows notebook tabs order */
 	GeanyDocumentOrderedListNode list;
+	/* Stores document's favorite status in the sidebar */
+	gboolean		 favorite;
+	/* Document's iter for the favorites tree view */
+	GtkTreeIter		 iter_favorite;
 }
 GeanyDocumentPrivate;
 

@@ -990,7 +990,7 @@ GEANY_API_SYMBOL
 GeanyDocument *document_open_file(const gchar *locale_filename, gboolean readonly,
 		GeanyFiletype *ft, const gchar *forced_enc)
 {
-	return document_open_file_full(NULL, locale_filename, 0, readonly, ft, forced_enc);
+	return document_open_file_full(NULL, locale_filename, 0, readonly, FALSE, ft, forced_enc);
 }
 
 typedef struct
@@ -1367,7 +1367,7 @@ void document_show_tab_real(GeanyDocument *doc)
  * forced_enc can be NULL to detect the file encoding.
  * Returns: doc of the opened file or NULL if an error occurred. */
 GeanyDocument *document_open_file_full(GeanyDocument *doc, const gchar *filename, gint pos,
-		gboolean readonly, GeanyFiletype *ft, const gchar *forced_enc)
+		gboolean readonly, gboolean favorite, GeanyFiletype *ft, const gchar *forced_enc)
 {
 	gint editor_mode;
 	gboolean reload = (doc == NULL) ? FALSE : TRUE;
@@ -1501,6 +1501,9 @@ GeanyDocument *document_open_file_full(GeanyDocument *doc, const gchar *filename
 		doc->readonly = readonly || filedata.readonly;
 		sci_set_readonly(doc->editor->sci, doc->readonly);
 		doc->priv->protected = 0;
+
+		if (favorite)
+			doc->priv->favorite = favorite;
 
 		/* update line number margin width */
 		doc->priv->line_count = sci_get_line_count(doc->editor->sci);
@@ -1862,7 +1865,8 @@ gboolean document_reload_force(GeanyDocument *doc, const gchar *forced_enc)
 
 	/* try to set the cursor to the position before reloading */
 	pos = sci_get_current_position(doc->editor->sci);
-	new_doc = document_open_file_full(doc, NULL, pos, doc->readonly, doc->file_type, forced_enc);
+	new_doc = document_open_file_full(doc, NULL, pos, doc->readonly, doc->priv->favorite,
+			doc->file_type, forced_enc);
 
 	if (file_prefs.keep_edit_history_on_reload && file_prefs.show_keep_edit_history_on_reload_msg)
 	{
@@ -3847,6 +3851,9 @@ GeanyDocument *document_clone(GeanyDocument *old_doc)
 	doc->readonly = FALSE;
 	sci_set_readonly(doc->editor->sci, doc->readonly);
 
+	/* don't let clone inherit favorite */
+	doc->priv->favorite = FALSE;
+
 	/* update ui */
 	ui_document_show_hide(doc);
 	return doc;
@@ -4486,4 +4493,26 @@ void document_handle_switch_page_after(GtkWidget *page)
 		document_try_focus(doc, NULL);
 		g_signal_emit_by_name(geany_object, "document-activate", doc);
 	}
+}
+
+gboolean document_get_favorite(GeanyDocument *doc)
+{
+	g_return_val_if_fail(doc != NULL, FALSE);
+	return doc->priv->favorite;
+}
+
+gboolean document_set_favorite(GeanyDocument *doc, gboolean highlight, gboolean update_ui)
+{
+	g_return_val_if_fail(doc != NULL, FALSE);
+	doc->priv->favorite = highlight;
+
+	if (update_ui)
+		sidebar_openfiles_update(doc);
+
+	return doc->priv->favorite;
+}
+
+gboolean document_toggle_favorite(GeanyDocument *doc, gboolean update_ui)
+{
+	return document_set_favorite(doc, ! doc->priv->favorite, update_ui);
 }

@@ -158,7 +158,9 @@ static void send_open_command(gint sock, gint argc, gchar **argv)
 		socket_fd_write_cstring(sock, "no-projects");
 
 	/* use "openro" to denote readonly status for new docs */
-	socket_fd_write_cstring(sock, cl_options.readonly ? "openro" : "open");
+	socket_fd_write_cstring(sock, cl_options.readonly ?
+			(cl_options.favorite ? "openrofav" : "openro") :
+			(cl_options.favorite ? "openfav" : "open"));
 
 	for (i = 1; i < argc && argv[i] != NULL && ! erred; i++)
 	{
@@ -645,7 +647,7 @@ gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpoint
 	gchar buf[BUFFER_LENGTH];
 	struct sockaddr_in caddr;
 	socklen_t caddr_len = sizeof(caddr);
-	gboolean readonly;
+	gboolean readonly, favorite;
 	gboolean no_projects = FALSE;
 
 	fd = g_io_channel_unix_get_fd(source);
@@ -654,9 +656,13 @@ gboolean socket_lock_input_cb(GIOChannel *source, GIOCondition condition, gpoint
 	/* first get the command */
 	while (socket_fd_get_cstring(sock, buf, sizeof(buf)) != -1)
 	{
-		if ((readonly = strncmp(buf, "openro", 7) == 0) || strncmp(buf, "open", 5) == 0)
+		if ((readonly = favorite = strncmp(buf, "openrofav", 10) == 0) ||
+				(readonly = strncmp(buf, "openro", 7) == 0) ||
+				(favorite = strncmp(buf, "openfav", 8) == 0) ||
+				strncmp(buf, "open", 5) == 0)
 		{
 			cl_options.readonly = readonly;
+			cl_options.favorite = favorite;
 			cl_options.no_projects = no_projects;
 
 			if (! handle_input_filenames(sock, window))

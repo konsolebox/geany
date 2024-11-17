@@ -352,7 +352,7 @@ static gchar *get_session_file_string(GeanyDocument *doc)
 	locale_filename = utils_get_locale_from_utf8(doc->file_name);
 	escaped_filename = g_uri_escape_string(locale_filename, NULL, TRUE);
 
-	fname = g_strdup_printf("%d;%s;%d;E%s;%d;%d;%d;%s;%d;%d",
+	fname = g_strdup_printf("%d;%s;%d;E%s;%d;%d;%d;%s;%d;%d;%d",
 		sci_get_current_position(doc->editor->sci),
 		ft->name,
 		doc->readonly,
@@ -362,7 +362,8 @@ static gchar *get_session_file_string(GeanyDocument *doc)
 		doc->editor->line_wrapping,
 		escaped_filename,
 		doc->editor->line_breaking,
-		doc->editor->indent_width);
+		doc->editor->indent_width,
+		document_get_favorite(doc));
 	g_free(escaped_filename);
 	g_free(locale_filename);
 	return fname;
@@ -1247,9 +1248,10 @@ static gboolean open_session_file(gchar **tmp, guint len)
 
 	if (g_file_test(locale_filename, G_FILE_TEST_IS_REGULAR))
 	{
+		gboolean favorite = len > 10 && atoi(tmp[10]);
 		GeanyFiletype *ft = filetypes_lookup_by_name(ft_name);
-		GeanyDocument *doc = document_open_file_full(
-			NULL, locale_filename, pos, ro, ft, encoding);
+		GeanyDocument *doc = document_open_file_full(NULL, locale_filename, pos, ro, favorite,
+				ft, encoding);
 
 		if (doc)
 		{
@@ -1257,6 +1259,7 @@ static gboolean open_session_file(gchar **tmp, guint len)
 
 			if (len > 9)
 				indent_width = atoi(tmp[9]);
+
 			editor_set_indent(doc->editor, indent_type, indent_width);
 			editor_set_line_wrapping(doc->editor, line_wrapping);
 			doc->editor->line_breaking = line_breaking;

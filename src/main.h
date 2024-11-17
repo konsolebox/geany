@@ -52,6 +52,7 @@ typedef struct
 	gboolean	list_documents;
 	gboolean 	readonly;
 	gboolean	no_projects;
+	gboolean	favorite;
 }
 CommandLineOptions;
 

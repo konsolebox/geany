@@ -282,7 +282,7 @@ gboolean document_account_for_unsaved(void);
 gboolean document_close_all(void);
 
 GeanyDocument *document_open_file_full(GeanyDocument *doc, const gchar *filename, gint pos,
-		gboolean readonly, GeanyFiletype *ft, const gchar *forced_enc);
+		gboolean readonly, gboolean favorite, GeanyFiletype *ft, const gchar *forced_enc);
 
 void document_open_file_list(const gchar *data, gsize length);
 
@@ -375,6 +375,12 @@ GeanyDocument *document_get_ordered_list_prev(GeanyDocument *doc, gboolean wrap)
 void document_reset_ordered_list();
 
 void document_handle_switch_page_after(GtkWidget *page);
+
+gboolean document_get_favorite(GeanyDocument *doc);
+
+gboolean document_set_favorite(GeanyDocument *doc, gboolean highlight, gboolean update_ui);
+
+gboolean document_toggle_favorite(GeanyDocument *doc, gboolean update_ui);
 
 #endif /* GEANY_PRIVATE */
 

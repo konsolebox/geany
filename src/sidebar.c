@@ -63,6 +63,8 @@ static struct
 	GtkWidget *new;
 	GtkWidget *open;
 	GtkWidget *open_dir;
+	GtkWidget *favorite;
+	GtkWidget *clear_favorites;
 	GtkWidget *save;
 	GtkWidget *save_as;
 	GtkWidget *reload;
@@ -74,7 +76,10 @@ static struct
 	GtkWidget *expand_all;
 	GtkWidget *collapse_all;
 }
-doc_items = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+doc_items = {
+	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+	NULL
+};
 
 enum
 {
@@ -95,24 +100,46 @@ enum
 	OPENFILES_ACTION_RELOAD_NO_PROMPT,
 	OPENFILES_ACTION_RENAME,
 	OPENFILES_ACTION_CLONE,
-	OPENFILES_ACTION_DELETE
+	OPENFILES_ACTION_DELETE,
+	OPENFILES_ACTION_FAVORITE,
+	OPENFILES_ACTION_CLEAR_FAVORITES
 };
 
 /* documents tree model columns */
 enum
 {
+	DOCUMENTS_TYPE,
 	DOCUMENTS_ICON,
 	DOCUMENTS_SHORTNAME,	/* dirname for parents, basename for children */
 	DOCUMENTS_DOCUMENT,
 	DOCUMENTS_COLOR,
-	DOCUMENTS_FILENAME		/* full filename */
+	DOCUMENTS_FILENAME,		/* full filename */
+	DOCUMENTS_WEIGHT
 };
+
+enum {
+	DOCUMENTS_TOTAL_COLUMNS = DOCUMENTS_WEIGHT + 1
+};
+
+enum {
+	TYPE_FILE,
+	TYPE_FOLDER,
+	TYPE_FAVORITES_FOLDER,
+};
+
+typedef enum
+{
+	FOLDER_FAVORITE_STATUS_INACTIVE = 0,
+	FOLDER_FAVORITE_STATUS_ACTIVE = 1,
+	FOLDER_FAVORITE_STATUS_INCONSISTENT = -1
+} FolderFavoriteStatus;
 
 static GtkTreeStore	*store_openfiles;
 static GtkWidget *openfiles_popup_menu;
 static gboolean documents_show_paths;
 static GtkWidget *tag_window;	/* scrolled window that holds the symbol list GtkTreeView */
 static gboolean updating_menu_items = FALSE;
+static GtkTreeIter iter_favorites = {0};
 
 /* callback prototypes */
 static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_data);
@@ -270,24 +297,30 @@ void sidebar_update_tag_list(GeanyDocument *doc, gboolean update)
 	#undef CHANGE_TREE
 }
 
-/* cleverly sorts documents by their short name */
 static gint documents_sort_func(GtkTreeModel *model, GtkTreeIter *iter_a,
 								GtkTreeIter *iter_b, gpointer data)
 {
-	gchar *key_a, *key_b;
-	gchar *name_a = NULL, *name_b = NULL;
-	gint cmp;
+	gchar *key_a, *key_b, *name_a, *name_b;
+	gint cmp, type_a, type_b;
 
-	gtk_tree_model_get(model, iter_a, DOCUMENTS_SHORTNAME, &name_a, -1);
-	key_a = g_utf8_collate_key_for_filename(name_a, -1);
+	gtk_tree_model_get(model, iter_a, DOCUMENTS_TYPE, &type_a, DOCUMENTS_SHORTNAME, &name_a, -1);
+	gtk_tree_model_get(model, iter_b, DOCUMENTS_TYPE, &type_b, DOCUMENTS_SHORTNAME, &name_b, -1);
+
+	if (type_a == TYPE_FAVORITES_FOLDER)
+		cmp = -1;
+	else if (type_b == TYPE_FAVORITES_FOLDER)
+		cmp = 1;
+	else
+	{
+		key_a = g_utf8_collate_key_for_filename(name_a, -1);
+		key_b = g_utf8_collate_key_for_filename(name_b, -1);
+		cmp = strcmp(key_a, key_b);
+		g_free(key_b);
+		g_free(key_a);
+	}
+
 	g_free(name_a);
-	gtk_tree_model_get(model, iter_b, DOCUMENTS_SHORTNAME, &name_b, -1);
-	key_b = g_utf8_collate_key_for_filename(name_b, -1);
 	g_free(name_b);
-	cmp = strcmp(key_a, key_b);
-	g_free(key_b);
-	g_free(key_a);
-
 	return cmp;
 }
 
@@ -304,8 +337,8 @@ static void prepare_openfiles(void)
 
 	/* store the icon and the short filename to show, and the index as reference,
 	 * the colour (black/red/green) and the full name for the tooltip */
-	store_openfiles = gtk_tree_store_new(5, G_TYPE_ICON, G_TYPE_STRING,
-		G_TYPE_POINTER, GDK_TYPE_COLOR, G_TYPE_STRING);
+	store_openfiles = gtk_tree_store_new(DOCUMENTS_TOTAL_COLUMNS, G_TYPE_INT, G_TYPE_ICON,
+			G_TYPE_STRING, G_TYPE_POINTER, GDK_TYPE_COLOR, G_TYPE_STRING, G_TYPE_INT);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(tv.tree_openfiles), GTK_TREE_MODEL(store_openfiles));
 
 	/* set policy settings for the scolledwindow around the treeview again, because glade
@@ -323,7 +356,7 @@ static void prepare_openfiles(void)
 	gtk_tree_view_column_set_attributes(column, icon_renderer, "gicon", DOCUMENTS_ICON, NULL);
 	gtk_tree_view_column_pack_start(column, text_renderer, TRUE);
 	gtk_tree_view_column_set_attributes(column, text_renderer, "text", DOCUMENTS_SHORTNAME,
-		"foreground-gdk", DOCUMENTS_COLOR, NULL);
+		"foreground-gdk", DOCUMENTS_COLOR, "weight", DOCUMENTS_WEIGHT, NULL);
 	g_signal_connect(G_OBJECT(text_renderer), "edited", G_CALLBACK(on_openfiles_renamed), GTK_TREE_VIEW(tv.tree_openfiles));
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv.tree_openfiles), column);
@@ -477,8 +510,65 @@ exit:
 	return g_strdup(doc->priv->folder);
 }
 
+static GIcon *get_file_icon(GeanyDocument *doc, gboolean use_default)
+{
+	static GIcon *default_file_icon = NULL;
+	static gboolean default_file_icon_tried = FALSE;
+
+	if (doc->file_type && doc->file_type->icon)
+		return doc->file_type->icon;
+
+	if (use_default)
+	{
+		if (default_file_icon == NULL && ! default_file_icon_tried)
+		{
+			default_file_icon = ui_get_mime_icon("text/plain");
+			default_file_icon_tried = TRUE;
+		}
+
+		return default_file_icon;
+	}
+
+	return NULL;
+}
+
+static GIcon *get_directory_icon(void)
+{
+	static GIcon *dir_icon = NULL;
+	static gboolean directory_icon_tried = FALSE;
+
+	if (dir_icon == NULL && ! directory_icon_tried)
+	{
+		dir_icon = ui_get_mime_icon("inode/directory");
+		directory_icon_tried = TRUE;
+	}
+
+	return dir_icon;
+}
+
+static GIcon *get_favorites_icon(void)
+{
+	static GIcon *favorites_icon = NULL;
+	static gboolean favorites_icon_tried = FALSE;
+
+	if (favorites_icon == NULL && ! favorites_icon_tried)
+	{
+		if (gtk_icon_theme_has_icon(gtk_icon_theme_get_default(), "folder-favorites"))
+			favorites_icon = g_themed_icon_new("folder-favorites");
+
+		if (favorites_icon == NULL)
+			favorites_icon = get_directory_icon();
+
+		favorites_icon_tried = TRUE;
+	}
+
+	return favorites_icon;
+}
+
 static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 {
+	g_return_val_if_fail(doc != NULL, NULL);
+
 	if (!documents_show_paths)
 		return NULL;
 
@@ -508,14 +598,10 @@ static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 
 	if (!parent_found)
 	{
-		static GIcon *dir_icon = NULL;
-
-		if (!dir_icon)
-			dir_icon = ui_get_mime_icon("inode/directory");
-
 		gtk_tree_store_append(store_openfiles, &parent, NULL);
-		gtk_tree_store_set(store_openfiles, &parent, DOCUMENTS_ICON, dir_icon,
-				DOCUMENTS_FILENAME, path, DOCUMENTS_SHORTNAME, folder, -1);
+		gtk_tree_store_set(store_openfiles, &parent, DOCUMENTS_TYPE, TYPE_FOLDER,
+				DOCUMENTS_ICON, get_directory_icon(), DOCUMENTS_FILENAME, path,
+				DOCUMENTS_SHORTNAME, folder, -1);
 	}
 
 	g_free(folder);
@@ -523,53 +609,142 @@ static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 	return &parent;
 }
 
+static void openfiles_update_entry_values(GeanyDocument *doc, GtkTreeIter *iter, gboolean partial)
+{
+	gboolean use_default_file_icon = partial ? FALSE : TRUE;
+	GIcon *icon = get_file_icon(doc, use_default_file_icon);
+	const GdkColor *color = document_get_status_color(doc);
+	gint weight = ui_document_label_font_weight(doc);
+
+	if (partial)
+	{
+		gtk_tree_store_set(store_openfiles, iter, DOCUMENTS_COLOR, color,
+				DOCUMENTS_WEIGHT, weight, -1);
+
+		if (icon)
+			gtk_tree_store_set(store_openfiles, iter, DOCUMENTS_ICON, icon, -1);
+	}
+	else
+	{
+		gchar *basename = g_path_get_basename(DOC_FILENAME(doc));
+
+		gtk_tree_store_set(store_openfiles, iter, DOCUMENTS_TYPE, TYPE_FILE, DOCUMENTS_ICON, icon,
+				DOCUMENTS_SHORTNAME, basename, DOCUMENTS_DOCUMENT, doc, DOCUMENTS_COLOR, color,
+				DOCUMENTS_FILENAME, DOC_FILENAME(doc), DOCUMENTS_WEIGHT, weight, -1);
+
+		g_free(basename);
+	}
+}
+
+static void expand_row(GtkTreeIter *iter)
+{
+	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(store_openfiles), iter);
+	gtk_tree_view_expand_row(GTK_TREE_VIEW(tv.tree_openfiles), path, TRUE);
+	gtk_tree_path_free(path);
+}
+
+static void openfiles_remove_favorite_entry(GeanyDocument *doc)
+{
+	GtkTreeIter *iter = &doc->priv->iter_favorite;
+
+	g_return_if_fail(iter_favorites.stamp != 0);
+	g_return_if_fail(gtk_tree_store_is_ancestor(store_openfiles, &iter_favorites, iter));
+
+	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(store_openfiles), &iter_favorites, iter) &&
+			gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store_openfiles), &iter_favorites) == 1)
+	{
+		gtk_tree_store_remove(store_openfiles, &iter_favorites);
+		iter_favorites.stamp = 0;
+	}
+	else
+		gtk_tree_store_remove(store_openfiles, iter);
+
+	iter->stamp = 0;
+}
+
+static void openfiles_update_favorite_entry(GeanyDocument *doc)
+{
+	gboolean favorite = document_get_favorite(doc);
+	GtkTreeIter *iter = &doc->priv->iter_favorite;
+
+	if (favorite)
+	{
+		if (iter->stamp)
+			openfiles_update_entry_values(doc, iter, TRUE);
+		else
+		{
+			gboolean new_folder = iter_favorites.stamp == 0;
+
+			if (new_folder)
+			{
+				GIcon *favorites_icon = get_favorites_icon();
+
+				gtk_tree_store_append(store_openfiles, &iter_favorites, NULL);
+				gtk_tree_store_set(store_openfiles, &iter_favorites,
+						DOCUMENTS_TYPE, TYPE_FAVORITES_FOLDER, DOCUMENTS_ICON, favorites_icon,
+						DOCUMENTS_FILENAME, "Favorites", DOCUMENTS_SHORTNAME, "Favorites", -1);
+				g_return_if_fail(iter_favorites.stamp != 0);
+			}
+
+			gtk_tree_store_append(store_openfiles, iter, &iter_favorites);
+			g_return_if_fail(iter->stamp != 0);
+			openfiles_update_entry_values(doc, iter, FALSE);
+
+			if (new_folder)
+				expand_row(&iter_favorites);
+
+			ui_update_tab_status(doc);
+			ui_document_show_hide(doc);
+		}
+	}
+	else if (iter->stamp)
+	{
+		openfiles_remove_favorite_entry(doc);
+		ui_update_tab_status(doc);
+		ui_document_show_hide(doc);
+	}
+}
+
 /* Also sets doc->priv->iter.
  * This is called recursively in sidebar_openfiles_update_all(). */
 void sidebar_openfiles_add(GeanyDocument *doc)
 {
-	GtkTreeIter *iter = &doc->priv->iter;
+	g_return_if_fail(doc != NULL);
+
 	GtkTreeIter *parent = get_doc_parent(doc);
-	gchar *basename;
-	const GdkColor *color = document_get_status_color(doc);
-	static GIcon *file_icon = NULL;
+	GtkTreeIter *iter = &doc->priv->iter;
 
 	gtk_tree_store_append(store_openfiles, iter, parent);
 
-	/* check if new parent */
+	/* Expand parent if new */
 	if (parent && gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store_openfiles), parent) == 1)
-	{
-		GtkTreePath *path;
+		expand_row(parent);
 
-		/* expand parent */
-		path = gtk_tree_model_get_path(GTK_TREE_MODEL(store_openfiles), parent);
-		gtk_tree_view_expand_row(GTK_TREE_VIEW(tv.tree_openfiles), path, TRUE);
-		gtk_tree_path_free(path);
-	}
-	if (!file_icon)
-		file_icon = ui_get_mime_icon("text/plain");
-
-	basename = g_path_get_basename(DOC_FILENAME(doc));
-	gtk_tree_store_set(store_openfiles, iter,
-		DOCUMENTS_ICON, (doc->file_type && doc->file_type->icon) ? doc->file_type->icon : file_icon,
-		DOCUMENTS_SHORTNAME, basename, DOCUMENTS_DOCUMENT, doc, DOCUMENTS_COLOR, color,
-		DOCUMENTS_FILENAME, DOC_FILENAME(doc), -1);
-	g_free(basename);
+	openfiles_update_entry_values(doc, iter, FALSE);
+	openfiles_update_favorite_entry(doc);
 }
 
 static void openfiles_remove(GeanyDocument *doc)
 {
+	g_return_if_fail(doc != NULL);
+
 	GtkTreeIter *iter = &doc->priv->iter;
 	GtkTreeIter parent;
 
 	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(store_openfiles), &parent, iter) &&
-		gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store_openfiles), &parent) == 1)
+			gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store_openfiles), &parent) == 1)
 		gtk_tree_store_remove(store_openfiles, &parent);
 	else
 		gtk_tree_store_remove(store_openfiles, iter);
+
+	if (doc->priv->iter_favorite.stamp != 0)
+		openfiles_remove_favorite_entry(doc);
 }
 
 void sidebar_openfiles_update(GeanyDocument *doc)
 {
+	g_return_if_fail(doc != NULL);
+
 	GtkTreeIter *iter = &doc->priv->iter;
 	gchar *fname = NULL;
 
@@ -577,28 +752,23 @@ void sidebar_openfiles_update(GeanyDocument *doc)
 
 	if (utils_str_equal(fname, DOC_FILENAME(doc)))
 	{
-		/* just update color and the icon */
-		const GdkColor *color = document_get_status_color(doc);
-		GIcon *icon = doc->file_type->icon;
-
-		gtk_tree_store_set(store_openfiles, iter, DOCUMENTS_COLOR, color, -1);
-		if (icon)
-			gtk_tree_store_set(store_openfiles, iter, DOCUMENTS_ICON, icon, -1);
+		openfiles_update_entry_values(doc, iter, TRUE);
+		openfiles_update_favorite_entry(doc);
 	}
 	else
 	{
-		/* path has changed, so remove and re-add */
-		GtkTreeSelection *treesel;
-		gboolean sel;
+		/* Path has changed, so remove and re-add */
 
-		treesel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
-		sel = gtk_tree_selection_iter_is_selected(treesel, &doc->priv->iter);
+		GtkTreeSelection *treesel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
+		gboolean sel = gtk_tree_selection_iter_is_selected(treesel, &doc->priv->iter);
+
 		openfiles_remove(doc);
-
 		sidebar_openfiles_add(doc);
+
 		if (sel)
 			gtk_tree_selection_select_iter(treesel, &doc->priv->iter);
 	}
+
 	g_free(fname);
 }
 
@@ -607,9 +777,13 @@ void sidebar_openfiles_update_all(void)
 	guint i;
 
 	gtk_tree_store_clear(store_openfiles);
+	iter_favorites.stamp = 0;
+
 	foreach_document (i)
 	{
-		sidebar_openfiles_add(documents[i]);
+		GeanyDocument *doc = documents[i];
+		doc->priv->iter_favorite.stamp = 0;
+		sidebar_openfiles_add(doc);
 	}
 }
 
@@ -759,7 +933,7 @@ static void create_openfiles_popup_menu(void)
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
 	g_signal_connect(item, "activate",
-				G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_REMOVE_RECURSIVE));
+			G_CALLBACK(on_openfiles_document_action), GINT_TO_POINTER(OPENFILES_ACTION_REMOVE_RECURSIVE));
 	doc_items.close_recursively = item;
 
 	item = gtk_separator_menu_item_new();
@@ -863,6 +1037,25 @@ static void create_openfiles_popup_menu(void)
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
 
+	doc_items.favorite = gtk_check_menu_item_new_with_mnemonic(_("Fa_vorite"));
+	gtk_widget_show(doc_items.favorite);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), doc_items.favorite);
+	g_signal_connect(doc_items.favorite, "activate", G_CALLBACK(on_openfiles_document_action),
+			GINT_TO_POINTER(OPENFILES_ACTION_FAVORITE));
+
+	item = gtk_image_menu_item_new_with_mnemonic(_("Clear Favori_tes"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
+			gtk_image_new_from_stock(GTK_STOCK_CLEAR, GTK_ICON_SIZE_MENU));
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+	g_signal_connect(item, "activate", G_CALLBACK(on_openfiles_document_action),
+			GINT_TO_POINTER(OPENFILES_ACTION_CLEAR_FAVORITES));
+	doc_items.clear_favorites = item;
+
+	item = gtk_separator_menu_item_new();
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+
 	doc_items.show_paths = gtk_check_menu_item_new_with_mnemonic(_("Show _Paths"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(doc_items.show_paths), documents_show_paths);
 	gtk_widget_show(doc_items.show_paths);
@@ -894,11 +1087,7 @@ static void unfold_parent(GtkTreeIter *iter)
 	GtkTreeIter parent;
 
 	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(store_openfiles), &parent, iter))
-	{
-		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(store_openfiles), &parent);
-		gtk_tree_view_expand_row(GTK_TREE_VIEW(tv.tree_openfiles), path, TRUE);
-		gtk_tree_path_free(path);
-	}
+		expand_row(&parent);
 }
 
 /* compares the given data with the doc pointer from the selected row of openfiles
@@ -922,9 +1111,24 @@ static gboolean tree_model_find_node(GtkTreeModel *model, GtkTreePath *path,
 	else return FALSE;
 }
 
+static gboolean node_selected(GeanyDocument *doc)
+{
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GeanyDocument *selected;
+
+	if (gtk_tree_selection_get_selected(selection, &model, &iter))
+		if (gtk_tree_model_get(model, &iter, DOCUMENTS_DOCUMENT, &selected, -1), selected == doc)
+			return TRUE;
+
+	return FALSE;
+}
+
 void sidebar_select_openfiles_item(GeanyDocument *doc)
 {
-	gtk_tree_model_foreach(GTK_TREE_MODEL(store_openfiles), tree_model_find_node, doc);
+	if (! node_selected(doc))
+		gtk_tree_model_foreach(GTK_TREE_MODEL(store_openfiles), tree_model_find_node, doc);
 }
 
 static void rename_file_inplace(GeanyDocument *doc)
@@ -949,6 +1153,14 @@ static void rename_file_inplace(GeanyDocument *doc)
 	g_list_free(renderers);
 }
 
+static void set_favorite(GeanyDocument *doc, gboolean favorite)
+{
+	g_return_if_fail(doc != NULL);
+
+	if (document_get_favorite(doc) != favorite)
+		document_set_favorite(doc, favorite, TRUE);
+}
+
 /* callbacks */
 
 static void document_action(GeanyDocument *doc, gint action)
@@ -961,6 +1173,11 @@ static void document_action(GeanyDocument *doc, gint action)
 		case OPENFILES_ACTION_REMOVE:
 		{
 			document_close(doc);
+			break;
+		}
+		case OPENFILES_ACTION_CLEAR_FAVORITES:
+		{
+			set_favorite(doc, FALSE);
 			break;
 		}
 		case OPENFILES_ACTION_SAVE:
@@ -999,19 +1216,49 @@ static void document_action(GeanyDocument *doc, gint action)
 	}
 }
 
+#define foreach_tree_model_child(model, parent, child) \
+	for (gint i = gtk_tree_model_iter_n_children(model, parent); \
+			i > 0 && gtk_tree_model_iter_nth_child(model, child, parent, --i); )
+
 static void document_action_recursive(GtkTreeModel *model, GtkTreeIter *parent, gint action)
 {
 	GtkTreeIter child;
-	gint i = gtk_tree_model_iter_n_children(model, parent) - 1;
-	GeanyDocument *doc;
 
-	while (i >= 0 && gtk_tree_model_iter_nth_child(model, &child, parent, i))
+	foreach_tree_model_child(model, parent, &child)
 	{
-		doc = NULL;
+		GeanyDocument *doc = NULL;
 		gtk_tree_model_get(model, &child, DOCUMENTS_DOCUMENT, &doc, -1);
 		document_action(doc, action);
-		--i;
 	}
+}
+
+static FolderFavoriteStatus get_folder_favorite_status(GtkTreeModel *model, GtkTreeIter *folder)
+{
+	GtkTreeIter child;
+	gint total_child = 0;
+	gint total_favorited = 0;
+
+	foreach_tree_model_child(model, folder, &child)
+	{
+		++total_child;
+
+		GeanyDocument *doc = NULL;
+		gtk_tree_model_get(model, &child, DOCUMENTS_DOCUMENT, &doc, -1);
+
+		if (DOC_VALID(doc) && document_get_favorite(doc))
+			++total_favorited;
+	}
+
+	return total_favorited == 0 ? FOLDER_FAVORITE_STATUS_INACTIVE :
+			total_favorited == total_child ? FOLDER_FAVORITE_STATUS_ACTIVE :
+			FOLDER_FAVORITE_STATUS_INCONSISTENT;
+}
+
+static gboolean is_favorites_folder(GtkTreeModel *model, GtkTreeIter *iter)
+{
+	gint type;
+	gtk_tree_model_get(model, iter, DOCUMENTS_TYPE, &type, -1);
+	return type == TYPE_FAVORITES_FOLDER;
 }
 
 static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_data)
@@ -1096,6 +1343,52 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 				g_free(dir);
 				break;
 			}
+			case OPENFILES_ACTION_FAVORITE:
+			{
+				gboolean active = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(
+							doc_items.favorite));
+				gboolean inconsistent = gtk_check_menu_item_get_inconsistent(GTK_CHECK_MENU_ITEM(
+							doc_items.favorite));
+
+				if (doc)
+					set_favorite(doc, active);
+				else if (! is_favorites_folder(model, &iter))
+				{
+					GtkTreeIter child;
+
+					foreach_tree_model_child(model, &iter, &child)
+					{
+						gtk_tree_model_get(model, &child, DOCUMENTS_DOCUMENT, &doc, -1);
+						set_favorite(doc, active || inconsistent);
+					}
+				}
+
+				break;
+			}
+			case OPENFILES_ACTION_CLEAR_FAVORITES:
+			{
+				if (documents_show_paths)
+				{
+					if (doc)
+					{
+						GtkTreeIter *parent = get_doc_parent(doc);
+
+						if (parent)
+							document_action_recursive(model, parent, action);
+					}
+					else
+						document_action_recursive(model, &iter, action);
+				}
+				else
+				{
+					guint i;
+
+					foreach_document(i)
+						document_set_favorite(documents[i], FALSE, TRUE);
+				}
+
+				break;
+			}
 			case OPENFILES_ACTION_REMOVE_RECURSIVE:
 			{
 				g_return_if_fail(doc == NULL);
@@ -1105,9 +1398,8 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 				g_return_if_fail(short_name_a);
 
 				gint len = strlen(short_name_a);
-				gint i = gtk_tree_model_iter_n_children(model, NULL) - 1;
 
-				while (i >= 0 && gtk_tree_model_iter_nth_child(model, &iter, NULL, i))
+				foreach_tree_model_child(model, NULL, &iter)
 				{
 					gchar *short_name_b = NULL;
 					gtk_tree_model_get(model, &iter, DOCUMENTS_SHORTNAME, &short_name_b, -1);
@@ -1117,7 +1409,6 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 						document_action_recursive(model, &iter, OPENFILES_ACTION_REMOVE);
 
 					g_free(short_name_b);
-					--i;
 				}
 
 				g_free(short_name_a);
@@ -1320,6 +1611,33 @@ static gboolean sidebar_button_press_cb(GtkWidget *widget, GdkEventButton *event
 	return handled;
 }
 
+static void update_favorite_check_menu_item(GeanyDocument *doc, gboolean sel, GtkTreeModel *model,
+		GtkTreeIter *iter)
+{
+	gboolean active = FALSE, inconsistent = FALSE, favorites_folder = FALSE;
+
+	if (sel)
+	{
+		if (doc)
+			active = document_get_favorite(doc);
+		else
+		{
+			favorites_folder = is_favorites_folder(model, iter);
+
+			if (! favorites_folder)
+			{
+				FolderFavoriteStatus status = get_folder_favorite_status(model, iter);
+				active = status != FOLDER_FAVORITE_STATUS_INACTIVE;
+				inconsistent = status == FOLDER_FAVORITE_STATUS_INCONSISTENT;
+			}
+		}
+	}
+
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(doc_items.favorite), active);
+	gtk_check_menu_item_set_inconsistent(GTK_CHECK_MENU_ITEM(doc_items.favorite), inconsistent);
+	gtk_widget_set_sensitive(doc_items.favorite, ! favorites_folder);
+}
+
 static void documents_menu_update(GtkTreeSelection *selection)
 {
 	GtkTreeModel *model;
@@ -1345,6 +1663,8 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gtk_widget_set_sensitive(doc_items.new, sel);
 	gtk_widget_set_sensitive(doc_items.open, sel);
 	gtk_widget_set_sensitive(doc_items.open_dir, doc ? document_has_dirname(doc) : filename && g_path_is_absolute(filename));
+	update_favorite_check_menu_item(doc, sel, model, &iter);
+	gtk_widget_set_sensitive(doc_items.clear_favorites, sel);
 	gtk_widget_set_sensitive(doc_items.save, doc ? doc->changed && doc->file_name && g_path_is_absolute(doc->file_name) : sel);
 	gtk_widget_set_sensitive(doc_items.save_as, doc != NULL);
 	gtk_widget_set_sensitive(doc_items.reload, sel && (!doc || doc->real_path));
@@ -1369,6 +1689,7 @@ static void on_load_settings(void)
 	tag_window = ui_lookup_widget(main_widgets.window, "scrolledwindow2");
 
 	prepare_openfiles();
+
 	/* note: ui_prefs.sidebar_page is reapplied after plugins are loaded */
 	stash_group_display(stash_group, NULL);
 	sidebar_tabs_show_hide(GTK_NOTEBOOK(main_widgets.sidebar_notebook), NULL, 0, NULL);

@@ -151,6 +151,9 @@ static GOptionEntry entries[] =
 #endif
 	{ "no-projects", 0, 0, G_OPTION_ARG_NONE, &cl_options.no_projects, N_("Open project files as regular files"), NULL },
 	{ "print-prefix", 0, 0, G_OPTION_ARG_NONE, &print_prefix, N_("Print Geany's installation prefix"), NULL },
+
+	{ "favorite", 'f', 0, G_OPTION_ARG_NONE, &cl_options.favorite, N_("Open all FILES in favorite mode"), NULL },
+
 	{ "read-only", 'r', 0, G_OPTION_ARG_NONE, &cl_options.readonly, N_("Open all FILES in read-only mode (see documentation)"), NULL },
 	{ "no-session", 's', G_OPTION_FLAG_REVERSE, G_OPTION_ARG_NONE, &cl_options.load_session, N_("Don't load the previous session's files"), NULL },
 #ifdef HAVE_VTE
@@ -528,8 +531,11 @@ static void parse_command_line_options(gint *argc, gchar ***argv)
 	GError *error = NULL;
 	GOptionContext *context;
 	gint i;
-	CommandLineOptions def_clo = {NEW_INSTANCE_DISABLED, NULL, TRUE, -1, -1, FALSE, FALSE, FALSE};
 	const char *env;
+
+	CommandLineOptions def_clo = {
+		NEW_INSTANCE_DISABLED, NULL, TRUE, -1, -1, FALSE, FALSE, FALSE, FALSE
+	};
 
 	/* first initialise cl_options fields with default values */
 	cl_options = def_clo;
@@ -826,7 +832,8 @@ gboolean main_handle_filename(const gchar *locale_filename, GError **error)
 
 		if (g_file_test(filename, G_FILE_TEST_IS_REGULAR))
 		{
-			doc = document_open_file(filename, cl_options.readonly, NULL, NULL);
+			doc = document_open_file_full(NULL, filename, 0, cl_options.readonly,
+					cl_options.favorite, NULL, NULL);
 
 			/* add recent file manually if opening_session_files is set */
 			if (doc != NULL && main_status.opening_session_files)
@@ -854,6 +861,9 @@ gboolean main_handle_filename(const gchar *locale_filename, GError **error)
 			g_free(filename);
 			return TRUE;
 		}
+
+		if (doc && cl_options.favorite && ! document_get_favorite(doc))
+			document_set_favorite(doc, cl_options.favorite, TRUE);
 
 		g_free(filename);
 	}
