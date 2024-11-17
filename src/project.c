@@ -255,7 +255,10 @@ void project_new(void)
 		}
 	}
 	gtk_widget_destroy(e.dialog);
-	document_new_file_if_non_open();
+
+	if (prefs.auto_open_new_file)
+		document_new_file_if_non_open();
+
 	ui_focus_current_document();
 }
 
@@ -265,7 +268,10 @@ gboolean project_load_file_with_session(const gchar *locale_file_name)
 	{
 		configuration_open_files(app->project->priv->session_files);
 		app->project->priv->session_files = NULL;
-		document_new_file_if_non_open();
+
+		if (prefs.auto_open_new_file)
+			document_new_file_if_non_open();
+
 		ui_focus_current_document();
 		return TRUE;
 	}
@@ -444,8 +450,10 @@ static void destroy_project(gboolean open_default)
 	{
 		configuration_load_default_session();
 		configuration_open_default_session();
+
 		if (prefs.auto_open_new_file)
 			document_new_file_if_non_open();
+
 		ui_focus_current_document();
 	}
 
