@@ -33,6 +33,7 @@
 #include "about.h"
 #include "app.h"
 #include "build.h"
+#include "consider.h"
 #include "dialogs.h"
 #include "documentprivate.h"
 #include "encodings.h"
@@ -432,46 +433,6 @@ void on_normal_size1_activate(GtkMenuItem *menuitem, gpointer user_data)
 	sci_zoom_off(doc->editor->sci);
 }
 
-static void handle_switch_page(GeanyDocument *doc)
-{
-	if (doc != NULL)
-	{
-		sidebar_select_openfiles_item(doc);
-		ui_save_buttons_toggle(doc->changed);
-		ui_set_window_title(doc);
-		ui_update_statusbar(doc, -1);
-		ui_update_popup_reundo_items(doc);
-		ui_document_show_hide(doc); /* update the document menu */
-		build_menu_update(doc);
-		sidebar_update_tag_list(doc, FALSE);
-		document_highlight_tags(doc);
-
-		document_check_disk_status(doc, TRUE);
-
-#ifdef HAVE_VTE
-		vte_cwd((doc->real_path != NULL) ? doc->real_path : doc->file_name, FALSE);
-#endif
-
-		g_signal_emit_by_name(geany_object, "document-activate", doc);
-	}
-}
-
-static gboolean delay_handle_switch_page(gpointer data)
-{
-	gulong *handler_id = data;
-
-	if (main_status.opening_session_files || main_status.opening_session_files)
-		return G_SOURCE_CONTINUE;
-
-	/* Guard against the unlikely case where we didn't run yet but are already
-	 * closing all documents */
-	if (! main_status.closing_all)
-		handle_switch_page(document_get_current());
-
-	*handler_id = 0;
-	return G_SOURCE_REMOVE;
-}
-
 /* Changes window-title after switching tabs and lots of other things.
  * Note: Using 'after' makes Scintilla redraw before the UI, appearing more responsive.
  *
@@ -481,25 +442,7 @@ static gboolean delay_handle_switch_page(gpointer data)
 static void on_notebook1_switch_page_after(GtkNotebook *notebook, gpointer page,
 		guint page_num, gpointer user_data)
 {
-	static gulong handler_id = 0;
-
-	if (main_status.opening_files_recursively || main_status.opening_session_files)
-	{
-		/* Delay the handling */
-		if (handler_id == 0)
-			handler_id = g_idle_add(delay_handle_switch_page, &handler_id);
-
-		return;
-	}
-
-	if (! main_status.closing_all)
-		handle_switch_page(document_get_from_notebook_child(page));
-
-	if (handler_id != 0)
-	{
-		g_source_remove(handler_id);
-		handler_id = 0;
-	}
+	consider_handling_switch_page_after(page);
 }
 
 static void on_tv_notebook_switch_page(GtkNotebook *notebook, gpointer page,

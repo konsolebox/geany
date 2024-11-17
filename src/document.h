@@ -267,11 +267,15 @@ GeanyDocument *document_find_by_sci(ScintillaObject *sci);
 
 void document_show_tab(GeanyDocument *doc);
 
+void document_show_tab_real(GeanyDocument *doc);
+
 void document_init_doclist(void);
 
 void document_finalize(void);
 
 void document_try_focus(GeanyDocument *doc, GtkWidget *source_widget);
+
+void document_try_focus_real(GeanyDocument *doc, GtkWidget *source_widget);
 
 gboolean document_account_for_unsaved(void);
 
@@ -369,6 +373,8 @@ GeanyDocument *document_get_ordered_list_next(GeanyDocument *doc, gboolean wrap)
 GeanyDocument *document_get_ordered_list_prev(GeanyDocument *doc, gboolean wrap);
 
 void document_reset_ordered_list();
+
+void document_handle_switch_page_after(GtkWidget *page);
 
 #endif /* GEANY_PRIVATE */
 

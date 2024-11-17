@@ -32,6 +32,7 @@
 
 #include "app.h"
 #include "callbacks.h"
+#include "consider.h"
 #include "dialogs.h"
 #include "documentprivate.h"
 #include "encodingsprivate.h"
@@ -994,6 +995,11 @@ void ui_sidebar_show_hide(void)
 }
 
 void ui_document_show_hide(GeanyDocument *doc)
+{
+	consider_calling_ui_document_show_hide(doc);
+}
+
+void ui_document_show_hide_real(GeanyDocument *doc)
 {
 	const gchar *widget_name;
 	GtkWidget *item;

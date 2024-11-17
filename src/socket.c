@@ -574,20 +574,26 @@ static gboolean handle_input_filenames(gint sock, GtkWidget *window)
 	gchar buf[BUFFER_LENGTH];
 	GError *error;
 
+	main_status.handling_input_filenames = TRUE;
+
 	if (socket_fd_get_cstring(sock, buf, sizeof(buf)) != -1 && ! is_eot (buf))
 	{
 		popup(window);
 		dialogs_create_cancellable_status_window(&status_window, &label, "Opening Files",
 				"Opening files...", TRUE);
 
+		for (int i = 0; i < 4 && gtk_events_pending(); ++i)
+			gtk_main_iteration();
+
 		do
 		{
-			while (gtk_events_pending())
+			for (int i = 0; i < 4 && gtk_events_pending(); ++i)
 				gtk_main_iteration();
 
 			if (status_window == NULL)
 			{
 				dialogs_show_msgbox(GTK_MESSAGE_WARNING, "Cancelled.");
+				main_status.handling_input_filenames = FALSE;
 				return FALSE;
 			}
 
@@ -603,7 +609,7 @@ static gboolean handle_input_filenames(gint sock, GtkWidget *window)
 			{
 				ui_label_set_text(GTK_LABEL(label), "Opening '%s'...", utf8_filename);
 
-				while (gtk_events_pending())
+				for (int i = 0; i < 4 && gtk_events_pending(); ++i)
 					gtk_main_iteration();
 
 				if (! cl_options.no_projects && g_str_has_suffix(locale_filename, ".geany"))
@@ -627,6 +633,7 @@ static gboolean handle_input_filenames(gint sock, GtkWidget *window)
 		gtk_widget_destroy(status_window);
 	}
 
+	main_status.handling_input_filenames = FALSE;
 	return TRUE;
 }
 

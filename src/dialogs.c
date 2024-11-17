@@ -31,6 +31,7 @@
 
 #include "app.h"
 #include "build.h"
+#include "consider.h"
 #include "document.h"
 #include "encodings.h"
 #include "encodingsprivate.h"
@@ -253,7 +254,6 @@ static gboolean open_file_dialog_handle_response(GtkWidget *dialog, gint respons
 						main_status.opening_files_recursively = TRUE;
 						document_open_files_recursively(filelist, ro, ft, charset, filter);
 						main_status.opening_files_recursively = FALSE;
-						consider_saving_session_files(TRUE);
 					}
 					else
 						ret = FALSE;

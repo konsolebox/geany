@@ -65,6 +65,9 @@ typedef struct GeanyStatus
 	gboolean	quitting;	/* state when Geany is quitting completely */
 	gboolean	main_window_realized;
 	gboolean	opening_files_recursively;
+	gboolean	reloading_all_files;
+	gboolean	opening_cl_files;
+	gboolean	handling_input_filenames;
 }
 GeanyStatus;
 
@@ -81,8 +84,6 @@ gboolean main_handle_filename(const gchar *locale_filename, GError **error);
 void main_load_project_from_command_line(const gchar *locale_filename, gboolean use_session);
 
 gint main_lib(gint argc, gchar **argv);
-
-void consider_saving_session_files(gboolean deferred_only);
 
 #endif /* GEANY_PRIVATE */
 

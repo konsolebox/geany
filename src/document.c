@@ -32,6 +32,7 @@
 
 #include "app.h"
 #include "callbacks.h" /* for ignore_callback */
+#include "consider.h"
 #include "dialogs.h"
 #include "documentprivate.h"
 #include "encodings.h"
@@ -572,6 +573,17 @@ static void monitor_file_setup(GeanyDocument *doc)
 
 void document_try_focus(GeanyDocument *doc, GtkWidget *source_widget)
 {
+	consider_trying_document_focus(doc, source_widget);
+}
+
+void document_try_focus_real(GeanyDocument *doc, GtkWidget *source_widget)
+{
+	if (doc == NULL)
+		doc = document_get_current();
+	/* only switch focus if doc points to current document */
+	else if (doc != document_get_current())
+		return;
+
 	/* doc might not be valid e.g. if user closed a tab whilst Geany is opening files */
 	if (DOC_VALID(doc))
 	{
@@ -641,7 +653,7 @@ static GeanyDocument *document_create(const gchar *utf8_filename, gboolean filen
 	}
 
 	ui_document_buttons_update();
-	consider_saving_session_files(FALSE);
+	consider_saving_session_files();
 
 	doc->is_valid = TRUE;	/* do this last to prevent UI updating with NULL items. */
 	doc->changed = TRUE;
@@ -759,7 +771,7 @@ gboolean document_remove_page(guint page_num)
 	if (done && ui_prefs.new_document_after_close)
 		document_new_file_if_non_open();
 	if (done)
-		consider_saving_session_files(FALSE);
+		consider_saving_session_files();
 
 	return done;
 }
@@ -1332,8 +1344,21 @@ void document_apply_indent_settings(GeanyDocument *doc)
 
 void document_show_tab(GeanyDocument *doc)
 {
+	g_return_if_fail(doc != NULL);
+
+	consider_showing_document_tab(doc);
+}
+
+void document_show_tab_real(GeanyDocument *doc)
+{
+	GtkWidget *original_focus = gtk_window_get_focus(GTK_WINDOW(main_widgets.window));
+
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(main_widgets.notebook),
-		document_get_notebook_page(doc));
+			document_get_notebook_page(doc));
+
+	if (original_focus ==
+			(GtkWidget * volatile) gtk_window_get_focus(GTK_WINDOW(main_widgets.window)))
+		document_try_focus(doc, NULL);
 }
 
 /* To open a new file, set doc to NULL; filename should be locale encoded.
@@ -1638,7 +1663,7 @@ static GFileEnumerator *enumerate_children(const char *dir_path, GError **error)
 static gboolean update_recursive_open_status_window(const char *file_path, GtkWidget **window_ptr,
 		GtkLabel *label)
 {
-	while (gtk_events_pending())
+	for (int i = 0; i < 4 && gtk_events_pending(); ++i)
 		gtk_main_iteration();
 
 	if (*window_ptr == NULL)
@@ -1648,7 +1673,7 @@ static gboolean update_recursive_open_status_window(const char *file_path, GtkWi
 	ui_label_set_text(label, "Opening '%s'...", file_path_utf8);
 	g_free(file_path_utf8);
 
-	while (gtk_events_pending())
+	for (int i = 0; i < 4 && gtk_events_pending(); ++i)
 		gtk_main_iteration();
 
 	return TRUE;
@@ -1681,6 +1706,9 @@ void document_open_files_recursively(const GSList *filenames, gboolean readonly,
 
 	dialogs_create_cancellable_status_window(&status_window, &label, "Opening Files Recursively",
 			"Opening files recursively...", TRUE);
+
+	for (int i = 0; i < 4 && gtk_events_pending(); ++i)
+		gtk_main_iteration();
 
 	for (item = filenames; item != NULL && error == NULL && ! cancelled; item = g_slist_next(item))
 	{
@@ -1889,6 +1917,8 @@ gboolean document_reload_prompt(GeanyDocument *doc, const gchar *forced_enc)
 
 void document_reload_all()
 {
+	main_status.reloading_all_files = TRUE;
+
 	if (dialogs_show_question_full(NULL, _("_Reload"), GTK_STOCK_CANCEL,
 			_("Any unsaved changes and undo history will be lost."),
 			_("Reload all opened documents?")))
@@ -1899,7 +1929,7 @@ void document_reload_all()
 		dialogs_create_cancellable_status_window(&status_window, &label, "Reloading Files",
 				"Reloading files...", TRUE);
 
-		while (gtk_events_pending())
+		for (int i = 0; i < 4 && gtk_events_pending(); ++i)
 			gtk_main_iteration();
 
 		foreach_document(i)
@@ -1908,11 +1938,7 @@ void document_reload_all()
 
 			if (doc->real_path)
 			{
-				gchar *real_path_utf8 = utils_get_utf8_from_locale(doc->real_path);
-				ui_label_set_text(GTK_LABEL(label), "Reloading '%s'...", real_path_utf8);
-				g_free(real_path_utf8);
-
-				while (gtk_events_pending())
+				for (int i = 0; i < 4 && gtk_events_pending(); ++i)
 					gtk_main_iteration();
 
 				if (status_window == NULL)
@@ -1920,6 +1946,13 @@ void document_reload_all()
 					dialogs_show_msgbox(GTK_MESSAGE_WARNING, "Cancelled.");
 					break;
 				}
+
+				gchar *real_path_utf8 = utils_get_utf8_from_locale(doc->real_path);
+				ui_label_set_text(GTK_LABEL(label), "Reloading '%s'...", real_path_utf8);
+				g_free(real_path_utf8);
+
+				for (int i = 0; i < 4 && gtk_events_pending(); ++i)
+					gtk_main_iteration();
 
 				if (document_reload_force(doc, NULL) == FALSE)
 				{
@@ -1933,6 +1966,8 @@ void document_reload_all()
 		if (status_window)
 			gtk_widget_destroy(status_window);
 	}
+
+	main_status.reloading_all_files = FALSE;
 }
 
 gboolean document_delete_prompt(GeanyDocument *doc)
@@ -4425,4 +4460,30 @@ static void document_remove_from_ordered_list(GeanyDocument *doc)
 void document_reset_ordered_list()
 {
 	ordered_list_origin.next = ordered_list_origin.prev = NULL;
+}
+
+void document_handle_switch_page_after(GtkWidget *page)
+{
+	GeanyDocument *doc = document_get_from_notebook_child(page);
+
+	if (doc != NULL)
+	{
+		sidebar_select_openfiles_item(doc);
+		ui_save_buttons_toggle(doc->changed);
+		ui_set_window_title(doc);
+		ui_update_statusbar(doc, -1);
+		ui_update_popup_reundo_items(doc);
+		ui_document_show_hide(doc); /* update the document menu */
+		build_menu_update(doc);
+		sidebar_update_tag_list(doc, FALSE);
+		document_highlight_tags(doc);
+		document_check_disk_status(doc, TRUE);
+
+#ifdef HAVE_VTE
+		vte_cwd((doc->real_path != NULL) ? doc->real_path : doc->file_name, FALSE);
+#endif
+
+		document_try_focus(doc, NULL);
+		g_signal_emit_by_name(geany_object, "document-activate", doc);
+	}
 }

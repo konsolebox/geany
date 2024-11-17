@@ -38,6 +38,7 @@ geany_includedir = $(includedir)/geany
 geany_include_HEADERS = \
 	app.h \
 	build.h \
+	consider.h \
 	dialogs.h \
 	document.h \
 	editor.h \
@@ -70,6 +71,7 @@ libgeany_la_SOURCES = \
 	app.h \
 	build.c build.h \
 	callbacks.c callbacks.h \
+	consider.c consider.h \
 	dialogs.c dialogs.h \
 	document.c document.h \
 	editor.c editor.h \

@@ -1281,6 +1281,7 @@ void configuration_open_files(GPtrArray *session_files)
 {
 	gint i = file_prefs.tab_order_ltr ? 0 : session_files->len - 1;
 	gboolean failure = FALSE;
+	GeanyDocument *doc;
 
 	/* necessary to set it to TRUE for project session support */
 	main_status.opening_session_files++;
@@ -1303,9 +1304,8 @@ void configuration_open_files(GPtrArray *session_files)
 
 	if (failure)
 		ui_set_statusbar(TRUE, _("Failed to load one or more session files."));
-	else
-		document_show_tab(session_notebook_page >= 0 ?
-				document_get_from_page(session_notebook_page) : document_get_current());
+	else if ((doc = document_get_from_page(session_notebook_page)) != NULL)
+		document_show_tab(doc);
 
 	main_status.opening_session_files--;
 }

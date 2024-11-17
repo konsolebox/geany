@@ -112,14 +112,6 @@ static gboolean no_plugins = FALSE;
 #endif
 static gboolean dummy = FALSE;
 
-enum {
-	DEFERRED = -1,
-	NOT_QUEUED = 0,
-	QUEUED = 1
-};
-
-static gint save_session_files_queued = NOT_QUEUED;
-
 gboolean new_instance_mode_arg_callback(const gchar *option_name, const gchar *value, gpointer data, GError **error)
 {
 	gint len = strlen(option_name);
@@ -278,6 +270,9 @@ static void main_init(void)
 	ui_prefs.recent_projects_queue		= g_queue_new();
 	main_status.opening_session_files	= 0;
 	main_status.opening_files_recursively	= FALSE;
+	main_status.reloading_all_files		= FALSE;
+	main_status.opening_cl_files		= FALSE;
+	main_status.handling_input_filenames	= FALSE;
 
 	main_widgets.window = create_window1();
 	g_signal_connect(main_widgets.window, "notify::is-active", G_CALLBACK(on_window_active_changed), NULL);
@@ -312,8 +307,6 @@ static void main_init(void)
 
 	gtk_window_set_default_size(GTK_WINDOW(main_widgets.window),
 		GEANY_WINDOW_DEFAULT_WIDTH, GEANY_WINDOW_DEFAULT_HEIGHT);
-
-	save_session_files_queued = NOT_QUEUED;
 }
 
 const gchar *main_get_version_string(void)
@@ -881,6 +874,8 @@ static void open_cl_files(gint argc, gchar **argv)
 	gboolean status_window_opened = FALSE;
 	gchar *filename = NULL, *utf8_filename, *message;
 
+	main_status.opening_cl_files = TRUE;
+
 	for (i = 1; i < argc; i++)
 	{
 		SETPTR(filename, main_get_argv_filename(argv[i]));
@@ -895,7 +890,7 @@ static void open_cl_files(gint argc, gchar **argv)
 			status_window_opened = TRUE;
 		}
 
-		while (gtk_events_pending())
+		for (int i = 0; i < 4 && gtk_events_pending(); ++i)
 			gtk_main_iteration();
 
 		if (status_window == NULL)
@@ -918,7 +913,7 @@ static void open_cl_files(gint argc, gchar **argv)
 		ui_label_set_text(GTK_LABEL(label), "Opening '%s'...", utf8_filename);
 		g_free(utf8_filename);
 
-		while (gtk_events_pending())
+		for (int i = 0; i < 4 && gtk_events_pending(); ++i)
 			gtk_main_iteration();
 
 		if (main_handle_filename(filename, &error))
@@ -932,6 +927,8 @@ error:
 	}
 
 	g_free(filename);
+
+	main_status.opening_cl_files = FALSE;
 
 	if (status_window)
 		gtk_widget_destroy(status_window);
@@ -1509,39 +1506,4 @@ void main_reload_configuration(void)
 	symbols_reload_config_files();
 
 	ui_set_statusbar(TRUE, _("Configuration files reloaded."));
-}
-
-static gboolean save_session_files(gpointer data)
-{
-	if (! main_status.quitting)
-	{
-		if (app->project != NULL)
-			project_write_config();
-		else
-			configuration_save_default_session();
-	}
-
-	save_session_files_queued = NOT_QUEUED;
-	return FALSE;
-}
-
-void consider_saving_session_files(gboolean deferred_only)
-{
-	if (deferred_only && save_session_files_queued != DEFERRED)
-		return;
-
-	if (save_session_files_queued == QUEUED)
-		return;
-
-	if (! cl_options.load_session || main_status.quitting || main_status.opening_session_files)
-		return;
-
-	if (main_status.opening_files_recursively)
-	{
-		save_session_files_queued = DEFERRED;
-		return;
-	}
-
-	save_session_files_queued = QUEUED;
-	g_idle_add_full(G_PRIORITY_LOW, save_session_files, NULL, NULL);
 }
