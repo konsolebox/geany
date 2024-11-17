@@ -112,6 +112,7 @@ static GtkTreeStore	*store_openfiles;
 static GtkWidget *openfiles_popup_menu;
 static gboolean documents_show_paths;
 static GtkWidget *tag_window;	/* scrolled window that holds the symbol list GtkTreeView */
+static gboolean updating_menu_items = FALSE;
 
 /* callback prototypes */
 static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_data);
@@ -1021,6 +1022,9 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 	GeanyDocument *doc = NULL;
 	gint action = GPOINTER_TO_INT(user_data);
 
+	if (updating_menu_items)
+		return;
+
 	if (gtk_tree_selection_get_selected(selection, &model, &iter))
 	{
 		gtk_tree_model_get(model, &iter, DOCUMENTS_DOCUMENT, &doc, -1);
@@ -1325,6 +1329,8 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	GeanyDocument *doc = NULL;
 	gchar *filename = NULL;
 
+	updating_menu_items = TRUE;
+
 	/* maybe no selection e.g. if ctrl-click deselected */
 	sel = gtk_tree_selection_get_selected(selection, &model, &iter);
 	if (sel)
@@ -1352,6 +1358,8 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(doc_items.show_paths), documents_show_paths);
 	gtk_widget_set_sensitive(doc_items.expand_all, documents_show_paths);
 	gtk_widget_set_sensitive(doc_items.collapse_all, documents_show_paths);
+
+	updating_menu_items = FALSE;
 }
 
 static StashGroup *stash_group = NULL;
