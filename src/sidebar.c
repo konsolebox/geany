@@ -65,6 +65,7 @@ static struct
 	GtkWidget *open_dir;
 	GtkWidget *favorite;
 	GtkWidget *clear_favorites;
+	GtkWidget *readonly;
 	GtkWidget *save;
 	GtkWidget *save_as;
 	GtkWidget *reload;
@@ -78,7 +79,7 @@ static struct
 }
 doc_items = {
 	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-	NULL
+	NULL, NULL
 };
 
 enum
@@ -102,7 +103,8 @@ enum
 	OPENFILES_ACTION_CLONE,
 	OPENFILES_ACTION_DELETE,
 	OPENFILES_ACTION_FAVORITE,
-	OPENFILES_ACTION_CLEAR_FAVORITES
+	OPENFILES_ACTION_CLEAR_FAVORITES,
+	OPENFILES_ACTION_READONLY
 };
 
 /* documents tree model columns */
@@ -133,6 +135,13 @@ typedef enum
 	FOLDER_FAVORITE_STATUS_ACTIVE = 1,
 	FOLDER_FAVORITE_STATUS_INCONSISTENT = -1
 } FolderFavoriteStatus;
+
+typedef enum
+{
+	FOLDER_READONLY_STATUS_INACTIVE = 0,
+	FOLDER_READONLY_STATUS_ACTIVE = 1,
+	FOLDER_READONLY_STATUS_INCONSISTENT = -1
+} FolderReadOnlyStatus;
 
 static GtkTreeStore	*store_openfiles;
 static GtkWidget *openfiles_popup_menu;
@@ -1056,6 +1065,16 @@ static void create_openfiles_popup_menu(void)
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
 
+	doc_items.readonly = gtk_check_menu_item_new_with_mnemonic(_("Read _Only"));
+	gtk_widget_show(doc_items.readonly);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), doc_items.readonly);
+	g_signal_connect(doc_items.readonly, "activate", G_CALLBACK(on_openfiles_document_action),
+			GINT_TO_POINTER(OPENFILES_ACTION_READONLY));
+
+	item = gtk_separator_menu_item_new();
+	gtk_widget_show(item);
+	gtk_container_add(GTK_CONTAINER(openfiles_popup_menu), item);
+
 	doc_items.show_paths = gtk_check_menu_item_new_with_mnemonic(_("Show _Paths"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(doc_items.show_paths), documents_show_paths);
 	gtk_widget_show(doc_items.show_paths);
@@ -1161,6 +1180,19 @@ static void set_favorite(GeanyDocument *doc, gboolean favorite)
 		document_set_favorite(doc, favorite, TRUE);
 }
 
+static void set_readonly(GeanyDocument *doc, gboolean readonly)
+{
+	g_return_if_fail(doc != NULL);
+
+	if (doc->readonly != readonly)
+	{
+		doc->readonly = readonly;
+		sidebar_openfiles_update(doc);
+		ui_document_show_hide(doc);
+		ui_update_tab_status(doc);
+	}
+}
+
 /* callbacks */
 
 static void document_action(GeanyDocument *doc, gint action)
@@ -1252,6 +1284,28 @@ static FolderFavoriteStatus get_folder_favorite_status(GtkTreeModel *model, GtkT
 	return total_favorited == 0 ? FOLDER_FAVORITE_STATUS_INACTIVE :
 			total_favorited == total_child ? FOLDER_FAVORITE_STATUS_ACTIVE :
 			FOLDER_FAVORITE_STATUS_INCONSISTENT;
+}
+
+static FolderReadOnlyStatus get_folder_readonly_status(GtkTreeModel *model, GtkTreeIter *folder)
+{
+	GtkTreeIter child;
+	gint total_child = 0;
+	gint total_readonlies = 0;
+
+	foreach_tree_model_child(model, folder, &child)
+	{
+		++total_child;
+
+		GeanyDocument *doc = NULL;
+		gtk_tree_model_get(model, &child, DOCUMENTS_DOCUMENT, &doc, -1);
+
+		if (DOC_VALID(doc) && doc->readonly)
+			++total_readonlies;
+	}
+
+	return total_readonlies == 0 ? FOLDER_READONLY_STATUS_INACTIVE :
+			total_readonlies == total_child ? FOLDER_READONLY_STATUS_ACTIVE :
+			FOLDER_READONLY_STATUS_INCONSISTENT;
 }
 
 static gboolean is_favorites_folder(GtkTreeModel *model, GtkTreeIter *iter)
@@ -1385,6 +1439,28 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 
 					foreach_document(i)
 						document_set_favorite(documents[i], FALSE, TRUE);
+				}
+
+				break;
+			}
+			case OPENFILES_ACTION_READONLY:
+			{
+				gboolean active = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(
+							doc_items.readonly));
+				gboolean inconsistent = gtk_check_menu_item_get_inconsistent(GTK_CHECK_MENU_ITEM(
+							doc_items.readonly));
+
+				if (doc)
+					set_readonly(doc, active);
+				else if (! is_favorites_folder(model, &iter))
+				{
+					GtkTreeIter child;
+
+					foreach_tree_model_child(model, &iter, &child)
+					{
+						gtk_tree_model_get(model, &child, DOCUMENTS_DOCUMENT, &doc, -1);
+						set_readonly(doc, active || inconsistent);
+					}
 				}
 
 				break;
@@ -1638,6 +1714,33 @@ static void update_favorite_check_menu_item(GeanyDocument *doc, gboolean sel, Gt
 	gtk_widget_set_sensitive(doc_items.favorite, ! favorites_folder);
 }
 
+static void update_readonly_check_menu_item(GeanyDocument *doc, gboolean sel, GtkTreeModel *model,
+		GtkTreeIter *iter)
+{
+	gboolean active = FALSE, inconsistent = FALSE, favorites_folder = FALSE;
+
+	if (sel)
+	{
+		if (doc)
+			active = doc->readonly;
+		else
+		{
+			favorites_folder = is_favorites_folder(model, iter);
+
+			if (! favorites_folder)
+			{
+				FolderFavoriteStatus status = get_folder_readonly_status(model, iter);
+				active = status != FOLDER_READONLY_STATUS_INACTIVE;
+				inconsistent = status == FOLDER_READONLY_STATUS_INCONSISTENT;
+			}
+		}
+	}
+
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(doc_items.readonly), active);
+	gtk_check_menu_item_set_inconsistent(GTK_CHECK_MENU_ITEM(doc_items.readonly), inconsistent);
+	gtk_widget_set_sensitive(doc_items.readonly, ! favorites_folder);
+}
+
 static void documents_menu_update(GtkTreeSelection *selection)
 {
 	GtkTreeModel *model;
@@ -1665,6 +1768,7 @@ static void documents_menu_update(GtkTreeSelection *selection)
 	gtk_widget_set_sensitive(doc_items.open_dir, doc ? document_has_dirname(doc) : filename && g_path_is_absolute(filename));
 	update_favorite_check_menu_item(doc, sel, model, &iter);
 	gtk_widget_set_sensitive(doc_items.clear_favorites, sel);
+	update_readonly_check_menu_item(doc, sel, model, &iter);
 	gtk_widget_set_sensitive(doc_items.save, doc ? doc->changed && doc->file_name && g_path_is_absolute(doc->file_name) : sel);
 	gtk_widget_set_sensitive(doc_items.save_as, doc != NULL);
 	gtk_widget_set_sensitive(doc_items.reload, sel && (!doc || doc->real_path));
