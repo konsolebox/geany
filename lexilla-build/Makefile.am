@@ -37,6 +37,7 @@ SRCS = \
 	$(LEXILLA)/lexers/LexD.cxx \
 	$(LEXILLA)/lexers/LexDMAP.cxx \
 	$(LEXILLA)/lexers/LexDMIS.cxx \
+	$(LEXILLA)/lexers/LexDart.cxx \
 	$(LEXILLA)/lexers/LexDataflex.cxx \
 	$(LEXILLA)/lexers/LexDiff.cxx \
 	$(LEXILLA)/lexers/LexECL.cxx \
@@ -116,7 +117,9 @@ SRCS = \
 	$(LEXILLA)/lexers/LexTAL.cxx \
 	$(LEXILLA)/lexers/LexTCL.cxx \
 	$(LEXILLA)/lexers/LexTCMD.cxx \
+	$(LEXILLA)/lexers/LexTOML.cxx \
 	$(LEXILLA)/lexers/LexTeX.cxx \
+	$(LEXILLA)/lexers/LexTroff.cxx \
 	$(LEXILLA)/lexers/LexTxt2tags.cxx \
 	$(LEXILLA)/lexers/LexVB.cxx \
 	$(LEXILLA)/lexers/LexVHDL.cxx \
@@ -124,37 +127,36 @@ SRCS = \
 	$(LEXILLA)/lexers/LexVisualProlog.cxx \
 	$(LEXILLA)/lexers/LexX12.cxx \
 	$(LEXILLA)/lexers/LexYAML.cxx \
+	$(LEXILLA)/lexers/LexZig.cxx \
+	$(LEXILLA)/lexlib/Accessor.cxx \
 	$(LEXILLA)/lexlib/Accessor.h \
 	$(LEXILLA)/lexlib/CatalogueModules.h \
+	$(LEXILLA)/lexlib/CharacterCategory.cxx \
 	$(LEXILLA)/lexlib/CharacterCategory.h \
+	$(LEXILLA)/lexlib/CharacterSet.cxx \
 	$(LEXILLA)/lexlib/CharacterSet.h \
+	$(LEXILLA)/lexlib/DefaultLexer.cxx \
 	$(LEXILLA)/lexlib/DefaultLexer.h \
+	$(LEXILLA)/lexlib/InList.cxx \
 	$(LEXILLA)/lexlib/InList.h \
+	$(LEXILLA)/lexlib/LexAccessor.cxx \
 	$(LEXILLA)/lexlib/LexAccessor.h \
+	$(LEXILLA)/lexlib/LexerBase.cxx \
 	$(LEXILLA)/lexlib/LexerBase.h \
+	$(LEXILLA)/lexlib/LexerModule.cxx \
 	$(LEXILLA)/lexlib/LexerModule.h \
-	$(LEXILLA)/lexlib/LexerNoExceptions.h \
+	$(LEXILLA)/lexlib/LexerSimple.cxx \
 	$(LEXILLA)/lexlib/LexerSimple.h \
 	$(LEXILLA)/lexlib/OptionSet.h \
+	$(LEXILLA)/lexlib/PropSetSimple.cxx \
 	$(LEXILLA)/lexlib/PropSetSimple.h \
 	$(LEXILLA)/lexlib/SparseState.h \
 	$(LEXILLA)/lexlib/StringCopy.h \
+	$(LEXILLA)/lexlib/StyleContext.cxx \
 	$(LEXILLA)/lexlib/StyleContext.h \
 	$(LEXILLA)/lexlib/SubStyles.h \
-	$(LEXILLA)/lexlib/WordList.h \
-	$(LEXILLA)/lexlib/Accessor.cxx \
-	$(LEXILLA)/lexlib/CharacterCategory.cxx \
-	$(LEXILLA)/lexlib/CharacterSet.cxx \
-	$(LEXILLA)/lexlib/DefaultLexer.cxx \
-	$(LEXILLA)/lexlib/InList.cxx \
-	$(LEXILLA)/lexlib/LexAccessor.cxx \
-	$(LEXILLA)/lexlib/LexerBase.cxx \
-	$(LEXILLA)/lexlib/LexerModule.cxx \
-	$(LEXILLA)/lexlib/LexerNoExceptions.cxx \
-	$(LEXILLA)/lexlib/LexerSimple.cxx \
-	$(LEXILLA)/lexlib/PropSetSimple.cxx \
-	$(LEXILLA)/lexlib/StyleContext.cxx \
 	$(LEXILLA)/lexlib/WordList.cxx \
+	$(LEXILLA)/lexlib/WordList.h \
 	$(LEXILLA)/src/Lexilla.cxx
 
 liblexilla_la_SOURCES = $(SRCS)

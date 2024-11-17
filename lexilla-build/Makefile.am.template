@@ -1,0 +1,16 @@
+SUBDIRS = include
+LEXILLA = $(top_srcdir)/lexilla
+
+noinst_LTLIBRARIES = liblexilla.la
+
+AM_CXXFLAGS = -DNDEBUG -DGTK -DSCI_LEXER -DNO_CXX11_REGEX
+
+SRCS = \
+<SRCS_FILES>
+
+liblexilla_la_SOURCES = $(SRCS)
+
+AM_CPPFLAGS = -I$(top_srcdir)/scintilla/include -I$(LEXILLA)/include -I$(LEXILLA)/lexlib \
+	@GTK_CFLAGS@ @LIBGEANY_CFLAGS@
+
+EXTRA_DIST = License.txt README version.txt

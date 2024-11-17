@@ -89,6 +89,13 @@ Makefile.in
 /src/signallist.i
 
 #-----------------------------------------------------------------------
+# /scintilla-build/
+#-----------------------------------------------------------------------
+/scintilla-build/ScintillaGTKWithSymbols.cxx
+/scintilla-build/gtk-scintilla-marshal.c
+/scintilla-build/gtk-scintilla-marshal.h
+
+#-----------------------------------------------------------------------
 # /doc/
 #-----------------------------------------------------------------------
 /doc/Doxyfile

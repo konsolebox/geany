@@ -21,7 +21,6 @@ ScintillaGTKWithSymbols.cxx:
 SRCS = \
 	$(SCINTILLA)/gtk/Converter.h \
 	$(SCINTILLA)/gtk/PlatGTK.cxx \
-	ScintillaGTKWithSymbols.cxx \
 	$(SCINTILLA)/gtk/ScintillaGTK.h \
 	$(SCINTILLA)/gtk/ScintillaGTKAccessible.cxx \
 	$(SCINTILLA)/gtk/ScintillaGTKAccessible.h \
@@ -99,6 +98,7 @@ SRCS = \
 	$(SCINTILLA)/src/ViewStyle.h \
 	$(SCINTILLA)/src/XPM.cxx \
 	$(SCINTILLA)/src/XPM.h \
+	ScintillaGTKWithSymbols.cxx \
 	gtk-scintilla-marshal.c \
 	gtk-scintilla-marshal.h
 

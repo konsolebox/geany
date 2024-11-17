@@ -1,0 +1,27 @@
+#!/bin/bash
+
+shopt -s extglob nullglob || exit
+
+function die {
+	printf '%s\n' "$1" >&2
+	exit "${2-1}"
+}
+
+function main {
+	local scintilla_dir new_srcs template
+
+	scintilla_dir=$(readlink -m "${BASH_SOURCE}/../../scintilla") || exit
+
+	new_srcs=$(cd "${scintilla_dir}" && files=({gtk,src}/*.@(cxx|h)) || exit
+			[[ ${files+.} ]] || die "No files found."
+			printf '\t$(SCINTILLA)/%s \\\n' "${files[@]}" | grep -vF -e /gtk/ScintillaGTK.cxx \
+					-e /gtk/scintilla-marshal.h) || exit
+
+	template=$(<Makefile.am.template) || die "Failed to read template."
+	[[ ${template} == *"<SRCS_FILES>"* ]] || die "Template content is invalid."
+
+	printf '%s\n' "${template//<SRCS_FILES>/${new_srcs}}" > Makefile.am && \
+		echo "Makefile.am successfully generated."
+}
+
+main

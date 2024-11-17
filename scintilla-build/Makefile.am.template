@@ -1,0 +1,32 @@
+SCINTILLA = $(top_srcdir)/scintilla
+
+SUBDIRS = include
+
+noinst_LTLIBRARIES = libscintilla.la
+
+AM_CXXFLAGS = -DNDEBUG -DGTK -DSCI_LEXER -DNO_CXX11_REGEX
+
+.PHONY: marshallers
+
+marshallers: $(SCINTILLA)/gtk/scintilla-marshal.list
+	glib-genmarshal --prefix scintilla_marshal $(SCINTILLA)/gtk/scintilla-marshal.list --header > gtk-scintilla-marshal.h
+	glib-genmarshal --prefix scintilla_marshal $(SCINTILLA)/gtk/scintilla-marshal.list --body > gtk-scintilla-marshal.c
+
+gtk-scintilla-marshal.c: marshallers
+gtk-scintilla-marshal.h: marshallers
+
+ScintillaGTKWithSymbols.cxx:
+	patch -p0 $(SCINTILLA)/gtk/ScintillaGTK.cxx ScintillaGTKWithSymbols.cxx.patch -o ScintillaGTKWithSymbols.cxx
+
+SRCS = \
+<SRCS_FILES>
+	ScintillaGTKWithSymbols.cxx \
+	gtk-scintilla-marshal.c \
+	gtk-scintilla-marshal.h
+
+libscintilla_la_SOURCES = $(SRCS)
+
+AM_CPPFLAGS = -I$(SCINTILLA)/include -I$(SCINTILLA)/gtk -I$(SCINTILLA)/src \
+	@GTK_CFLAGS@ @LIBGEANY_CFLAGS@
+
+EXTRA_DIST = $(SCINTILLA)/gtk/scintilla-marshal.list $(SCINTILLA)/License.txt $(SCINTILLA)/README $(SCINTILLA)/version.txt
