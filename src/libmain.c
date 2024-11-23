@@ -44,7 +44,7 @@
 #include "keyfile.h"
 #include "log.h"
 #include "msgwindow.h"
-#include "navqueue.h"
+#include "nav.h"
 #include "notebook.h"
 #include "plugins.h"
 #include "projectprivate.h"
@@ -1237,7 +1237,7 @@ gint main_lib(gint argc, gchar **argv)
 	notebook_init();
 	filetypes_init();
 	templates_init();
-	navqueue_init();
+	nav_init();
 	document_init_doclist();
 	document_reset_ordered_list();
 	symbols_init();
@@ -1363,7 +1363,7 @@ static void do_main_quit(void)
 	plugins_finalize();
 #endif
 
-	navqueue_free();
+	nav_free();
 	keybindings_free();
 	notebook_free();
 	highlighting_free_styles();

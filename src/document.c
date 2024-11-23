@@ -44,7 +44,7 @@
 #include "highlighting.h"
 #include "main.h"
 #include "msgwindow.h"
-#include "navqueue.h"
+#include "nav.h"
 #include "notebook.h"
 #include "project.h"
 #include "sciwrappers.h"
@@ -711,7 +711,7 @@ static gboolean remove_page(guint page_num)
 	{
 		notebook_remove_page(page_num);
 		sidebar_remove_document(doc);
-		navqueue_remove_file(doc->file_name);
+		nav_remove_document(doc);
 		msgwin_status_add(_("File %s closed."), DOC_FILENAME(doc));
 	}
 	document_remove_from_ordered_list(doc);

@@ -45,7 +45,7 @@
 #include "log.h"
 #include "main.h"
 #include "msgwindow.h"
-#include "navqueue.h"
+#include "nav.h"
 #include "plugins.h"
 #include "pluginutils.h"
 #include "prefs.h"
@@ -1451,12 +1451,12 @@ void on_menu_toggle_all_additional_widgets1_activate(GtkMenuItem *menuitem, gpoi
 
 void on_toolbutton_forward_activate(GtkAction *menuitem, gpointer user_data)
 {
-	navqueue_go_forward();
+	nav_go_forward();
 }
 
 void on_toolbutton_back_activate(GtkAction *menuitem, gpointer user_data)
 {
-	navqueue_go_back();
+	nav_go_back();
 }
 
 gboolean on_motion_event(GtkWidget *widget, GdkEventMotion *event, gpointer user_data)

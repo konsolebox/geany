@@ -36,7 +36,7 @@
 #include "filetypesprivate.h"
 #include "geanyobject.h"
 #include "keyfile.h"
-#include "navqueue.h"
+#include "nav.h"
 #include "stash.h"
 #include "support.h"
 #include "symbols.h"
@@ -1574,7 +1574,7 @@ static gboolean taglist_go_to_selection(GtkTreeSelection *selection, guint keyva
 
 			if (doc != NULL)
 			{
-				navqueue_goto_line(doc, doc, line);
+				nav_goto_line(doc, line, nav_get_current_position(doc));
 				state = keybindings_get_modifiers(state);
 				if (keyval != GDK_space && ! (state & GEANY_PRIMARY_MOD_MASK))
 					change_focus_to_editor(doc, NULL);

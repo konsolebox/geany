@@ -40,7 +40,7 @@
 #include "keyfile.h"
 #include "main.h"
 #include "msgwindow.h"
-#include "navqueue.h"
+#include "nav.h"
 #include "plugindata.h"
 #include "pluginprivate.h"
 #include "pluginutils.h"

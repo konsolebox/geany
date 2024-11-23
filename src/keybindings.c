@@ -41,7 +41,7 @@
 #include "keybindingsprivate.h"
 #include "main.h"
 #include "msgwindow.h"
-#include "navqueue.h"
+#include "nav.h"
 #include "notebook.h"
 #include "prefs.h"
 #include "sciwrappers.h"
@@ -2126,10 +2126,10 @@ static gboolean cb_func_goto_action(guint key_id)
 	switch (key_id)
 	{
 		case GEANY_KEYS_GOTO_BACK:
-			navqueue_go_back();
+			nav_go_back();
 			break;
 		case GEANY_KEYS_GOTO_FORWARD:
-			navqueue_go_forward();
+			nav_go_forward();
 			break;
 		case GEANY_KEYS_GOTO_LINE:
 		{

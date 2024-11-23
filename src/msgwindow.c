@@ -39,7 +39,7 @@
 #include "filetypes.h"
 #include "keybindings.h"
 #include "main.h"
-#include "navqueue.h"
+#include "nav.h"
 #include "prefs.h"
 #include "support.h"
 #include "ui_utils.h"
@@ -665,7 +665,7 @@ static gboolean goto_compiler_file_line(const gchar *fname, gint line, gboolean 
 	{
 		gchar *utf8_filename = utils_get_utf8_from_locale(filename);
 		GeanyDocument *doc = document_find_by_filename(utf8_filename);
-		GeanyDocument *old_doc = document_get_current();
+		NavPosition old_npos = nav_get_current_position(NULL);
 
 		g_free(utf8_filename);
 
@@ -677,7 +677,8 @@ static gboolean goto_compiler_file_line(const gchar *fname, gint line, gboolean 
 			if (! doc->changed && editor_prefs.use_indicators)	/* if modified, line may be wrong */
 				editor_indicator_set_on_line(doc->editor, GEANY_INDICATOR_ERROR, line - 1);
 
-			ret = navqueue_goto_line(old_doc, doc, line);
+			ret = nav_goto_line(doc, line, old_npos);
+
 			if (ret && focus_editor)
 				gtk_widget_grab_focus(GTK_WIDGET(doc->editor->sci));
 
@@ -1072,7 +1073,7 @@ gboolean msgwin_goto_messages_file_line(gboolean focus_editor)
 		guint id = 0;
 		gchar *string = NULL;
 		GeanyDocument *doc;
-		GeanyDocument *old_doc = document_get_current();
+		NavPosition old_npos = nav_get_current_position(NULL);
 
 		gtk_tree_model_get(model, &iter,
 			MSG_COL_LINE, &line, MSG_COL_DOC_ID, &id, MSG_COL_STRING, &string, -1);
@@ -1087,7 +1088,7 @@ gboolean msgwin_goto_messages_file_line(gboolean focus_editor)
 			}
 			else
 			{
-				ret = navqueue_goto_line(old_doc, doc, line);
+				ret = nav_goto_line(doc, line, old_npos);
 				if (ret && focus_editor)
 					gtk_widget_grab_focus(GTK_WIDGET(doc->editor->sci));
 			}
@@ -1104,7 +1105,7 @@ gboolean msgwin_goto_messages_file_line(gboolean focus_editor)
 				doc = document_open_file(filename, FALSE, NULL, NULL);
 				if (doc != NULL)
 				{
-					ret = (line < 0) ? TRUE : navqueue_goto_line(old_doc, doc, line);
+					ret = (line < 0) ? TRUE : nav_goto_line(doc, line, old_npos);
 					if (ret && focus_editor)
 						gtk_widget_grab_focus(GTK_WIDGET(doc->editor->sci));
 				}

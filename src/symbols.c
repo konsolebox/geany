@@ -46,7 +46,7 @@
 #include "filetypesprivate.h"
 #include "geanyobject.h"
 #include "main.h"
-#include "navqueue.h"
+#include "nav.h"
 #include "sciwrappers.h"
 #include "sidebar.h"
 #include "support.h"
@@ -1740,15 +1740,12 @@ static void load_user_tags(GeanyFiletypeID ft_id)
 
 static void on_goto_popup_item_activate(GtkMenuItem *item, TMTag *tag)
 {
-	GeanyDocument *new_doc, *old_doc;
-
 	g_return_if_fail(tag);
 
-	old_doc = document_get_current();
-	new_doc = document_open_file(tag->file->file_name, FALSE, NULL, NULL);
+	GeanyDocument *doc = document_open_file(tag->file->file_name, FALSE, NULL, NULL);
 
-	if (new_doc)
-		navqueue_goto_line(old_doc, new_doc, tag->line);
+	if (doc)
+		nav_goto_line(doc, tag->line, nav_get_current_position(NULL));
 }
 
 /* FIXME: use the same icons as in the symbols tree defined in add_top_level_items() */
@@ -2011,6 +2008,8 @@ static gboolean goto_tag(const gchar *name, gboolean definition)
 	const TMTagType forward_types = tm_tag_prototype_t | tm_tag_externvar_t;
 	TMTag *tmtag, *current_tag = NULL;
 	GeanyDocument *old_doc = document_get_current();
+	NavPosition old_npos = nav_get_current_position(old_doc);
+	g_return_val_if_fail(DOC_VALID(old_doc), FALSE);
 	gboolean found = FALSE;
 	const GPtrArray *all_tags;
 	GPtrArray *tags, *filtered_tags;
@@ -2056,7 +2055,7 @@ static gboolean goto_tag(const gchar *name, gboolean definition)
 			/* not found in opened document, should open */
 			new_doc = document_open_file(tmtag->file->file_name, FALSE, NULL, NULL);
 
-		navqueue_goto_line(old_doc, new_doc, tmtag->line);
+		nav_goto_line(new_doc, tmtag->line, old_npos);
 	}
 	else if (tags->len > 1)
 	{
