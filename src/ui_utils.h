@@ -128,6 +128,10 @@ void ui_widget_modify_font_from_string(GtkWidget *wid, const gchar *str);
 
 gboolean ui_is_keyval_enter_or_return(guint keyval);
 
+gboolean ui_is_state_keyval_ctrl_c_or_ctrl_d(GdkModifierType state, guint keyval);
+
+gboolean ui_is_state_keyval_ctrl_z(GdkModifierType state, guint keyval);
+
 gint ui_get_gtk_settings_integer(const gchar *property_name, gint default_value);
 
 void ui_combo_box_add_to_history(GtkComboBoxText *combo_entry,

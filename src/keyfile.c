@@ -542,6 +542,7 @@ static void save_dialog_prefs(GKeyFile *config)
 		g_key_file_set_boolean(config, "VTE", "scroll_on_key", vte_config.scroll_on_key);
 		g_key_file_set_boolean(config, "VTE", "scroll_on_out", vte_config.scroll_on_out);
 		g_key_file_set_boolean(config, "VTE", "enable_bash_keys", vte_config.enable_bash_keys);
+		g_key_file_set_boolean(config, "VTE", "ctrl_c_d_resets_vte", vte_config.ctrl_c_d_resets_vte);
 		g_key_file_set_boolean(config, "VTE", "ignore_menu_bar_accel", vte_config.ignore_menu_bar_accel);
 		g_key_file_set_boolean(config, "VTE", "follow_path", vte_config.follow_path);
 		g_key_file_set_boolean(config, "VTE", "run_in_vte", vte_config.run_in_vte);
@@ -900,6 +901,7 @@ static void load_dialog_prefs(GKeyFile *config)
 		vte_config.scroll_on_key = utils_get_setting_boolean(config, "VTE", "scroll_on_key", TRUE);
 		vte_config.scroll_on_out = utils_get_setting_boolean(config, "VTE", "scroll_on_out", TRUE);
 		vte_config.enable_bash_keys = utils_get_setting_boolean(config, "VTE", "enable_bash_keys", TRUE);
+		vte_config.ctrl_c_d_resets_vte = utils_get_setting_boolean(config, "VTE", "ctrl_c_d_resets_vte", FALSE);
 		vte_config.ignore_menu_bar_accel = utils_get_setting_boolean(config, "VTE", "ignore_menu_bar_accel", FALSE);
 		vte_config.follow_path = utils_get_setting_boolean(config, "VTE", "follow_path", FALSE);
 		vte_config.run_in_vte = utils_get_setting_boolean(config, "VTE", "run_in_vte", FALSE);

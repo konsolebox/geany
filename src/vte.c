@@ -422,7 +422,7 @@ static void set_clean(gboolean value)
 static gboolean vte_keyrelease_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
 	if (ui_is_keyval_enter_or_return(event->keyval) ||
-		((event->keyval == GDK_c) && (event->state & GDK_CONTROL_MASK)))
+			ui_is_state_keyval_ctrl_c_or_ctrl_d(event->state, event->keyval))
 	{
 		/* assume any text on the prompt has been executed when pressing Enter/Return */
 		set_clean(TRUE);
@@ -432,22 +432,13 @@ static gboolean vte_keyrelease_cb(GtkWidget *widget, GdkEventKey *event, gpointe
 
 static gboolean vte_keypress_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
-	if (vte_config.enable_bash_keys)
-		return FALSE;	/* Ctrl-[CD] will be handled by the VTE itself */
-
-	if (event->type != GDK_KEY_RELEASE)
-		return FALSE;
-
-	if ((event->keyval == GDK_c ||
-		event->keyval == GDK_d ||
-		event->keyval == GDK_C ||
-		event->keyval == GDK_D) &&
-		event->state & GDK_CONTROL_MASK &&
-		! (event->state & GDK_SHIFT_MASK) && ! (event->state & GDK_MOD1_MASK))
+	if (event->type == GDK_KEY_RELEASE && vte_config.ctrl_c_d_resets_vte &&
+			ui_is_state_keyval_ctrl_c_or_ctrl_d(event->state, event->keyval))
 	{
 		vte_restart(widget);
 		return TRUE;
 	}
+
 	return FALSE;
 }
 

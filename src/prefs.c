@@ -751,6 +751,9 @@ static void prefs_init_dialog(void)
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_enable_bash_keys");
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.enable_bash_keys);
 
+		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_ctrl_c_d_resets_vte");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.ctrl_c_d_resets_vte);
+
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_ignore_menu_key");
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.ignore_menu_bar_accel);
 
@@ -1183,6 +1186,9 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_enable_bash_keys");
 			vte_config.enable_bash_keys = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+
+			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_ctrl_c_d_resets_vte");
+			vte_config.ctrl_c_d_resets_vte = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "check_ignore_menu_key");
 			vte_config.ignore_menu_bar_accel = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));

@@ -1219,7 +1219,11 @@ static gboolean check_vte(GdkModifierType state, guint keyval)
 		return FALSE;
 	/* let VTE copy/paste override any user keybinding */
 	if (state == (GEANY_PRIMARY_MOD_MASK | GDK_SHIFT_MASK) && (keyval == GDK_c || keyval == GDK_v))
-		return TRUE;
+		goto disable_menu_accelerators_and_return_true;
+	/* Also allow Ctrl-C, Ctrl-D and Ctrl-Z to override user keybinding */
+	if (ui_is_state_keyval_ctrl_c_or_ctrl_d(state, keyval) || ui_is_state_keyval_ctrl_z(state,
+			keyval))
+		goto disable_menu_accelerators_and_return_true;
 	if (! vte_config.enable_bash_keys)
 		return FALSE;
 	/* prevent menubar flickering: */
@@ -1236,6 +1240,7 @@ static gboolean check_vte(GdkModifierType state, guint keyval)
 			return FALSE;
 	}
 
+disable_menu_accelerators_and_return_true:
 	/* Temporarily disable the menus to prevent conflicting menu accelerators
 	 * from overriding the VTE bash shortcuts.
 	 * Note: maybe there's a better way of doing this ;-) */
@@ -1246,6 +1251,7 @@ static gboolean check_vte(GdkModifierType state, guint keyval)
 	widget = main_widgets.editor_menu;
 	gtk_widget_set_sensitive(widget, FALSE);
 	g_idle_add(set_sensitive, widget);
+
 	return TRUE;
 }
 #endif

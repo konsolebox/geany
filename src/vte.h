@@ -51,6 +51,7 @@ typedef struct
 	gboolean run_in_vte;
 	gboolean skip_run_script;
 	gboolean enable_bash_keys;
+	gboolean ctrl_c_d_resets_vte;
 	gboolean cursor_blinks;
 	gboolean send_selection_unsafe;
 	gboolean allow_bold;
