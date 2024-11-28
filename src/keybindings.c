@@ -587,9 +587,9 @@ static void init_default_kb(void)
 	add_kb(group, GEANY_KEYS_GOTO_PREVIOUSMARKER, NULL,
 		GDK_comma, GEANY_PRIMARY_MOD_MASK, "edit_gotopreviousmarker",
 		_("Go to Pre_vious Marker"), "go_to_previous_marker1");
-	add_kb(group, GEANY_KEYS_SEARCH_NEXTMESSAGE, NULL,
+	add_kb(group, GEANY_KEYS_GOTO_NEXTMESSAGE, NULL,
 		GDK_Right, GEANY_PRIMARY_MOD_MASK | GDK_MOD1_MASK, "menu_nextmessage", _("Next Message"), "next_message1");
-	add_kb(group, GEANY_KEYS_SEARCH_PREVIOUSMESSAGE, NULL,
+	add_kb(group, GEANY_KEYS_GOTO_PREVIOUSMESSAGE, NULL,
 		GDK_Left, GEANY_PRIMARY_MOD_MASK | GDK_MOD1_MASK, "menu_previousmessage", _("Previous Message"), "previous_message1");
 	add_kb(group, GEANY_KEYS_GOTO_TAGDEFINITION, NULL,
 		GDK_t, GEANY_PRIMARY_MOD_MASK, "popup_gototagdefinition",
@@ -1527,10 +1527,6 @@ static gboolean cb_func_search_action(guint key_id)
 	{
 		case GEANY_KEYS_SEARCH_FINDINFILES:
 			on_find_in_files1_activate(NULL, NULL); return TRUE;
-		case GEANY_KEYS_SEARCH_NEXTMESSAGE:
-			on_next_message1_activate(NULL, NULL); return TRUE;
-		case GEANY_KEYS_SEARCH_PREVIOUSMESSAGE:
-			on_previous_message1_activate(NULL, NULL); return TRUE;
 	}
 	if (!doc)
 		return TRUE;
@@ -2193,6 +2189,12 @@ static gboolean cb_func_goto_action(guint key_id)
 
 			break;
 		}
+		case GEANY_KEYS_GOTO_NEXTMESSAGE:
+			on_next_message1_activate(NULL, NULL);
+			break;
+		case GEANY_KEYS_GOTO_PREVIOUSMESSAGE:
+			on_previous_message1_activate(NULL, NULL);
+			break;
 		case GEANY_KEYS_GOTO_TAGDEFINITION:
 			goto_tag(doc, TRUE);
 			break;

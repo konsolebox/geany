@@ -153,7 +153,7 @@ enum GeanyKeyBindingID
 	GEANY_KEYS_EDITOR_DUPLICATELINE,			/**< Keybinding. */
 	GEANY_KEYS_FOCUS_SCRIBBLE,					/**< Keybinding. */
 	GEANY_KEYS_TOOLS_OPENCOLORCHOOSER,			/**< Keybinding. */
-	GEANY_KEYS_SEARCH_PREVIOUSMESSAGE,			/**< Keybinding. */
+	GEANY_KEYS_GOTO_PREVIOUSMESSAGE,			/**< Keybinding. */
 	GEANY_KEYS_FILE_CLOSE,						/**< Keybinding. */
 	GEANY_KEYS_DOCUMENT_REPLACETABS,			/**< Keybinding. */
 	GEANY_KEYS_FILE_RELOAD,						/**< Keybinding. */
@@ -194,7 +194,7 @@ enum GeanyKeyBindingID
 	GEANY_KEYS_MARK_REMOVEERRORINDICATORS,		/**< Keybinding. */
 	GEANY_KEYS_MARK_REMOVEALL,					/**< Keybinding. */
 	GEANY_KEYS_GOTO_TAGDEFINITION,				/**< Keybinding. */
-	GEANY_KEYS_SEARCH_NEXTMESSAGE,				/**< Keybinding. */
+	GEANY_KEYS_GOTO_NEXTMESSAGE,				/**< Keybinding. */
 	GEANY_KEYS_EDITOR_DELETELINETOEND,			/**< Keybinding. */
 	GEANY_KEYS_FORMAT_AUTOINDENT,				/**< Keybinding. */
 	GEANY_KEYS_FILE_OPENSELECTED,				/**< Keybinding. */
