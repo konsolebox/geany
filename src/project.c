@@ -134,7 +134,7 @@ void project_new(void)
 			}
 			else
 			{
-				if (!document_close_all())
+				if (!document_close_all(FALSE))
 					return;
 			}
 		}
@@ -401,7 +401,7 @@ gboolean project_close(gboolean open_default)
 		g_warning("Project file \"%s\" could not be written", app->project->file_name);
 
 	/* close all existing tabs first */
-	if (!document_close_all())
+	if (!document_close_all(FALSE))
 		return FALSE;
 
 	ui_set_statusbar(TRUE, _("Project \"%s\" closed."), app->project->name);
@@ -1041,7 +1041,7 @@ static gboolean load_config(const gchar *filename)
 	{
 		configuration_save_default_session();
 		/* now close all open files */
-		document_close_all();
+		document_close_all(FALSE);
 	}
 	/* read session files so they can be opened with configuration_open_files() */
 	p->priv->session_files = configuration_load_session_files(config);

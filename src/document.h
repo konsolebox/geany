@@ -279,7 +279,7 @@ void document_try_focus_real(GeanyDocument *doc, GtkWidget *source_widget);
 
 gboolean document_account_for_unsaved(void);
 
-gboolean document_close_all(void);
+gboolean document_close_all(gboolean manual);
 
 GeanyDocument *document_open_file_full(GeanyDocument *doc, const gchar *filename, gint pos,
 		gboolean readonly, gboolean favorite, GeanyFiletype *ft, const gchar *forced_enc);

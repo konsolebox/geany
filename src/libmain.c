@@ -276,6 +276,8 @@ static void main_init(void)
 	main_status.reloading_all_files		= FALSE;
 	main_status.opening_cl_files		= FALSE;
 	main_status.handling_input_filenames	= FALSE;
+	main_status.closing_all				= FALSE;
+	main_status.manually_closing_all	= FALSE;
 
 	main_widgets.window = create_window1();
 	g_signal_connect(main_widgets.window, "notify::is-active", G_CALLBACK(on_window_active_changed), NULL);
@@ -1351,7 +1353,7 @@ static void do_main_quit(void)
 	if (app->project != NULL)
 		project_close(FALSE);   /* save project session files */
 
-	document_close_all();
+	document_close_all(FALSE);
 
 	main_status.quitting = TRUE;
 

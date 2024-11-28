@@ -69,6 +69,7 @@ typedef struct GeanyStatus
 	gboolean	reloading_all_files;
 	gboolean	opening_cl_files;
 	gboolean	handling_input_filenames;
+	gboolean	manually_closing_all;
 }
 GeanyStatus;
 

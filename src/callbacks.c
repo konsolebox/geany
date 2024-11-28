@@ -150,7 +150,7 @@ void on_close_all1_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	if (app->project == NULL || dialogs_show_question_full(NULL, GTK_STOCK_CLOSE, GTK_STOCK_CANCEL,
 			NULL, _("Close all project files?")))
-		document_close_all();
+		document_close_all(TRUE);
 }
 
 void on_close1_activate(GtkMenuItem *menuitem, gpointer user_data)

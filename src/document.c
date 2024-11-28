@@ -653,7 +653,6 @@ static GeanyDocument *document_create(const gchar *utf8_filename, gboolean filen
 	}
 
 	ui_document_buttons_update();
-	consider_saving_session_files();
 
 	doc->is_valid = TRUE;	/* do this last to prevent UI updating with NULL items. */
 	doc->changed = TRUE;
@@ -1585,6 +1584,8 @@ GeanyDocument *document_open_file_full(GeanyDocument *doc, const gchar *filename
 
 		/* now the document is fully ready, display it (see notebook_new_tab()) */
 		gtk_widget_show(document_get_notebook_child(doc));
+
+		consider_saving_session_files();
 	}
 
 	g_free(display_filename);
@@ -3911,12 +3912,14 @@ static void force_close_all(void)
 	main_status.closing_all = FALSE;
 }
 
-gboolean document_close_all(void)
+gboolean document_close_all(gboolean manual)
 {
 	if (! document_account_for_unsaved())
 		return FALSE;
 
+	main_status.manually_closing_all = manual;
 	force_close_all();
+	main_status.manually_closing_all = FALSE;
 
 	return TRUE;
 }

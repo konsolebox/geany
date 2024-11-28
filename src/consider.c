@@ -99,8 +99,11 @@ static gboolean save_session_files_idle_inner(void)
 {
 	g_return_val_if_fail(cl_options.load_session, G_SOURCE_REMOVE);
 	g_return_val_if_fail(! main_status.opening_session_files, G_SOURCE_REMOVE);
-	g_return_val_if_fail(! main_status.closing_all, G_SOURCE_REMOVE);
-	return ! main_status.quitting && opening_multiple_files() ? G_SOURCE_CONTINUE : G_SOURCE_REMOVE;
+	g_return_val_if_fail(! main_status.closing_all || main_status.manually_closing_all,
+			G_SOURCE_REMOVE);
+
+	return ! main_status.quitting && (opening_multiple_files() ||
+			main_status.manually_closing_all) ? G_SOURCE_CONTINUE : G_SOURCE_REMOVE;
 }
 
 static gboolean save_session_files_idle(G_GNUC_UNUSED gpointer data)
@@ -116,9 +119,9 @@ static gboolean save_session_files_idle(G_GNUC_UNUSED gpointer data)
 void consider_saving_session_files(void)
 {
 	if (cl_options.load_session && ! main_status.quitting && ! main_status.opening_session_files &&
-			! main_status.closing_all)
+			(! main_status.closing_all || main_status.manually_closing_all))
 	{
-		if (opening_multiple_files())
+		if (opening_multiple_files() || main_status.manually_closing_all)
 		{
 			if (save_session_files_data.event_source_id == 0)
 				save_session_files_data.event_source_id = IDLE_ADD(save_session_files_idle);
