@@ -101,6 +101,8 @@ GtkWidget *ui_dialog_vbox_new(GtkDialog *dialog);
 
 void ui_set_statusbar(gboolean log, const gchar *format, ...) G_GNUC_PRINTF (2, 3);
 
+void ui_set_statusbar_with_timeout(gboolean log, guint timeout_seconods, const gchar *format, ...) G_GNUC_PRINTF (3, 4);
+
 void ui_table_add_row(GtkTable *table, gint row, ...) G_GNUC_NULL_TERMINATED;
 
 GtkWidget *ui_path_box_new(const gchar *title, GtkFileChooserAction action, GtkEntry *entry);

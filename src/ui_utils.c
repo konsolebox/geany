@@ -114,6 +114,22 @@ typedef struct
 	void (*activate_cb)(GtkMenuItem *, gpointer);
 } GeanyRecentFiles;
 
+typedef struct
+{
+	gchar *text;
+	glong last_time;
+} StatusBarStateData;
+
+StatusBarStateData current_statusbar_state_data = {0};
+
+typedef struct
+{
+	guint event_source_id;
+	StatusBarStateData state_data;
+} StatusBarRevertData;
+
+static StatusBarRevertData statusbar_revert_data = {0};
+
 static void update_recent_menu(GeanyRecentFiles *grf);
 static void recent_file_loaded(const gchar *utf8_filename, GeanyRecentFiles *grf);
 static void recent_file_activate_cb(GtkMenuItem *menuitem, gpointer user_data);
@@ -128,35 +144,79 @@ void ui_widget_set_sensitive(GtkWidget *widget, gboolean set)
 		gtk_widget_set_sensitive(widget, set);
 }
 
-/* allow_override is TRUE if text can be ignored when another message has been set
- * that didn't use allow_override and has not timed out. */
-static void set_statusbar(const gchar *text, gboolean allow_override)
+static void set_statusbar_internal(const gchar *text)
 {
 	static guint id = 0;
-	static glong last_time = 0;
+
+	g_return_if_fail(text != NULL);
+
+	if (id == 0)
+		id = gtk_statusbar_get_context_id(GTK_STATUSBAR(ui_widgets.statusbar), "geany-main");
+
+	gtk_statusbar_pop(GTK_STATUSBAR(ui_widgets.statusbar), id);
+	gtk_statusbar_push(GTK_STATUSBAR(ui_widgets.statusbar), id, text);
+	SETPTR(current_statusbar_state_data.text, g_strdup(text));
+}
+
+static gboolean revert_statusbar(gpointer data)
+{
+	gboolean called_from_event = !!data;
+
+	if (statusbar_revert_data.event_source_id)
+	{
+		if (! called_from_event)
+			g_source_remove(statusbar_revert_data.event_source_id);
+
+		statusbar_revert_data.event_source_id = 0;
+		set_statusbar_internal(statusbar_revert_data.state_data.text ?
+				statusbar_revert_data.state_data.text : "");
+		g_free(g_steal_pointer(&statusbar_revert_data.state_data.text));
+		current_statusbar_state_data.last_time = statusbar_revert_data.state_data.last_time;
+	}
+
+	return G_SOURCE_REMOVE;
+}
+
+/* allow_override is TRUE if text can be ignored when another message has been set
+ * that didn't use allow_override and has not timed out. */
+static gboolean set_statusbar(const gchar *text, gboolean allow_override)
+{
 	GTimeVal timeval;
 	const gint GEANY_STATUS_TIMEOUT = 1;
 
 	if (! interface_prefs.statusbar_visible)
-		return; /* just do nothing if statusbar is not visible */
-
-	if (id == 0)
-		id = gtk_statusbar_get_context_id(GTK_STATUSBAR(ui_widgets.statusbar), "geany-main");
+		return FALSE; /* just do nothing if statusbar is not visible */
 
 	g_get_current_time(&timeval);
 
 	if (! allow_override)
 	{
-		gtk_statusbar_pop(GTK_STATUSBAR(ui_widgets.statusbar), id);
-		gtk_statusbar_push(GTK_STATUSBAR(ui_widgets.statusbar), id, text);
-		last_time = timeval.tv_sec;
+		revert_statusbar(0);
+		set_statusbar_internal(text);
+		current_statusbar_state_data.last_time = timeval.tv_sec;
+		return TRUE;
 	}
-	else
-	if (timeval.tv_sec > last_time + GEANY_STATUS_TIMEOUT)
+
+	if (timeval.tv_sec > current_statusbar_state_data.last_time + GEANY_STATUS_TIMEOUT)
 	{
-		gtk_statusbar_pop(GTK_STATUSBAR(ui_widgets.statusbar), id);
-		gtk_statusbar_push(GTK_STATUSBAR(ui_widgets.statusbar), id, text);
+		revert_statusbar(0);
+		set_statusbar_internal(text);
+		return TRUE;
 	}
+
+	return FALSE;
+}
+
+static gboolean ui_set_statusbar_internal(gboolean log, const gchar *format, va_list ap)
+{
+	gchar *string = g_strdup_vprintf(format, ap);
+	gboolean statusbar_text_set = ! prefs.suppress_status_messages && set_statusbar(string, FALSE);
+
+	if (log || prefs.suppress_status_messages)
+		msgwin_status_add("%s", string);
+
+	g_free(string);
+	return statusbar_text_set;
 }
 
 /** Displays text on the statusbar.
@@ -165,20 +225,45 @@ static void set_statusbar(const gchar *text, gboolean allow_override)
 GEANY_API_SYMBOL
 void ui_set_statusbar(gboolean log, const gchar *format, ...)
 {
-	gchar *string;
 	va_list args;
 
 	va_start(args, format);
-	string = g_strdup_vprintf(format, args);
+	ui_set_statusbar_internal(log, format, args);
 	va_end(args);
+}
 
-	if (! prefs.suppress_status_messages)
-		set_statusbar(string, FALSE);
+void ui_set_statusbar_with_timeout(gboolean log, guint timeout_seconds, const gchar *format, ...)
+{
+	g_return_if_fail(timeout_seconds > 0);
 
-	if (log || prefs.suppress_status_messages)
-		msgwin_status_add("%s", string);
+	va_list args;
+	StatusBarStateData new_state_data = statusbar_revert_data.event_source_id ?
+			statusbar_revert_data.state_data : current_statusbar_state_data;
 
-	g_free(string);
+	if (new_state_data.text)
+		new_state_data.text = g_strdup(new_state_data.text);
+
+	va_start(args, format);
+
+	if (ui_set_statusbar_internal(log, format, args))
+	{
+		if (statusbar_revert_data.event_source_id)
+		{
+			g_source_remove(statusbar_revert_data.event_source_id);
+			statusbar_revert_data.event_source_id = 0;
+		}
+
+		if (new_state_data.text)
+		{
+			SETPTR(statusbar_revert_data.state_data.text, g_steal_pointer(&new_state_data.text));
+			statusbar_revert_data.state_data.last_time = new_state_data.last_time;
+			statusbar_revert_data.event_source_id = g_timeout_add_seconds(timeout_seconds,
+					revert_statusbar, (gpointer) 1);
+		}
+	}
+
+	va_end(args);
+	g_free(new_state_data.text);
 }
 
 /* note: some comments below are for translators */
