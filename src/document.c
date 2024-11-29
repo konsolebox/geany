@@ -2700,7 +2700,7 @@ gboolean document_save_file(GeanyDocument *doc, gboolean force)
 		msgwin_status_add(_("File %s saved."), doc->file_name);
 		ui_update_statusbar(doc, -1);
 #ifdef HAVE_VTE
-		vte_cwd((doc->real_path != NULL) ? doc->real_path : doc->file_name, FALSE);
+		vte_cwd_document(doc, VTE_SHOW_DIR_NOT_CHANGED);
 #endif
 	}
 	g_free(locale_filename);
@@ -4491,7 +4491,7 @@ void document_handle_switch_page_after(GtkWidget *page)
 		document_check_disk_status(doc, TRUE);
 
 #ifdef HAVE_VTE
-		vte_cwd((doc->real_path != NULL) ? doc->real_path : doc->file_name, FALSE);
+		vte_cwd_document(doc, VTE_SHOW_DIR_NOT_CHANGED);
 #endif
 
 		document_try_focus(doc, NULL);

@@ -119,6 +119,7 @@ enum GeanyKeyGroupID
 	GEANY_KEY_GROUP_TOOLS,			/**< Group. */
 	GEANY_KEY_GROUP_HELP,			/**< Group. */
 	GEANY_KEY_GROUP_SIDEBAR,		/**< Group. */
+	GEANY_KEY_GROUP_TERMINAL,		/**< Group. */
 	GEANY_KEY_GROUP_COUNT	/* must not be used by plugins */
 };
 
@@ -291,6 +292,7 @@ enum GeanyKeyBindingID
 	GEANY_KEYS_FILE_RELOAD_ALL,					/**< Keybinding. */
 	GEANY_KEYS_SIDEBAR_RENAME_FILE,				/**< Keybinding. */
 	GEANY_KEYS_FILE_RENAME,						/**< Keybinding. */
+	GEANY_KEYS_TERMINAL_SET_PATH_FROM_DOCUMENT,	/**< Keybinding. */
 	GEANY_KEYS_COUNT	/* must not be used by plugins */
 };
 

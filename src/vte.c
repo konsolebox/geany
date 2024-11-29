@@ -236,10 +236,7 @@ static void override_menu_key(void)
 
 static void on_startup_complete(G_GNUC_UNUSED GObject *dummy)
 {
-	GeanyDocument *doc = document_get_current();
-
-	if (doc)
-		vte_cwd((doc->real_path != NULL) ? doc->real_path : doc->file_name, FALSE);
+	vte_cwd_current_document(VTE_SHOW_DIR_NOT_CHANGED);
 }
 
 void vte_init(void)
@@ -654,9 +651,8 @@ static void vte_popup_menu_clicked(GtkMenuItem *menuitem, gpointer user_data)
 		}
 		case POPUP_CHANGEPATH:
 		{
-			GeanyDocument *doc = document_get_current();
-			if (doc != NULL)
-				vte_cwd(doc->file_name, TRUE);
+			vte_cwd_current_document(VTE_IGNORE_FOLLOW_PATH | VTE_IGNORE_DIRTY |
+					VTE_SHOW_DIR_ALREADY_CORRECT);
 			break;
 		}
 		case POPUP_RESTARTTERMINAL:
@@ -770,14 +766,23 @@ static GtkWidget *vte_create_popup_menu(void)
 
 /* If the command could be executed, TRUE is returned, FALSE otherwise (i.e. there was some text
  * on the prompt). */
-gboolean vte_send_cmd(const gchar *cmd)
+gboolean vte_send_cmd(const gchar *cmd, gboolean ignore_dirty)
 {
 	g_return_val_if_fail(cmd != NULL, FALSE);
 
-	if (clean)
+	if (clean || ignore_dirty)
 	{
+		gboolean was_clean = clean;
+
 		vf->vte_terminal_feed_child(VTE_TERMINAL(vte_config.vte), cmd, strlen(cmd));
-		set_clean(TRUE); /* vte_terminal_feed_child() also marks the vte as not clean */
+
+		/* "vte_terminal_feed_child() also marks the vte as not clean" but not sure why clean has to
+		 * be reverted here.  Anyway keep the old behavior but don't revert if previously dirty. */
+		if (was_clean)
+			set_clean(TRUE);
+
+		/* Just return TRUE as anything that calls vte_send_cmd with ignore_dirty wouldn't care
+		 * about it. */
 		return TRUE;
 	}
 	else
@@ -823,41 +828,72 @@ const gchar *vte_get_working_directory(void)
 	return vte_info.dir;
 }
 
-/* Changes the current working directory of the VTE to the path of the given filename.
- * filename is expected to be in UTF-8 encoding.
- * filename can also be a path, then it is used directly.
- * If force is set to TRUE, it will always change the cwd
- */
-void vte_cwd(const gchar *filename, gboolean force)
+/* Changes the current working directory of the VTE based on the given path which can refer to a
+ * file or a directory.
+ *
+ * If the path refers to a file (i.e., a non-directory), the "dirname" version of it is used. */
+gboolean vte_cwd(const gchar *path, VteCwdFlags flags)
 {
-	if (vte_info.have_vte && (vte_config.follow_path || force) &&
-		filename != NULL && g_path_is_absolute(filename))
-	{
-		gchar *path;
+	g_return_val_if_fail(path != NULL, FALSE);
 
-		if (g_file_test(filename, G_FILE_TEST_IS_DIR))
-			path = g_strdup(filename);
-		else
-			path = g_path_get_dirname(filename);
+	gboolean result = FALSE;
+	const guint STATUSBAR_TIMEOUT = 3;
+
+	if (vte_info.have_vte && (flags & VTE_IGNORE_FOLLOW_PATH || vte_config.follow_path) &&
+			path != NULL && g_path_is_absolute(path))
+	{
+		gchar *dir = g_file_test(path, G_FILE_TEST_IS_DIR) ? g_strdup(path) :
+				g_path_get_dirname(path);
 
 		vte_get_working_directory(); /* refresh vte_info.dir */
-		if (! utils_str_equal(path, vte_info.dir))
+
+		if (utils_str_equal(dir, vte_info.dir))
 		{
-			/* use g_shell_quote to avoid problems with spaces, '!' or something else in path */
-			gchar *quoted_path = g_shell_quote(path);
-			const gchar *cmd_prefix = vte_config.send_cmd_prefix ? vte_config.send_cmd_prefix : "";
-			gchar *cmd = g_strconcat(cmd_prefix, "cd ", quoted_path, "\n", NULL);
-			if (! vte_send_cmd(cmd))
+			if (flags & VTE_SHOW_DIR_ALREADY_CORRECT)
 			{
-				const gchar *msg = _("Directory not changed because the terminal may contain some input (press Ctrl+C or Enter to clear it).");
-				ui_set_statusbar(FALSE, "%s", msg);
+				const gchar *msg = _("Directory is already correct.");
+				ui_set_statusbar_with_timeout(FALSE, STATUSBAR_TIMEOUT, "%s", msg);
 				geany_debug("%s", msg);
 			}
-			g_free(quoted_path);
+
+			result = TRUE;
+		}
+		else
+		{
+			/* use g_shell_quote to avoid problems with spaces, '!' or something else in dir */
+			gchar *quoted_dir = g_shell_quote(dir);
+			const gchar *cmd_prefix = vte_config.send_cmd_prefix ? vte_config.send_cmd_prefix : "";
+			gchar *cmd = g_strconcat(cmd_prefix, "cd ", quoted_dir, "\n", NULL);
+
+			if (vte_send_cmd(cmd, !!(flags & VTE_IGNORE_DIRTY)))
+				result = TRUE;
+			else if (flags & VTE_SHOW_DIR_NOT_CHANGED)
+			{
+				const gchar *msg = _("Directory not changed because the terminal may contain some "
+						"input (press Ctrl+C, Ctrl+D or Enter to clear it).");
+				ui_set_statusbar_with_timeout(FALSE, STATUSBAR_TIMEOUT, "%s", msg);
+				geany_debug("%s", msg);
+			}
+
+			g_free(quoted_dir);
 			g_free(cmd);
 		}
-		g_free(path);
+
+		g_free(dir);
 	}
+
+	return result;
+}
+
+gboolean vte_cwd_document(GeanyDocument *doc, VteCwdFlags flags)
+{
+	return doc != NULL && vte_cwd(vte_config.cwd_real_path && doc->real_path != NULL ?
+			doc->real_path : doc->file_name, flags);
+}
+
+gboolean vte_cwd_current_document(VteCwdFlags flags)
+{
+	return vte_cwd_document(document_get_current(), flags);
 }
 
 static void vte_drag_data_received(GtkWidget *widget, GdkDragContext *drag_context,

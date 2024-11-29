@@ -771,6 +771,9 @@ static void prefs_init_dialog(void)
 
 		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "allow_bold");
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.allow_bold);
+
+		widget = ui_lookup_widget(ui_widgets.prefs_dialog, "cwd_real_path");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vte_config.cwd_real_path);
 	}
 #endif
 }
@@ -1207,6 +1210,9 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 
 			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "allow_bold");
 			vte_config.allow_bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+
+			widget = ui_lookup_widget(ui_widgets.prefs_dialog, "cwd_real_path");
+			vte_config.cwd_real_path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 
 			vte_apply_user_settings();
 		}
