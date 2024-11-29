@@ -107,6 +107,8 @@ static void cb_func_switch_tablastused(guint key_id);
 static void cb_func_move_tab(guint key_id);
 static void cb_func_sort_tabs(guint key_id);
 
+static void cb_func_terminal_set_path_from_document(guint key_id);
+
 static void add_popup_menu_accels(void);
 
 /** Gets significant modifiers from a GdkModifierType mask. The set of
@@ -315,6 +317,7 @@ static void init_default_kb(void)
 	ADD_KB_GROUP(GEANY_KEY_GROUP_FOCUS, _("Focus"), cb_func_switch_action);
 	ADD_KB_GROUP(GEANY_KEY_GROUP_NOTEBOOK, _("Notebook tab"), NULL);
 	ADD_KB_GROUP(GEANY_KEY_GROUP_SIDEBAR, _("Sidebar"), NULL);
+	ADD_KB_GROUP(GEANY_KEY_GROUP_TERMINAL, _("Terminal"), NULL);
 
 	/* Init all fields of keys with default values.
 	 * The menu_item field is always the main menu item, popup menu accelerators are
@@ -736,6 +739,11 @@ static void init_default_kb(void)
 
 	add_kb(group, GEANY_KEYS_SIDEBAR_RENAME_FILE, sidebar_rename_file_cb,
 		0, 0, "sidebar_rename_file", _("Rename File"), NULL);
+
+	group = keybindings_get_core_group(GEANY_KEY_GROUP_TERMINAL);
+
+	add_kb(group, GEANY_KEYS_TERMINAL_SET_PATH_FROM_DOCUMENT, cb_func_terminal_set_path_from_document,
+		0, 0, "terminal_cwd", _("Set Path From Document"), NULL);
 }
 
 static void free_key_group(gpointer item)
@@ -2804,4 +2812,10 @@ GeanyKeyGroup *keybindings_set_group(GeanyKeyGroup *group, const gchar *section_
 void keybindings_free_group(GeanyKeyGroup *group)
 {
 	g_ptr_array_remove_fast(keybinding_groups, group);
+}
+
+static void cb_func_terminal_set_path_from_document(G_GNUC_UNUSED guint key_id)
+{
+	vte_cwd_current_document(VTE_IGNORE_FOLLOW_PATH | VTE_IGNORE_DIRTY |
+			VTE_SHOW_DIR_ALREADY_CORRECT);
 }

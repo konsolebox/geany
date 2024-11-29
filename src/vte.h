@@ -26,6 +26,8 @@
 
 #include "gtkcompat.h"
 
+#include "document.h"
+
 G_BEGIN_DECLS
 
 typedef struct
@@ -55,6 +57,7 @@ typedef struct
 	gboolean cursor_blinks;
 	gboolean send_selection_unsafe;
 	gboolean allow_bold;
+	gboolean cwd_real_path;
 	gint scrollback_lines;
 	gchar *shell;
 	gchar *font;
@@ -65,17 +68,29 @@ typedef struct
 
 extern VteConfig vte_config;
 
+typedef enum
+{
+	VTE_IGNORE_FOLLOW_PATH			= 1,
+	VTE_IGNORE_DIRTY				= 2,
+	VTE_SHOW_DIR_NOT_CHANGED		= 4,
+	VTE_SHOW_DIR_ALREADY_CORRECT	= 8
+} VteCwdFlags;
+
 void vte_init(void);
 
 void vte_close(void);
 
 void vte_apply_user_settings(void);
 
-gboolean vte_send_cmd(const gchar *cmd);
+gboolean vte_send_cmd(const gchar *cmd, gboolean ignore_dirty);
 
 const gchar *vte_get_working_directory(void);
 
-void vte_cwd(const gchar *filename, gboolean force);
+gboolean vte_cwd(const gchar *path, VteCwdFlags flags);
+
+gboolean vte_cwd_document(GeanyDocument *doc, VteCwdFlags flags);
+
+gboolean vte_cwd_current_document(VteCwdFlags flags);
 
 void vte_append_preferences_tab(void);
 

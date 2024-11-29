@@ -549,6 +549,7 @@ static void save_dialog_prefs(GKeyFile *config)
 		g_key_file_set_boolean(config, "VTE", "skip_run_script", vte_config.skip_run_script);
 		g_key_file_set_boolean(config, "VTE", "cursor_blinks", vte_config.cursor_blinks);
 		g_key_file_set_boolean(config, "VTE", "allow_bold", vte_config.allow_bold);
+		g_key_file_set_boolean(config, "VTE", "cwd_real_path", vte_config.cwd_real_path);
 		g_key_file_set_integer(config, "VTE", "scrollback_lines", vte_config.scrollback_lines);
 		g_key_file_set_string(config, "VTE", "font", vte_config.font);
 		g_key_file_set_string(config, "VTE", "shell", vte_config.shell);
@@ -720,7 +721,7 @@ GPtrArray *configuration_load_session_files(GKeyFile *config)
 	if (vte_info.have_vte)
 	{
 		gchar *tmp_string = utils_get_setting_string(config, "VTE", "last_dir", NULL);
-		vte_cwd(tmp_string,TRUE);
+		vte_cwd(tmp_string, VTE_IGNORE_FOLLOW_PATH | VTE_SHOW_DIR_NOT_CHANGED);
 		g_free(tmp_string);
 	}
 #endif
@@ -908,6 +909,7 @@ static void load_dialog_prefs(GKeyFile *config)
 		vte_config.skip_run_script = utils_get_setting_boolean(config, "VTE", "skip_run_script", FALSE);
 		vte_config.cursor_blinks = utils_get_setting_boolean(config, "VTE", "cursor_blinks", FALSE);
 		vte_config.allow_bold = utils_get_setting_boolean(config, "VTE", "allow_bold", TRUE);
+		vte_config.cwd_real_path = utils_get_setting_boolean(config, "VTE", "cwd_real_path", TRUE);
 		vte_config.scrollback_lines = utils_get_setting_integer(config, "VTE", "scrollback_lines", 500);
 		get_setting_color(config, "VTE", "colour_fore", &vte_config.colour_fore, "#ffffff");
 		get_setting_color(config, "VTE", "colour_back", &vte_config.colour_back, "#000000");

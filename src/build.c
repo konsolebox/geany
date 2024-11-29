@@ -858,14 +858,17 @@ static void build_run_cmd(GeanyDocument *doc, guint cmdindex)
 		else
 			vte_cmd = g_strconcat("\n/bin/sh ", run_cmd, "\n", NULL);
 
-		vte_cwd(working_dir, TRUE);
-		if (! vte_send_cmd(vte_cmd))
+		if (vte_cwd(working_dir, VTE_IGNORE_FOLLOW_PATH | VTE_SHOW_DIR_NOT_CHANGED))
 		{
-			const gchar *msg = _("File not executed because the terminal may contain some input (press Ctrl+C or Enter to clear it).");
-			ui_set_statusbar(FALSE, "%s", msg);
-			geany_debug("%s", msg);
-			if (!vte_config.skip_run_script)
-				g_unlink(run_cmd);
+			if (! vte_send_cmd(vte_cmd, FALSE))
+			{
+				const gchar *msg = _("File not executed because the terminal may contain some "
+						"input (press Ctrl+C, Ctrl+D or Enter to clear it).");
+				ui_set_statusbar(FALSE, "%s", msg);
+				geany_debug("%s", msg);
+				if (!vte_config.skip_run_script)
+					g_unlink(run_cmd);
+			}
 		}
 
 		/* show the VTE */
