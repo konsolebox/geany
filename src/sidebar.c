@@ -750,6 +750,18 @@ static void openfiles_remove(GeanyDocument *doc)
 		openfiles_remove_favorite_entry(doc);
 }
 
+static void openfiles_remove_and_readd(GeanyDocument *doc)
+{
+	GtkTreeSelection *treesel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
+	gboolean sel = gtk_tree_selection_iter_is_selected(treesel, &doc->priv->iter);
+
+	openfiles_remove(doc);
+	sidebar_openfiles_add(doc);
+
+	if (sel)
+		gtk_tree_selection_select_iter(treesel, &doc->priv->iter);
+}
+
 void sidebar_openfiles_update(GeanyDocument *doc)
 {
 	g_return_if_fail(doc != NULL);
@@ -765,18 +777,8 @@ void sidebar_openfiles_update(GeanyDocument *doc)
 		openfiles_update_favorite_entry(doc);
 	}
 	else
-	{
 		/* Path has changed, so remove and re-add */
-
-		GtkTreeSelection *treesel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
-		gboolean sel = gtk_tree_selection_iter_is_selected(treesel, &doc->priv->iter);
-
-		openfiles_remove(doc);
-		sidebar_openfiles_add(doc);
-
-		if (sel)
-			gtk_tree_selection_select_iter(treesel, &doc->priv->iter);
-	}
+		openfiles_remove_and_readd(doc);
 
 	g_free(fname);
 }
@@ -1914,7 +1916,12 @@ static void on_openfiles_renamed(GtkCellRenderer *renderer, const gchar *path_st
 			gchar *new_file_name = g_strconcat(dirname, G_DIR_SEPARATOR_S, new_basename, NULL);
 
 			if (strcmp(doc->file_name, new_file_name) != 0)
+			{
 				document_rename_and_save(doc, new_file_name, TRUE);
+
+				/* Avoid inconsistencies in the iterators */
+				openfiles_remove_and_readd(doc);
+			}
 
 			g_free(new_file_name);
 			g_free(dirname);
