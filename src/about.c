@@ -137,7 +137,7 @@ static GtkWidget *create_dialog(void)
 	GtkWidget *header_label;
 	GtkWidget *label_info;
 	GtkWidget *codename_label;
-	GtkWidget *builddate_label;
+	GtkWidget *build_notes_label;
 	GtkWidget *url_button;
 	GtkWidget *cop_label;
 	GtkWidget *label;
@@ -222,19 +222,20 @@ static GtkWidget *create_dialog(void)
 	gtk_widget_show(codename_label);
 	gtk_box_pack_start(GTK_BOX(info_box), codename_label, FALSE, FALSE, 0);
 
-	/* build date label */
-	builddate_label = gtk_label_new(NULL);
-	gtk_label_set_justify(GTK_LABEL(builddate_label), GTK_JUSTIFY_CENTER);
-	gtk_label_set_selectable(GTK_LABEL(builddate_label), TRUE);
-	gtk_label_set_use_markup(GTK_LABEL(builddate_label), TRUE);
+	/* build notes label */
+	build_notes_label = gtk_label_new(NULL);
+	gtk_label_set_justify(GTK_LABEL(build_notes_label), GTK_JUSTIFY_CENTER);
+	gtk_label_set_selectable(GTK_LABEL(build_notes_label), TRUE);
+	gtk_label_set_use_markup(GTK_LABEL(build_notes_label), TRUE);
 	build_date = utils_parse_and_format_build_date(__DATE__);
-	g_snprintf(buffer2, sizeof(buffer2), _("(built on or after %s)"), build_date);
+	g_snprintf(buffer2, sizeof(buffer2), _("(%s; built on or after %s)"), GEANY_BUILD_NOTES,
+			build_date);
 	g_free(build_date);
 	g_snprintf(buffer, sizeof(buffer), BUILDDATE, buffer2);
-	gtk_label_set_markup(GTK_LABEL(builddate_label), buffer);
-	gtk_misc_set_padding(GTK_MISC(builddate_label), 2, 2);
-	gtk_widget_show(builddate_label);
-	gtk_box_pack_start(GTK_BOX(info_box), builddate_label, FALSE, FALSE, 0);
+	gtk_label_set_markup(GTK_LABEL(build_notes_label), buffer);
+	gtk_misc_set_padding(GTK_MISC(build_notes_label), 2, 2);
+	gtk_widget_show(build_notes_label);
+	gtk_box_pack_start(GTK_BOX(info_box), build_notes_label, FALSE, FALSE, 0);
 
 	box = gtk_hbutton_box_new();
 	url_button = gtk_button_new();

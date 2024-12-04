@@ -1,8 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.60])
-AC_INIT([Geany], [1.29],
-		[https://sourceforge.net/tracker/?group_id=153444&atid=787791])
+AC_INIT([Geany], [1.29-konsolebox],
+		[https://github.com/konsolebox/geany/issues])
 AC_CONFIG_SRCDIR([src/geany.h])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
@@ -55,6 +55,7 @@ AC_CHECK_FUNCS([ftruncate fgetpos fnmatch mkstemp strerror strstr])
 GEANY_CHECK_REVISION([dnl force debug mode for a VCS working copy
 					  CFLAGS="-g -DGEANY_DEBUG $CFLAGS"])
 
+GEANY_CHECK_REVISION_DATE
 
 AC_ARG_ENABLE([gtk3],
 		[AS_HELP_STRING([--enable-gtk3],
