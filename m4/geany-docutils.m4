@@ -21,7 +21,7 @@ AC_DEFUN([GEANY_CHECK_DOCUTILS_HTML],
 	dnl we require rst2html by default unless we don't build from Git
 	dnl and already have the HTML manual built in-tree
 	html_docs_default=yes
-	AS_IF([test "$REVISION" = "-1" && test "x$have_prebuilt_html_docs" = xyes],
+	AS_IF([test "x$GEANY_REVISION" = "x" && test "x$have_prebuilt_html_docs" = xyes],
 		[html_docs_default=auto])
 
 	AC_ARG_ENABLE([html-docs],

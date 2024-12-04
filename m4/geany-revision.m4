@@ -1,31 +1,30 @@
 dnl GEANY_CHECK_REVISION([action-if-found], [action-if-not-found])
-dnl Check for the Git revision and set REVISION to "<revid>"
-dnl or to "-1" if the revision can't be found
-dnl Also AC_DEFINEs REVISION
+dnl Checks for the Git revision and assigns it to GEANY_REVISION
 AC_DEFUN([GEANY_CHECK_REVISION],
 [
-	REVISION="0"
+	if test "x${GEANY_REVISION}" == "x"; then
+		GEANY_REVISION=""
+		AC_MSG_CHECKING([for Git revision])
+		GIT=`which git 2>/dev/null`
 
-	AC_MSG_CHECKING([for Git revision])
-	# try Git first
-	GIT=`which git 2>/dev/null`
-	if test -d "$srcdir/.git" -a "x${GIT}" != "x" -a -x "${GIT}"; then
-		REVISION=`cd "$srcdir"; "${GIT}" rev-parse --short --revs-only HEAD 2>/dev/null || echo 0`
-	fi
+		if test -d "$srcdir/.git" -a "x${GIT}" != "x" -a -x "${GIT}"; then
+			GEANY_REVISION=`
+				exec 2>/dev/null && cd "$srcdir" || exit
+				"${GIT}" rev-parse --short --revs-only HEAD
+			`
+		fi
 
-	if test "x${REVISION}" != "x0"; then
-		AC_MSG_RESULT([$REVISION])
-		GEANY_STATUS_ADD([Compiling Git revision], [$REVISION])
-
-		# call action-if-found
-		$1
+		if test "x${GEANY_REVISION}" != "x"; then
+			AC_MSG_RESULT([$GEANY_REVISION])
+			GEANY_STATUS_ADD([Compiling Git revision], [$GEANY_REVISION])
+			$1
+		else
+			AC_MSG_RESULT([none])
+			$2
+		fi
 	else
-		REVISION="-1"
-		AC_MSG_RESULT([none])
-
-		# call action-if-not-found
-		$2
+		AC_MSG_NOTICE([using ${GEANY_REVISION} as Git revision])
 	fi
 
-	AC_DEFINE_UNQUOTED([REVISION], "$REVISION", [git revision hash])
+	AC_DEFINE_UNQUOTED([GEANY_REVISION], "${GEANY_REVISION}", [git revision hash])
 ])

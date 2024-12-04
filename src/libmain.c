@@ -316,12 +316,14 @@ static void main_init(void)
 
 const gchar *main_get_version_string(void)
 {
-	static gchar full[] = VERSION " (git >= " REVISION ")";
-
-	if (utils_str_equal(REVISION, "-1"))
-		return VERSION;
+	if (*(GEANY_REVISION) && *(GEANY_REVISION_DATE))
+		return VERSION "-" GEANY_REVISION_DATE "-" GEANY_REVISION;
+	else if (*(GEANY_REVISION))
+		return VERSION "-" GEANY_REVISION;
+	else if (*(GEANY_REVISION_DATE))
+		return VERSION "-" GEANY_REVISION_DATE;
 	else
-		return full;
+		return VERSION;
 }
 
 /* get the full file path of a command-line argument
