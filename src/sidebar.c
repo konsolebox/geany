@@ -581,7 +581,7 @@ static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 	if (!documents_show_paths)
 		return NULL;
 
-	static GtkTreeIter parent;
+	GtkTreeIter parent;
 	GtkTreeModel *model = GTK_TREE_MODEL(store_openfiles);
 	gchar *path, *stored_path = NULL, *stored_folder = NULL;
 	gchar *folder = sidebar_get_doc_folder(doc, &path);
@@ -615,7 +615,7 @@ static GtkTreeIter *get_doc_parent(GeanyDocument *doc)
 
 	g_free(folder);
 	g_free(path);
-	return &parent;
+	return gtk_tree_iter_copy(&parent);
 }
 
 static void openfiles_update_entry_values(GeanyDocument *doc, GtkTreeIter *iter, gboolean partial)
@@ -652,6 +652,16 @@ static void expand_row(GtkTreeIter *iter)
 	gtk_tree_path_free(path);
 }
 
+static gboolean openfiles_has_no_child(GtkTreeIter *iter)
+{
+	return gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store_openfiles), iter) == 0;
+}
+
+static gboolean openfiles_has_one_child(GtkTreeIter *iter)
+{
+	return gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store_openfiles), iter) == 1;
+}
+
 static void openfiles_remove_favorite_entry(GeanyDocument *doc)
 {
 	GtkTreeIter *iter = &doc->priv->iter_favorite;
@@ -659,16 +669,14 @@ static void openfiles_remove_favorite_entry(GeanyDocument *doc)
 	g_return_if_fail(iter_favorites.stamp != 0);
 	g_return_if_fail(gtk_tree_store_is_ancestor(store_openfiles, &iter_favorites, iter));
 
-	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(store_openfiles), &iter_favorites, iter) &&
-			gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store_openfiles), &iter_favorites) == 1)
+	gtk_tree_store_remove(store_openfiles, iter);
+	iter->stamp = 0;
+
+	if (openfiles_has_no_child(&iter_favorites))
 	{
 		gtk_tree_store_remove(store_openfiles, &iter_favorites);
 		iter_favorites.stamp = 0;
 	}
-	else
-		gtk_tree_store_remove(store_openfiles, iter);
-
-	iter->stamp = 0;
 }
 
 static void openfiles_update_favorite_entry(GeanyDocument *doc)
@@ -726,28 +734,66 @@ void sidebar_openfiles_add(GeanyDocument *doc)
 	gtk_tree_store_append(store_openfiles, iter, parent);
 
 	/* Expand parent if new */
-	if (parent && gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store_openfiles), parent) == 1)
+	if (parent && openfiles_has_one_child(parent))
 		expand_row(parent);
 
 	openfiles_update_entry_values(doc, iter, FALSE);
 	openfiles_update_favorite_entry(doc);
+	gtk_tree_iter_free(parent);
 }
 
 static void openfiles_remove(GeanyDocument *doc)
 {
 	g_return_if_fail(doc != NULL);
 
-	GtkTreeIter *iter = &doc->priv->iter;
 	GtkTreeIter parent;
+	gtk_tree_model_iter_parent(GTK_TREE_MODEL(store_openfiles), &parent, &doc->priv->iter);
 
-	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(store_openfiles), &parent, iter) &&
-			gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store_openfiles), &parent) == 1)
+	gtk_tree_store_remove(store_openfiles, &doc->priv->iter);
+
+	if (openfiles_has_no_child(&parent))
 		gtk_tree_store_remove(store_openfiles, &parent);
-	else
-		gtk_tree_store_remove(store_openfiles, iter);
 
 	if (doc->priv->iter_favorite.stamp != 0)
 		openfiles_remove_favorite_entry(doc);
+}
+
+static void openfiles_scroll_to_row(GtkTreeIter *iter)
+{
+	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(store_openfiles), iter);
+	g_return_if_fail(path != NULL);
+	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(tv.tree_openfiles), path, NULL, FALSE, 0, 0);
+	gtk_tree_path_free(path);
+}
+
+static void openfiles_remove_and_readd(GeanyDocument *doc)
+{
+	GtkTreeSelection *treesel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
+
+	gboolean sel = gtk_tree_selection_iter_is_selected(treesel, &doc->priv->iter);
+	gboolean sel_favorite = document_get_favorite(doc) &&
+			gtk_tree_selection_iter_is_selected(treesel, &doc->priv->iter_favorite);
+
+	openfiles_remove(doc);
+	sidebar_openfiles_add(doc);
+
+	if (sel)
+	{
+		gtk_tree_selection_select_iter(treesel, &doc->priv->iter);
+
+		GtkTreeIter parent;
+		gtk_tree_model_iter_parent(GTK_TREE_MODEL(store_openfiles), &parent, &doc->priv->iter);
+
+		if (openfiles_has_one_child(&parent))
+			openfiles_scroll_to_row(&parent);
+	}
+	else if (sel_favorite)
+	{
+		gtk_tree_selection_select_iter(treesel, &doc->priv->iter_favorite);
+
+		if (openfiles_has_one_child(&iter_favorites))
+			openfiles_scroll_to_row(&iter_favorites);
+	}
 }
 
 void sidebar_openfiles_update(GeanyDocument *doc)
@@ -765,18 +811,8 @@ void sidebar_openfiles_update(GeanyDocument *doc)
 		openfiles_update_favorite_entry(doc);
 	}
 	else
-	{
 		/* Path has changed, so remove and re-add */
-
-		GtkTreeSelection *treesel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
-		gboolean sel = gtk_tree_selection_iter_is_selected(treesel, &doc->priv->iter);
-
-		openfiles_remove(doc);
-		sidebar_openfiles_add(doc);
-
-		if (sel)
-			gtk_tree_selection_select_iter(treesel, &doc->priv->iter);
-	}
+		openfiles_remove_and_readd(doc);
 
 	g_free(fname);
 }
@@ -1150,12 +1186,8 @@ void sidebar_select_openfiles_item(GeanyDocument *doc)
 		gtk_tree_model_foreach(GTK_TREE_MODEL(store_openfiles), tree_model_find_node, doc);
 }
 
-static void rename_file_inplace(GeanyDocument *doc)
+static void rename_file_inplace(GtkTreeIter *iter)
 {
-	g_assert(DOC_VALID(doc) && doc->file_name);
-
-	GtkTreeIter *iter = &doc->priv->iter;
-
 	g_return_if_fail(gtk_tree_store_iter_is_valid(store_openfiles, iter));
 
 	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(store_openfiles), iter);
@@ -1165,11 +1197,18 @@ static void rename_file_inplace(GeanyDocument *doc)
 	GtkCellRenderer *renderer = g_list_nth_data(renderers, 1);
 
 	g_object_set(G_OBJECT(renderer), "editable", TRUE, NULL);
-
 	gtk_tree_view_set_cursor_on_cell(tree_view, path, column, renderer, TRUE);
-
 	gtk_tree_path_free(path);
 	g_list_free(renderers);
+}
+
+gboolean rename_file_inplace_idle(gpointer data)
+{
+	GtkTreeIter *iter = data;
+
+	rename_file_inplace(iter);
+	gtk_tree_iter_free(iter);
+	return G_SOURCE_REMOVE;
 }
 
 static void set_favorite(GeanyDocument *doc, gboolean favorite)
@@ -1228,11 +1267,6 @@ static void document_action(GeanyDocument *doc, gint action)
 			if (doc->real_path)
 				document_reload_force(doc, NULL);
 
-			break;
-		}
-		case OPENFILES_ACTION_RENAME:
-		{
-			rename_file_inplace(doc);
 			break;
 		}
 		case OPENFILES_ACTION_CLONE:
@@ -1428,7 +1462,10 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 						GtkTreeIter *parent = get_doc_parent(doc);
 
 						if (parent)
+						{
 							document_action_recursive(model, parent, action);
+							gtk_tree_iter_free(parent);
+						}
 					}
 					else
 						document_action_recursive(model, &iter, action);
@@ -1511,6 +1548,12 @@ static void on_openfiles_document_action(GtkMenuItem *menuitem, gpointer user_da
 					}
 				}
 
+				break;
+			}
+			case OPENFILES_ACTION_RENAME:
+			{
+				g_return_if_fail(doc && doc->file_name);
+				g_idle_add(rename_file_inplace_idle, gtk_tree_iter_copy(&iter));
 				break;
 			}
 			default:
@@ -1914,7 +1957,8 @@ static void on_openfiles_renamed(GtkCellRenderer *renderer, const gchar *path_st
 			gchar *new_file_name = g_strconcat(dirname, G_DIR_SEPARATOR_S, new_basename, NULL);
 
 			if (strcmp(doc->file_name, new_file_name) != 0)
-				document_rename_and_save(doc, new_file_name, TRUE);
+				if (document_rename_and_save(doc, new_file_name, TRUE) == FALSE)
+					openfiles_remove_and_readd(doc);
 
 			g_free(new_file_name);
 			g_free(dirname);
@@ -1937,15 +1981,12 @@ void sidebar_rename_file_cb(G_GNUC_UNUSED guint key_id)
 		{
 			gtk_tree_model_get(model, &iter, DOCUMENTS_DOCUMENT, &doc, -1);
 
-			if (!DOC_VALID(doc))
-				doc = document_get_current();
-
-			if (doc && doc->file_name)
+			if (doc && doc->file_name || (doc = document_get_current()) && doc->file_name)
 			{
 				gtk_notebook_set_current_page(GTK_NOTEBOOK(main_widgets.sidebar_notebook),
 						TREEVIEW_OPENFILES);
 
-				rename_file_inplace(doc);
+				rename_file_inplace(&iter);
 			}
 		}
 	}
@@ -1953,26 +1994,22 @@ void sidebar_rename_file_cb(G_GNUC_UNUSED guint key_id)
 
 void sidebar_openfiles_scroll_to_row(GeanyDocument *doc)
 {
-	GtkTreeIter *iter;
-	GtkTreeSelection *selection;
-	GtkTreePath *path;
-
 	g_return_if_fail(tv.tree_openfiles != NULL);
 	g_return_if_fail(store_openfiles != NULL);
 
 	if (DOC_VALID(doc))
 	{
-		iter = &doc->priv->iter;
+		GtkTreeIter *iter = &doc->priv->iter;
 
 		if (doc->priv->iter_favorite.stamp)
 		{
-			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
+			GtkTreeSelection *selection =
+					gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
 
 			if (gtk_tree_selection_iter_is_selected(selection, &doc->priv->iter) == FALSE)
 				iter = &doc->priv->iter_favorite;
 		}
 
-		path = gtk_tree_model_get_path(GTK_TREE_MODEL(store_openfiles), iter);
-		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(tv.tree_openfiles), path, NULL, FALSE, 0, 0);
+		openfiles_scroll_to_row(iter);
 	}
 }
