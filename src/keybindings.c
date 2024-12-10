@@ -1228,9 +1228,9 @@ static gboolean check_vte(GdkModifierType state, guint keyval)
 	/* let VTE copy/paste override any user keybinding */
 	if (state == (GEANY_PRIMARY_MOD_MASK | GDK_SHIFT_MASK) && (keyval == GDK_c || keyval == GDK_v))
 		goto disable_menu_accelerators_and_return_true;
-	/* Also allow Ctrl-C, Ctrl-D and Ctrl-Z to override user keybinding */
-	if (ui_is_state_keyval_ctrl_c_or_ctrl_d(state, keyval) || ui_is_state_keyval_ctrl_z(state,
-			keyval))
+	/* Also allow Ctrl-C, Ctrl-D, Ctrl-K, Ctrl-L and Ctrl-Z to override user keybinding */
+	if (ui_is_state_keyval_ctrl_any_of(state, keyval, GDK_c, GDK_C, GDK_d, GDK_D, GDK_k, GDK_K,
+			GDK_l, GDK_L, GDK_z, GDK_Z))
 		goto disable_menu_accelerators_and_return_true;
 	if (! vte_config.enable_bash_keys)
 		return FALSE;
