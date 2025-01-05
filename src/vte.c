@@ -419,7 +419,7 @@ static void set_clean(gboolean value)
 static gboolean vte_keyrelease_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
 	if (ui_is_keyval_enter_or_return(event->keyval) ||
-			ui_is_state_keyval_ctrl_c_or_ctrl_d(event->state, event->keyval))
+			ui_is_state_keyval_ctrl_any_of(event->state, event->keyval, GDK_c, GDK_C, GDK_d, GDK_D))
 	{
 		/* assume any text on the prompt has been executed when pressing Enter/Return */
 		set_clean(TRUE);
@@ -430,7 +430,7 @@ static gboolean vte_keyrelease_cb(GtkWidget *widget, GdkEventKey *event, gpointe
 static gboolean vte_keypress_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
 	if (event->type == GDK_KEY_RELEASE && vte_config.ctrl_c_d_resets_vte &&
-			ui_is_state_keyval_ctrl_c_or_ctrl_d(event->state, event->keyval))
+			ui_is_state_keyval_ctrl_any_of(event->state, event->keyval, GDK_c, GDK_C, GDK_d, GDK_D))
 	{
 		vte_restart(widget);
 		return TRUE;
