@@ -2969,6 +2969,22 @@ gboolean ui_is_keyval_enter_or_return(guint keyval)
 	return (keyval == GDK_Return || keyval == GDK_ISO_Enter|| keyval == GDK_KP_Enter);
 }
 
+gboolean ui_is_state_keyval_ctrl_any_of(GdkModifierType state, guint keyval, ...)
+{
+	va_list keys;
+	guint key;
+	gboolean r = FALSE;
+
+	va_start(keys, keyval);
+
+	if (state & GDK_CONTROL_MASK && ! (state & (GDK_SHIFT_MASK | GDK_MOD1_MASK)))
+		while ((key = va_arg(keys, guint)) && ! (r = keyval == key))
+			;
+
+	va_end(keys);
+	return r;
+}
+
 gboolean ui_is_state_keyval_ctrl_c_or_ctrl_d(GdkModifierType state, guint keyval)
 {
 	return (keyval == GDK_c || keyval == GDK_C || keyval == GDK_d || keyval == GDK_D) &&

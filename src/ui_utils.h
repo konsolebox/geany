@@ -130,6 +130,8 @@ void ui_widget_modify_font_from_string(GtkWidget *wid, const gchar *str);
 
 gboolean ui_is_keyval_enter_or_return(guint keyval);
 
+gboolean ui_is_state_keyval_ctrl_any_of(GdkModifierType state, guint keyval, ...);
+
 gboolean ui_is_state_keyval_ctrl_c_or_ctrl_d(GdkModifierType state, guint keyval);
 
 gboolean ui_is_state_keyval_ctrl_z(GdkModifierType state, guint keyval);
