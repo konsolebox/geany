@@ -2985,18 +2985,6 @@ gboolean ui_is_state_keyval_ctrl_any_of(GdkModifierType state, guint keyval, ...
 	return r;
 }
 
-gboolean ui_is_state_keyval_ctrl_c_or_ctrl_d(GdkModifierType state, guint keyval)
-{
-	return (keyval == GDK_c || keyval == GDK_C || keyval == GDK_d || keyval == GDK_D) &&
-			state & GDK_CONTROL_MASK && ! (state & (GDK_SHIFT_MASK | GDK_MOD1_MASK));
-}
-
-gboolean ui_is_state_keyval_ctrl_z(GdkModifierType state, guint keyval)
-{
-	return (keyval == GDK_z || keyval == GDK_Z) &&
-			state & GDK_CONTROL_MASK && ! (state & (GDK_SHIFT_MASK | GDK_MOD1_MASK));
-}
-
 /** Reads an integer from the GTK default settings registry
  * (see http://library.gnome.org/devel/gtk/stable/GtkSettings.html).
  * @param property_name The property to read.
