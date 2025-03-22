@@ -764,25 +764,23 @@ static GtkWidget *vte_create_popup_menu(void)
 	return menu;
 }
 
-/* If the command could be executed, TRUE is returned, FALSE otherwise (i.e. there was some text
- * on the prompt). */
+/* If the command could be executed, TRUE is returned, FALSE otherwise (i.e. there's likely some
+ * text on the prompt and ignore_dirty isn't set to TRUE). */
 gboolean vte_send_cmd(const gchar *cmd, gboolean ignore_dirty)
 {
 	g_return_val_if_fail(cmd != NULL, FALSE);
 
 	if (clean || ignore_dirty)
 	{
-		gboolean was_clean = clean;
-
 		vf->vte_terminal_feed_child(VTE_TERMINAL(vte_config.vte), cmd, strlen(cmd));
 
-		/* "vte_terminal_feed_child() also marks the vte as not clean" but not sure why clean has to
-		 * be reverted here.  Anyway keep the old behavior but don't revert if previously dirty. */
-		if (was_clean)
-			set_clean(TRUE);
+		/* Because vte_terminal_feed_child sets clean to FALSE through vte_commit_cb and clean
+		 * should also be set to TRUE when ignore_dirty is enabled.  It's more convenient to assert
+		 * that the terminal has been reset to a clean state after the command has been executed
+		 * through "Set Path From Document" because that's what the user would be trying to do
+		 * sensibly. */
+		set_clean(TRUE);
 
-		/* Just return TRUE as anything that calls vte_send_cmd with ignore_dirty wouldn't care
-		 * about it. */
 		return TRUE;
 	}
 	else
