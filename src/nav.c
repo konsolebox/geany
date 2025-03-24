@@ -228,6 +228,13 @@ static void goto_link(GList *target_link, NavPosition orig_npos, gboolean orig_n
 		list_delete_link(target_link);
 }
 
+gboolean nav_save_current_position(void)
+{
+	NavPosition current_npos = nav_get_current_position(NULL);
+	g_return_val_if_fail(NAV_POSITION_VALID(current_npos), FALSE);
+	add_new_position(current_npos, FALSE, FALSE);
+}
+
 static void go_back_internal(GList *target_link, NavPosition orig_npos,
 		gboolean orig_npos_is_linked)
 {

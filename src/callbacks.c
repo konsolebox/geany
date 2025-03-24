@@ -107,9 +107,8 @@ void on_save1_activate(GtkMenuItem *menuitem, gpointer user_data)
 	GeanyDocument *doc = document_get_current();
 
 	if (doc != NULL)
-	{
-		document_save_file(doc, ui_prefs.allow_always_save);
-	}
+		if (document_save_file(doc, ui_prefs.allow_always_save))
+			nav_save_current_position();
 }
 
 void on_save_as1_activate(GtkMenuItem *menuitem, gpointer user_data)
@@ -139,6 +138,7 @@ void on_save_all1_activate(GtkMenuItem *menuitem, gpointer user_data)
 	if (!count)
 		return;
 
+	nav_save_current_position();
 	ui_set_statusbar(FALSE, ngettext("%d file saved.", "%d files saved.", count), count);
 	/* saving may have changed window title, sidebar for another doc, so update */
 	document_show_tab(cur_doc);

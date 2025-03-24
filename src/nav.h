@@ -57,6 +57,8 @@ gboolean nav_goto_position(NavPosition new_npos, NavPosition old_npos);
 
 gboolean nav_goto_line(GeanyDocument *doc, gint line, NavPosition old_npos);
 
+gboolean nav_save_current_position(void);
+
 void nav_go_back(void);
 
 void nav_go_forward(void);
