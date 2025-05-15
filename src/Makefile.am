@@ -212,3 +212,6 @@ fix-ubuntu-libdir:
 	fi
 
 install-exec-hook: fix-ubuntu-libdir
+
+# Set TZ=UTC so build date aligns with git
+export TZ = UTC
