@@ -1992,27 +1992,27 @@ static void do_highlight(GeanyDocument *doc, gboolean all_mode)
 	if (end > start)
 	{
 		gint ind_start, ind_end, start_val, end_val;
-		ind_start = scintilla_send_message(sci, SCI_INDICATORSTART, GEANY_INDICATOR_USER, start);
-		ind_end = scintilla_send_message(sci, SCI_INDICATOREND, GEANY_INDICATOR_USER, start);
-		start_val = scintilla_send_message(sci, SCI_INDICATORVALUEAT, GEANY_INDICATOR_USER, start);
-		end_val = scintilla_send_message(sci, SCI_INDICATORVALUEAT, GEANY_INDICATOR_USER, end - 1);
+		ind_start = SSM(sci, SCI_INDICATORSTART, GEANY_INDICATOR_USER, start);
+		ind_end = SSM(sci, SCI_INDICATOREND, GEANY_INDICATOR_USER, start);
+		start_val = SSM(sci, SCI_INDICATORVALUEAT, GEANY_INDICATOR_USER, start);
+		end_val = SSM(sci, SCI_INDICATORVALUEAT, GEANY_INDICATOR_USER, end - 1);
 		clear_mode = !!start_val && !!end_val && ind_start <= start && ind_end >= end;
 	}
 	else
 	{
 		gint pos, ind_pos;
 		pos = ind_pos = sci_get_current_position(sci);
-		gboolean ind_exists = !!scintilla_send_message(sci, SCI_INDICATORVALUEAT,
+		gboolean ind_exists = !!SSM(sci, SCI_INDICATORVALUEAT,
 				GEANY_INDICATOR_USER, ind_pos);
 
 		if (!ind_exists && ind_pos > 0)
-			ind_exists = !!scintilla_send_message(sci, SCI_INDICATORVALUEAT, GEANY_INDICATOR_USER,
+			ind_exists = !!SSM(sci, SCI_INDICATORVALUEAT, GEANY_INDICATOR_USER,
 					--ind_pos);
 
 		if (ind_exists)
 		{
-			start = scintilla_send_message(sci, SCI_INDICATORSTART, GEANY_INDICATOR_USER, ind_pos);
-			end = scintilla_send_message(sci, SCI_INDICATOREND, GEANY_INDICATOR_USER, ind_pos);
+			start = SSM(sci, SCI_INDICATORSTART, GEANY_INDICATOR_USER, ind_pos);
+			end = SSM(sci, SCI_INDICATOREND, GEANY_INDICATOR_USER, ind_pos);
 			clear_mode = TRUE;
 		}
 		else
