@@ -31,5 +31,8 @@ void consider_saving_session_files(void);
 void consider_showing_document_tab(GeanyDocument *doc);
 void consider_trying_document_focus(GeanyDocument *doc, GtkWidget *source_widget);
 void consider_calling_ui_document_show_hide(GeanyDocument *doc);
+void consider_updating_openfiles_filter(void);
+void consider_sidebar_openfiles_expand_row(GtkTreeRowReference *row);
+void consider_sidebar_select_openfiles_item(GeanyDocument *doc);
 
 #endif // GEANY_CONSIDER_H

@@ -34,6 +34,7 @@ typedef struct SidebarTreeviews
 	GtkWidget		*default_tag_tree;
 	GtkWidget		*popup_taglist;
 	GtkWidget		*tree_highlights;
+	GtkWidget		*entry_openfiles_filter;
 }
 SidebarTreeviews;
 
@@ -75,6 +76,14 @@ void sidebar_focus_symbols_tab(void);
 void sidebar_rename_file_cb(guint key_id);
 
 void sidebar_openfiles_scroll_to_row(GeanyDocument *doc);
+
+void sidebar_openfiles_expand_row(GtkTreeIter *iter);
+
+void sidebar_openfiles_expand_row_v2(GtkTreeRowReference *row);
+
+void sidebar_update_openfiles_filter(void);
+
+void sidebar_select_openfiles_item_real(GeanyDocument *doc);
 
 G_END_DECLS
 
