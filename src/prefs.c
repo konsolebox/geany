@@ -503,7 +503,7 @@ static void prefs_init_dialog(void)
 
 	ui_radio_button_set_group_value(ui_widgets.prefs_dialog,
 			toolbar_prefs.use_gtk_default_icon ? -1 : toolbar_prefs.icon_size,
-			"radio_toolbar_icon_default", "radio_toolbar_very_small", GTK_ICON_SIZE_MENU,
+			"radio_toolbar_icon_default", "radio_toolbar_verysmall", GTK_ICON_SIZE_MENU,
 			"radio_toolbar_small", GTK_ICON_SIZE_SMALL_TOOLBAR, "radio_toolbar_large",
 			GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
 
@@ -941,7 +941,7 @@ on_prefs_dialog_response(GtkDialog *dialog, gint response, gpointer user_data)
 		toolbar_prefs.use_gtk_default_style = toolbar_prefs.icon_style == -1;
 
 		toolbar_prefs.icon_size = ui_radio_button_get_group_value(ui_widgets.prefs_dialog, -1,
-				"radio_toolbar_very_small", GTK_ICON_SIZE_MENU, "radio_toolbar_small",
+				"radio_toolbar_verysmall", GTK_ICON_SIZE_MENU, "radio_toolbar_small",
 				GTK_ICON_SIZE_SMALL_TOOLBAR, "radio_toolbar_large", GTK_ICON_SIZE_LARGE_TOOLBAR,
 				NULL);
 		toolbar_prefs.use_gtk_default_icon = toolbar_prefs.icon_size == -1;
