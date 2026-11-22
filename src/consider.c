@@ -76,11 +76,11 @@ typedef struct
 	GtkTreeRowReference *row;
 } SidebarSelectOpenfilesItemData;
 
-SaveSessionFilesData save_session_files_data = {0};
-HandleSwitchPageAfterData handle_switch_page_after_data = {0};
-ShowDocumentTabData show_document_tab_data = {0};
-TryDocumentFocusData try_document_focus_data = {0};
-CallUIDocumentShowHideData call_ui_document_show_hide_data = {0};
+static SaveSessionFilesData save_session_files_data;
+static HandleSwitchPageAfterData handle_switch_page_after_data;
+static ShowDocumentTabData show_document_tab_data;
+static TryDocumentFocusData try_document_focus_data;
+static CallUIDocumentShowHideData call_ui_document_show_hide_data;
 static SidebarOpenfilesUpdateFilterData sidebar_openfiles_update_filter_data;
 static SidebarOpenfilesExpandRowData sidebar_openfiles_expand_row_data;
 static GHashTable *sidebar_openfiles_expand_row_registry;
