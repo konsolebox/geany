@@ -645,12 +645,7 @@ static GeanyDocument *document_create(const gchar *utf8_filename, gboolean filen
 	document_reset_ordered_list();
 
 	/* select document in sidebar */
-	{
-		GtkTreeSelection *sel;
-
-		sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv.tree_openfiles));
-		gtk_tree_selection_select_iter(sel, &doc->priv->iter);
-	}
+	sidebar_select_openfiles_item(doc);
 
 	ui_document_buttons_update();
 
@@ -4486,7 +4481,6 @@ void document_handle_switch_page_after(GtkWidget *page)
 		ui_document_show_hide(doc); /* update the document menu */
 		build_menu_update(doc);
 		sidebar_update_tag_list(doc, FALSE);
-		sidebar_openfiles_scroll_to_row(doc);
 		document_highlight_tags(doc);
 		document_check_disk_status(doc, TRUE);
 

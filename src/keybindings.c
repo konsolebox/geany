@@ -739,6 +739,8 @@ static void init_default_kb(void)
 
 	add_kb(group, GEANY_KEYS_SIDEBAR_RENAME_FILE, sidebar_rename_file_cb,
 		0, 0, "sidebar_rename_file", _("Rename File"), NULL);
+	add_kb(group, GEANY_KEYS_SIDEBAR_SELECT_FILTER_ENTRY, sidebar_select_filter_entry_cb,
+		0, 0, "sidebar_select_filter_entry", _("Select Filter Entry Box"), NULL);
 
 	group = keybindings_get_core_group(GEANY_KEY_GROUP_TERMINAL);
 

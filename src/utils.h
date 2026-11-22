@@ -323,6 +323,8 @@ void utils_start_new_geany_instance(const gchar *doc_path);
 
 void utils_open_local_path(const gchar *path);
 
+gboolean utils_tokens_match(const gchar *subject, gchar **tokens);
+
 #endif /* GEANY_PRIVATE */
 
 G_END_DECLS

@@ -34,6 +34,7 @@ typedef struct SidebarTreeviews
 	GtkWidget		*default_tag_tree;
 	GtkWidget		*popup_taglist;
 	GtkWidget		*tree_highlights;
+	GtkWidget		*entry_openfiles_filter;
 }
 SidebarTreeviews;
 
@@ -47,6 +48,18 @@ enum
 	SYMBOLS_COLUMN_TOOLTIP,
 	SYMBOLS_N_COLUMNS
 };
+
+enum
+{
+	OPENFILES_SELECT_CURRENT_DOCUMENT = -1
+};
+
+typedef enum
+{
+	OPENFILES_SELECT_ROW,
+	OPENFILES_SELECT_DOCUMENT
+}
+SidebarSelectOpenfilesItemType;
 
 void sidebar_init(void);
 
@@ -74,7 +87,15 @@ void sidebar_focus_symbols_tab(void);
 
 void sidebar_rename_file_cb(guint key_id);
 
-void sidebar_openfiles_scroll_to_row(GeanyDocument *doc);
+void sidebar_openfiles_expand_row(GtkTreeIter *iter);
+
+void sidebar_openfiles_expand_row_real(GtkTreeRowReference *row);
+
+void sidebar_select_openfiles_item_real(GeanyDocument *doc, GtkTreeRowReference *row);
+
+void sidebar_openfiles_update_filter(void);
+
+void sidebar_select_filter_entry_cb(G_GNUC_UNUSED guint key_id);
 
 G_END_DECLS
 

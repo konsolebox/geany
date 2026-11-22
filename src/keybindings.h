@@ -293,6 +293,7 @@ enum GeanyKeyBindingID
 	GEANY_KEYS_SIDEBAR_RENAME_FILE,				/**< Keybinding. */
 	GEANY_KEYS_FILE_RENAME,						/**< Keybinding. */
 	GEANY_KEYS_TERMINAL_SET_PATH_FROM_DOCUMENT,	/**< Keybinding. */
+	GEANY_KEYS_SIDEBAR_SELECT_FILTER_ENTRY,		/**< Keybinding. */
 	GEANY_KEYS_COUNT	/* must not be used by plugins */
 };
 

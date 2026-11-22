@@ -2127,3 +2127,20 @@ void utils_open_local_path(const gchar *path)
 
 	g_free(uri);
 }
+
+gboolean utils_tokens_match(const gchar *subject, gchar **tokens)
+{
+	gchar *folded_subject = g_utf8_casefold(subject, -1);
+	gboolean all_tokens_matched = TRUE;
+
+	for (guint i = 0; tokens[i] != NULL; ++i)
+	{
+		if (g_strstr_len(folded_subject, -1, tokens[i]) == NULL) {
+			all_tokens_matched = FALSE;
+			break;
+		}
+	}
+
+	g_free(folded_subject);
+	return all_tokens_matched;
+}

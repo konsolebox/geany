@@ -25,6 +25,7 @@
 #include "document.h"
 #include "keyfile.h"
 #include "main.h"
+#include "sidebar.h"
 #include "ui_utils.h"
 
 typedef struct
@@ -57,11 +58,34 @@ typedef struct
 	GeanyDocument *doc;
 } CallUIDocumentShowHideData;
 
+typedef struct
+{
+	guint event_source_id;
+} SidebarOpenfilesUpdateFilterData;
+
+typedef struct
+{
+	GtkTreeRowReference *row;
+	guint event_source_id;
+} SidebarOpenfilesExpandRowData;
+
+typedef struct
+{
+	guint event_source_id;
+	GeanyDocument *doc;
+	GtkTreeRowReference *row;
+} SidebarSelectOpenfilesItemData;
+
 SaveSessionFilesData save_session_files_data = {0};
 HandleSwitchPageAfterData handle_switch_page_after_data = {0};
 ShowDocumentTabData show_document_tab_data = {0};
 TryDocumentFocusData try_document_focus_data = {0};
 CallUIDocumentShowHideData call_ui_document_show_hide_data = {0};
+static SidebarOpenfilesUpdateFilterData sidebar_openfiles_update_filter_data;
+static SidebarOpenfilesExpandRowData sidebar_openfiles_expand_row_data;
+static GHashTable *sidebar_openfiles_expand_row_registry;
+static GMutex sidebar_openfiles_expand_row_registry_mutex;
+static SidebarSelectOpenfilesItemData sidebar_select_openfiles_item_data;
 
 #define IDLE_ADD(f) g_idle_add(f, NULL);
 
@@ -265,4 +289,111 @@ void consider_calling_ui_document_show_hide(GeanyDocument *doc)
 
 	if (call_ui_document_show_hide_data.event_source_id == 0)
 		call_ui_document_show_hide_data.event_source_id = IDLE_ADD(call_ui_document_show_hide_idle);
+}
+
+/*
+ * sidebar_openfiles_update_filter
+ */
+
+static gboolean update_openfiles_filter_idle(G_GNUC_UNUSED gpointer data)
+{
+	sidebar_openfiles_update_filter_data.event_source_id = 0;
+	sidebar_openfiles_update_filter();
+	return G_SOURCE_REMOVE;
+}
+
+void consider_sidebar_openfiles_update_filter(void)
+{
+	geany_debug("consider_sidebar_openfiles_update_filter()");
+
+	if (sidebar_openfiles_update_filter_data.event_source_id == 0)
+		sidebar_openfiles_update_filter_data.event_source_id =
+				IDLE_ADD(update_openfiles_filter_idle);
+}
+
+/*
+ * sidebar_openfiles_expand_row
+ */
+
+static gboolean sidebar_openfiles_expand_row_idle(SidebarOpenfilesExpandRowData *data)
+{
+	if (opening_multiple_files() || sidebar_openfiles_update_filter_data.event_source_id)
+		return G_SOURCE_CONTINUE;
+
+	g_mutex_lock(&sidebar_openfiles_expand_row_registry_mutex);
+	g_hash_table_remove(sidebar_openfiles_expand_row_registry,
+			GUINT_TO_POINTER(data->event_source_id));
+	g_mutex_unlock(&sidebar_openfiles_expand_row_registry_mutex);
+	sidebar_openfiles_expand_row_real(data->row);
+	return G_SOURCE_REMOVE;
+}
+
+static void sidebar_openfiles_expand_row_data_free(SidebarOpenfilesExpandRowData *data)
+{
+	gtk_tree_row_reference_free(data->row);
+	g_free(data);
+}
+
+static gboolean has_sidebar_openfiles_expand_row_events(void)
+{
+	gboolean has_events;
+
+	g_mutex_lock(&sidebar_openfiles_expand_row_registry_mutex);
+	has_events = sidebar_openfiles_expand_row_registry != NULL &&
+			g_hash_table_size(sidebar_openfiles_expand_row_registry) > 0;
+	g_mutex_unlock(&sidebar_openfiles_expand_row_registry_mutex);
+	return has_events;
+}
+
+void consider_sidebar_openfiles_expand_row(GtkTreeRowReference **row)
+{
+	geany_debug("consider_sidebar_openfiles_expand_row: row: %p", row);
+
+	g_mutex_lock(&sidebar_openfiles_expand_row_registry_mutex);
+	SidebarOpenfilesExpandRowData *data = g_new0(SidebarOpenfilesExpandRowData, 1);
+	data->row = g_steal_pointer(row);
+	data->event_source_id = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+			(GSourceFunc) sidebar_openfiles_expand_row_idle, data,
+			(GDestroyNotify) sidebar_openfiles_expand_row_data_free);
+
+	if (sidebar_openfiles_expand_row_registry == NULL)
+		sidebar_openfiles_expand_row_registry = g_hash_table_new(g_direct_hash, g_direct_equal);
+
+	g_hash_table_add(sidebar_openfiles_expand_row_registry,
+			GUINT_TO_POINTER(data->event_source_id));
+	g_mutex_unlock(&sidebar_openfiles_expand_row_registry_mutex);
+}
+
+/*
+ * sidebar_openfiles_expand_rows
+ */
+
+static gboolean sidebar_select_openfiles_item_idle(G_GNUC_UNUSED gpointer data)
+{
+	if (opening_multiple_files() || has_sidebar_openfiles_expand_row_events() ||
+			sidebar_openfiles_update_filter_data.event_source_id ||
+			handle_switch_page_after_data.event_source_id)
+		return G_SOURCE_CONTINUE;
+
+	sidebar_select_openfiles_item_data.event_source_id = 0;
+	sidebar_select_openfiles_item_real(sidebar_select_openfiles_item_data.doc,
+			sidebar_select_openfiles_item_data.row);
+	g_clear_pointer(&sidebar_select_openfiles_item_data.row, gtk_tree_row_reference_free);
+	return G_SOURCE_REMOVE;
+}
+
+void consider_sidebar_select_openfiles_item(GeanyDocument *doc, GtkTreeRowReference **row)
+{
+	geany_debug("consider_sidebar_select_openfiles_item: doc: %p, row: %p, *row: %p", doc, row, row ? *row : NULL);
+
+	sidebar_select_openfiles_item_data.doc = doc;
+
+	g_clear_pointer(&sidebar_select_openfiles_item_data.row, gtk_tree_row_reference_free);
+
+	if (row)
+		sidebar_select_openfiles_item_data.row = g_steal_pointer(row);
+
+	if (sidebar_select_openfiles_item_data.event_source_id == 0)
+		sidebar_select_openfiles_item_data.event_source_id =
+				IDLE_ADD(sidebar_select_openfiles_item_idle);
 }

@@ -3863,6 +3863,8 @@ Sidebar keybindings
 Action                          Default shortcut          Description
 =============================== ========================= ==================================================
 Rename File                                               Renames file in-place in the Documents tab
+
+Select Filter Entry Box                                   Sets cursor focus on the filter entry box
 =============================== ========================= ==================================================
 
 
