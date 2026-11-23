@@ -1723,6 +1723,11 @@ static void on_go_to_previous_marker1_activate(GtkMenuItem *menuitem, gpointer u
 	keybindings_send_command(GEANY_KEY_GROUP_GOTO, GEANY_KEYS_GOTO_PREVIOUSMARKER);
 }
 
+static void on_go_to_document1_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+	keybindings_send_command(GEANY_KEY_GROUP_GOTO, GEANY_KEYS_GOTO_DOCUMENT);
+}
+
 static void on_reflow_lines_block1_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
 	keybindings_send_command(GEANY_KEY_GROUP_FORMAT, GEANY_KEYS_FORMAT_REFLOWPARAGRAPH);

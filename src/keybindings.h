@@ -257,6 +257,7 @@ enum GeanyKeyBindingID
 	GEANY_KEYS_FOCUS_MESSAGE_WINDOW,			/**< Keybinding. */
 	GEANY_KEYS_NOTEBOOK_MOVETABFIRST,			/**< Keybinding. */
 	GEANY_KEYS_GOTO_PREVIOUSMARKER,				/**< Keybinding. */
+	GEANY_KEYS_GOTO_DOCUMENT,					/**< Keybinding. */
 	GEANY_KEYS_EDITOR_SCROLLLINEUP,				/**< Keybinding. */
 	GEANY_KEYS_FOCUS_COMPILER,					/**< Keybinding. */
 	GEANY_KEYS_FORMAT_TOGGLECASE,				/**< Keybinding. */

@@ -590,6 +590,8 @@ static void init_default_kb(void)
 	add_kb(group, GEANY_KEYS_GOTO_PREVIOUSMARKER, NULL,
 		GDK_comma, GEANY_PRIMARY_MOD_MASK, "edit_gotopreviousmarker",
 		_("Go to Pre_vious Marker"), "go_to_previous_marker1");
+	add_kb(group, GEANY_KEYS_GOTO_DOCUMENT, NULL,
+		GDK_g, GEANY_PRIMARY_MOD_MASK, "edit_gotodocument", _("Go to _Document"), "go_to_document1");
 	add_kb(group, GEANY_KEYS_GOTO_NEXTMESSAGE, NULL,
 		GDK_Right, GEANY_PRIMARY_MOD_MASK | GDK_MOD1_MASK, "menu_nextmessage", _("Next Message"), "next_message1");
 	add_kb(group, GEANY_KEYS_GOTO_PREVIOUSMESSAGE, NULL,
@@ -739,6 +741,7 @@ static void init_default_kb(void)
 
 	add_kb(group, GEANY_KEYS_SIDEBAR_RENAME_FILE, sidebar_rename_file_cb,
 		0, 0, "sidebar_rename_file", _("Rename File"), NULL);
+
 	add_kb(group, GEANY_KEYS_SIDEBAR_SELECT_FILTER_ENTRY, sidebar_select_filter_entry_cb,
 		0, 0, "sidebar_select_filter_entry", _("Select Filter Entry Box"), NULL);
 
@@ -2210,6 +2213,9 @@ static gboolean cb_func_goto_action(guint key_id)
 			break;
 		case GEANY_KEYS_GOTO_TAGDECLARATION:
 			goto_tag(doc, FALSE);
+			break;
+		case GEANY_KEYS_GOTO_DOCUMENT:
+			show_goto_document_dialog();
 			break;
 		case GEANY_KEYS_GOTO_LINESTART:
 			sci_send_command(sci, editor_prefs.smart_home_key ? SCI_VCHOME : SCI_HOME);

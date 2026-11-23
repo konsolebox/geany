@@ -3673,6 +3673,8 @@ Go to End of Display Line       Alt-End                   Move the caret to the 
 Go to Previous Word Part        Ctrl-/                    Goto the previous part of the current word.
 
 Go to Next Word Part            Ctrl-\\                   Goto the next part of the current word.
+
+Go to Document                                            Show Go to Document dialog
 =============================== ========================= ==================================================
 
 View keybindings

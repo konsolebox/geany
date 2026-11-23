@@ -82,6 +82,7 @@ libgeany_la_SOURCES = \
 	geanyobject.c geanyobject.h \
 	geanywraplabel.c geanywraplabel.h \
 	gtkcompat.h \
+	goto_document.c goto_document.h \
 	highlighting.c highlighting.h \
 	highlightingmappings.h \
 	keybindings.c keybindings.h \

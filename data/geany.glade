@@ -670,6 +670,12 @@
     <property name="stock">gtk-go-up</property>
     <property name="icon-size">1</property>
   </object>
+  <object class="GtkImage" id="image_go_to_document1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-file</property>
+    <property name="icon-size">1</property>
+  </object>
   <object class="GtkImage" id="image4075">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -7503,6 +7509,23 @@
                     <child type="submenu">
                       <object class="GtkMenu" id="goto1_menu">
                         <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkImageMenuItem" id="go_to_document1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Go to _Document</property>
+                            <property name="use_underline">True</property>
+                            <property name="image">image_go_to_document1</property>
+                            <property name="use_stock">False</property>
+                            <signal name="activate" handler="on_go_to_document1_activate" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorMenuItem" id="separator66">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                          </object>
+                        </child>
                         <child>
                           <object class="GtkImageMenuItem" id="go_to_line1">
                             <property name="label" translatable="yes">_Go to Line</property>
