@@ -7528,7 +7528,7 @@
                         </child>
                         <child>
                           <object class="GtkImageMenuItem" id="go_to_line1">
-                            <property name="label" translatable="yes">_Go to Line</property>
+                            <property name="label" translatable="yes">Go to _Line</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="use_underline">True</property>
