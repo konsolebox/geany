@@ -1821,12 +1821,11 @@ static gboolean taglist_go_to_selection(GtkTreeSelection *selection, guint keyva
 static gboolean sidebar_key_press_cb(GtkWidget *widget, GdkEventKey *event,
 											 gpointer user_data)
 {
-	may_steal_focus = FALSE;
 	if (ui_is_keyval_enter_or_return(event->keyval) || event->keyval == GDK_space)
 	{
 		GtkWidgetClass *widget_class = GTK_WIDGET_GET_CLASS(widget);
 		GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
-		may_steal_focus = TRUE;
+		may_steal_focus = !(event->state & GDK_CONTROL_MASK);
 
 		/* force the TreeView handler to run before us for it to do its job (selection & stuff).
 		 * doing so will prevent further handlers to be run in most cases, but the only one is our
@@ -1858,7 +1857,6 @@ static gboolean sidebar_button_press_cb(GtkWidget *widget, GdkEventButton *event
 		handled = widget_class->button_press_event(widget, event);
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
-	may_steal_focus = TRUE;
 
 	if (event->type == GDK_2BUTTON_PRESS)
 	{	/* double click on parent node(section) expands/collapses it */
@@ -1882,7 +1880,10 @@ static gboolean sidebar_button_press_cb(GtkWidget *widget, GdkEventButton *event
 		}
 	}
 	else if (event->button == 1)
-	{	/* allow reclicking of taglist treeview item */
+	{
+		may_steal_focus = !(event->state & GDK_CONTROL_MASK);
+
+		/* allow reclicking of taglist treeview item */
 		if (widget == tv.tree_openfiles)
 		{
 			openfiles_go_to_selection(selection, 0);
